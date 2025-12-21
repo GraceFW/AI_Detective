@@ -1,0 +1,104 @@
+﻿using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
+
+// 这里只处理场景的加载和卸载，并发布对应的事件
+
+public class SceneManager : MonoBehaviour
+{
+	[Header("场景配置")]
+	public GameSceneSO menuScene;
+	[SerializeField]private  GameSceneSO currentScene;
+	private GameSceneSO _sceneToLoad;
+	private bool _isLoading;
+	private bool _shouldFade;
+	private float _fadeDuration;
+
+	[Header("广播配置")]
+	[Tooltip("场景卸载完毕事件")]
+	public VoidEventSO unloadedSceneEvent;
+	[Tooltip("场景加载完毕事件")]
+	public VoidEventSO loadedSceneEvent;
+
+
+	private void Start()
+	{
+		// 游戏开始时加载菜单场景(理应通过响应GameManager发布的游戏初始化事件来实现)
+		// 后续需优化
+		SceneInit();
+	}
+
+
+	// 加载MenuScene
+	public void SceneInit()
+	{
+		LoadScene(menuScene);
+	}
+
+	/// <summary>
+	/// 加载场景的关键方法
+	/// </summary>
+	/// <param name="sceneToLoad">要加载的场景</param>
+	public void LoadScene(GameSceneSO sceneToLoad)
+	{
+		OnLoadRequestEvent(sceneToLoad);
+	}
+
+	private void OnLoadRequestEvent(GameSceneSO sceneToLoad)
+	{
+		if (_isLoading)
+			return;
+		_isLoading = true;
+		_sceneToLoad = sceneToLoad;
+		_shouldFade = sceneToLoad.useFade;
+		_fadeDuration = sceneToLoad.fadeDuration;
+
+		if (currentScene != null)
+		{
+			StartCoroutine(UnLoadPreviousScene());
+		}
+		else
+		{
+			LoadNewScene();
+		}
+	}
+
+	// 卸载旧场景
+	private IEnumerator UnLoadPreviousScene()
+	{
+		// 画面变黑再卸载旧场景，然后加载新场景
+		if (_shouldFade)
+		{
+			var fadeComplete = new System.Threading.ManualResetEvent(false);
+			FadeManager.Instance.FadeIn(_fadeDuration, () => fadeComplete.Set());
+			yield return new WaitUntil(() => fadeComplete.WaitOne(0));
+		}
+		// 卸载旧场景
+		yield return currentScene.sceneReference.UnLoadScene();
+		// 广播“场景卸载完成”事件
+		unloadedSceneEvent?.RaiseEvent(); 
+		LoadNewScene(); // 加载新场景
+	}
+
+	private void LoadNewScene()
+	{
+		var loadingOption = _sceneToLoad.sceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
+		loadingOption.Completed += OnLoadCompleted;
+	}
+
+	private void OnLoadCompleted(AsyncOperationHandle<SceneInstance> handle)
+	{
+		currentScene = _sceneToLoad;
+		_isLoading = false;
+		loadedSceneEvent?.RaiseEvent(); // 场景加载完成事件
+		// 场景加载完后再淡入
+		if (_shouldFade)
+		{
+			FadeManager.Instance.FadeOut(_fadeDuration);
+		}
+
+	}
+}
