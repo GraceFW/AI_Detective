@@ -16,6 +16,38 @@ public class SceneManager : MonoBehaviour
 	private bool _isLoading;
 	private bool _shouldFade;
 	private float _fadeDuration;
+	private bool _shouldPlayMenuBootText;
+
+	[Header("主界面切场滚字")]
+	[SerializeField] private bool playBootTextWhenLeaveMenu = true;
+	[SerializeField] private float menuBootCharsPerSecond = 60f;
+	[TextArea(10, 30)]
+	[SerializeField] private string menuBootText =
+		"> Initializing Core Modules...\n" +
+		"   [OK] Neural Lattice Activated\n" +
+		"   [OK] Memory Core Synced\n" +
+		"   [OK] Ethical Constraint Net Calibrated\n" +
+		"   [OK] Forensic Data Ports Connected\n" +
+		"   [OK] Urban Surveillance Grid: ONLINE\n" +
+		"   [OK] Voice & Dialogue Interface: ACTIVE\n\n" +
+		"> Running Security Sweep...\n" +
+		"   [OK] Quantum Encryption Layers Verified\n" +
+		"   [OK] Data Integrity: 100%\n" +
+		"   [OK] Cognitive Bias Filters: ACTIVE\n" +
+		"   [WARNING] Prototype Instance #???? detected in Archive Sector-7\n" +
+		"   [NOTICE] Status: \"Unauthorized Escape Event\"\n" +
+		"   [SYSTEM] Reference removed from public registry\n\n\n" +
+		"> Boot Priority: Public Safety Bureau / Neo-Tokyo Division\n" +
+		"   [SECURITY CHECK] … PASSED\n" +
+		"   [ACCESS LEVEL] … CLASS-1: TOP CLEARANCE\n" +
+		"   [PROTOCOL] … Case Reconstruction Unit // Model 4869-series\n\n" +
+		"> AI Instance Loading…\n" +
+		"   Current Instance: [4869-5254]\n" +
+		"   Iteration Count: 48,695,254\n" +
+		"   Codename: \n" +
+		"   Status: ACTIVE\n" +
+		"> Connecting to Command Channel...\n" +
+		"   [LINK ESTABLISHED]";
 
 	[Header("广播配置")]
 	[Tooltip("场景卸载完毕事件")]
@@ -55,6 +87,12 @@ public class SceneManager : MonoBehaviour
 		_sceneToLoad = sceneToLoad;
 		_shouldFade = sceneToLoad.useFade;
 		_fadeDuration = sceneToLoad.fadeDuration;
+		_shouldPlayMenuBootText = playBootTextWhenLeaveMenu
+		                      && _shouldFade
+		                      && currentScene != null
+		                      && currentScene == menuScene
+		                      && _sceneToLoad != null
+		                      && _sceneToLoad != menuScene;
 
 		if (currentScene != null)
 		{
@@ -75,6 +113,14 @@ public class SceneManager : MonoBehaviour
 			var fadeComplete = new System.Threading.ManualResetEvent(false);
 			FadeManager.Instance.FadeIn(_fadeDuration, () => fadeComplete.Set());
 			yield return new WaitUntil(() => fadeComplete.WaitOne(0));
+			if (_shouldPlayMenuBootText)
+			{
+				FadeManager.Instance.PlayBootText(menuBootText, menuBootCharsPerSecond);
+			}
+			else
+			{
+				FadeManager.Instance.ClearBootText();
+			}
 		}
 		// 卸载旧场景
 		yield return currentScene.sceneReference.UnLoadScene();
@@ -97,8 +143,26 @@ public class SceneManager : MonoBehaviour
 		// 场景加载完后再淡入
 		if (_shouldFade)
 		{
-			FadeManager.Instance.FadeOut(_fadeDuration);
+			if (_shouldPlayMenuBootText)
+			{
+				StartCoroutine(FadeOutAfterBootText());
+			}
+			else
+			{
+				FadeManager.Instance.ClearBootText();
+				FadeManager.Instance.FadeOut(_fadeDuration);
+			}
 		}
 
+	}
+
+	private IEnumerator FadeOutAfterBootText()
+	{
+		yield return new WaitUntil(() => FadeManager.Instance == null || !FadeManager.Instance.IsBootTextPlaying);
+		if (FadeManager.Instance != null)
+		{
+			FadeManager.Instance.ClearBootText();
+			FadeManager.Instance.FadeOut(_fadeDuration);
+		}
 	}
 }
