@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d57d6653203ec4ca8eaeb022c69e39, type: 3}
-  m_Name: LoadSceneEvent
+  m_Script: {fileID: 11500000, guid: f09b152b846c6424b8246853205b1a53, type: 3}
+  m_Name: LoadedSceneEvent_0
   m_EditorClassIdentifier: 
