@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
+/// <summary>
+/// 游戏事件基类，基于ScriptableObject实现
+/// </summary>
 public class GameEventSO : ScriptableObject
 {
 	public UnityAction OnEventRaised;

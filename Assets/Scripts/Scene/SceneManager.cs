@@ -7,30 +7,46 @@ using UnityEngine.SceneManagement;
 
 // 这里只处理场景的加载和卸载，并发布对应的事件
 
-public class SceneManager : MonoBehaviour
+public class SceneManager : MonoBehaviour, ISaveable
 {
 	[Header("场景配置")]
 	public GameSceneSO menuScene;
-	[SerializeField]private  GameSceneSO currentScene;
+	[SerializeField]private GameSceneSO currentScene;
 	private GameSceneSO _sceneToLoad;
 	private bool _isLoading;
 	private bool _shouldFade;
 	private float _fadeDuration;
 
 	[Header("广播配置")]
-	[Tooltip("场景卸载完毕事件")]
-	public VoidEventSO unloadedSceneEvent;
-	[Tooltip("场景加载完毕事件")]
-	public VoidEventSO loadedSceneEvent;
 
+	[Tooltip("场景卸载完毕事件")]
+	[SerializeField] private VoidEventSO _unloadedSceneEvent;
+
+	[Tooltip("场景加载完毕事件")]
+	[SerializeField] private VoidEventSO _loadedSceneEvent_0;
+
+	[Tooltip("场景加载完毕事件(带场景类型变量)")]
+	[SerializeField] private GameSceneEventSO _loadedSceneEvent_1;
+
+	private void OnEnable()
+	{
+		ISaveable saveable = this;
+		saveable.RegisterSaveData();
+	}
 
 	private void Start()
 	{
 		// 游戏开始时加载菜单场景(理应通过响应GameManager发布的游戏初始化事件来实现)
 		// 后续需优化
-		SceneInit();
+		// 已经优化，给到GameManager处理
+		// SceneInit();
 	}
 
+	private void OnDisable()
+	{
+		ISaveable saveable = this;
+		saveable.UnRegisterSaveData();
+	}
 
 	// 加载MenuScene
 	public void SceneInit()
@@ -79,7 +95,7 @@ public class SceneManager : MonoBehaviour
 		// 卸载旧场景
 		yield return currentScene.sceneReference.UnLoadScene();
 		// 广播“场景卸载完成”事件
-		unloadedSceneEvent?.RaiseEvent(); 
+		_unloadedSceneEvent?.RaiseEvent(); 
 		LoadNewScene(); // 加载新场景
 	}
 
@@ -93,12 +109,36 @@ public class SceneManager : MonoBehaviour
 	{
 		currentScene = _sceneToLoad;
 		_isLoading = false;
-		loadedSceneEvent?.RaiseEvent(); // 场景加载完成事件
+		_loadedSceneEvent_0?.RaiseEvent(); // 场景加载完成事件
+		_loadedSceneEvent_1?.RaiseEvent(currentScene); //场景加载完毕事件，传递场景类型参数
 		// 场景加载完后再淡入
 		if (_shouldFade)
 		{
 			FadeManager.Instance.FadeOut(_fadeDuration);
 		}
 
+	}
+
+	public DataDefinition GetDataID()
+	{
+		return GetComponent<DataDefinition>();
+	}
+
+	public void SaveData(Data data)
+	{
+		data.SaveGameScene(currentScene);
+		data.isHavingSceneData = true;
+	}
+
+	public void LoadData(Data data)
+	{
+		if (data.isHavingSceneData)
+		{
+			_sceneToLoad = data.GetSavedScene();
+
+			LoadScene(_sceneToLoad);
+		}
+		else
+			Debug.Log("No Such Data Saved !");
 	}
 }

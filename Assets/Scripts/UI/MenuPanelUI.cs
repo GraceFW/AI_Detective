@@ -4,11 +4,13 @@ using UnityEngine.UI;
 public class UIMenu : MonoBehaviour
 {
 	public Button startBtn;
-	[SerializeField] private LoadSceneEventSO _loadSceneEvent;
+	[SerializeField] private GameSceneEventSO _loadSceneEvent;
 	[SerializeField] private GameSceneSO _firstLevelScene;
 	private void Start()
 	{
+		Debug.Log("MenuPanel done!");
 		startBtn.onClick.AddListener(OnStartGameButtonClick);
+		Debug.Log("btn added!");
 	}
 	public void OnStartGameButtonClick()
 	{
