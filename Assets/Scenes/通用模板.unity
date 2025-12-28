@@ -4127,6 +4127,7 @@ GameObject:
   - component: {fileID: 1487017805}
   - component: {fileID: 1487017807}
   - component: {fileID: 1487017806}
+  - component: {fileID: 1487017808}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -4150,8 +4151,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -186.35, y: 249.46}
-  m_SizeDelta: {x: 1134.3, y: 1135.926}
+  m_AnchoredPosition: {x: -200.00003, y: 59.999985}
+  m_SizeDelta: {x: 1134.3, y: 670.3107}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1487017806
 MonoBehaviour:
@@ -4173,18 +4174,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F55 1,247 \u6761\u3002\u6309\u5173\u8054\u5EA6\u4E0E\u53EF\u4FE1\u5EA6\u6392\u5E8F\u3002\r\n\r\n\u3010\u5B98\u65B9\u6863\u6848_\u6458\u8981\u3011\r\n\u6765\u6E90:
-    WIKI_FANDOM // \u53EF\u4FE1\u5EA6: \u4E2D\u7B49\uFF08\u5B58\u5728\u7528\u6237\u7F16\u8F91\u51B2\u7A81\uFF09\r\n\u5185\u5BB9:
-    \u9752\u6749\u5188\u4ED3 (\u7537\uFF0C45\u5C81)\uFF0C\u63A8\u7406\u6F2B\u753B\u5BB6\u3002\u4EE3\u8868\u4F5C\u300A\u4E8C\u91CD\u8EAB\u4FA6\u63A2\u4E8B\u4EF6\u7C3F\u300B\uFF0C\u81EA
-    15 \u5E74\u524D\u8FDE\u8F7D\u81F3\u4ECA\uFF0C3 \u5E74\u524D\u8FDB\u5165\u975E\u89C4\u5F8B\u66F4\u65B0\u72B6\u6001\uFF0C\u8BFB\u8005\u793E\u533A\u5185\u6807\u7B7E\u4E3A\u201C\u4F11\u520A\u7387
-    > 60%\u201D\u3002\u8FD1\u4E09\u5E74\u7F51\u7EDC\u60C5\u7EEA\u5206\u6790\u663E\u793A\uFF0C\u8D1F\u9762\u8BC4\u4EF7\u6307\u6570\u4E0A\u5347
-    240%\uFF0C\u4E3B\u8981\u5173\u8054\u8BCD\u4E3A\u201C\u62D6\u5EF6\u201D\u3001\u201C\u70C2\u5C3E\u201D\u3001\u201C\u5931\u4FE1\u201D\u3002\r\n\r\n\u3010\u8FD1\u671F\u6D3B\u52A8_LOG\u3011\r\n\u6765\u6E90:
-    \u6F2B\u753B\u524D\u7EBF\u65B0\u95FB\u7F51 // \u65F6\u95F4: \u6628\u65E5 14:00-16:30\r\n\u5185\u5BB9:
-    \u4E8E\u79CB\u53F6\u539F\u4E3E\u884C\u300A\u4E8C\u91CD\u8EAB\u4FA6\u63A2\u4E8B\u4EF6\u7C3F\u300B\u8BFB\u8005\u89C1\u9762\u4F1A\u3002\u73B0\u573A\u97F3\u9891\u8BB0\u5F55\u5206\u6790\u663E\u793A\uFF0C\u63D0\u95EE\u73AF\u8282\u4E2D\u201C\u5B8C\u7ED3\u201D\u3001\u201C\u7ED3\u5C40\u201D\u3001\u201C\u8FDB\u5EA6\u201D\u7B49\u8BCD\u6C47\u51FA\u73B0\u9891\u7387\u4E3A\u57FA\u51C6\u503C\u7684
-    3.8 \u500D\u3002\u5BF9\u8C61\u8BED\u97F3\u5E94\u7B54\u51FA\u73B0\u91CD\u590D\u6A21\u5F0F\uFF0C\u903B\u8F91\u6027\u4F4E\u4E8E\u5176\u5386\u53F2\u8BBF\u8C08\u5E73\u5747\u503C
-    15%\u3002\r\n\u79BB\u573A\u65F6\u751F\u7269\u7279\u5F81\u8BC6\u522B\uFF08\u516C\u5F00\u5F71\u50CF\uFF09\u663E\u793A\uFF1A\u75B2\u52B3\u6307\u6570\u9AD8\uFF0C\u5B58\u5728\u8F7B\u5FAE\u56DE\u907F\u59FF\u6001\u3002\r\n\r\n\u3010\u8206\u8BBA\u573A\u70ED\u70B9\u3011\r\n\u6765\u6E90:
-    \u8BBA\u575B \u4E8C\u91CD\u8EAB\u7814\u7A76\u4F1A // \u53EF\u4FE1\u5EA6: \u4F4E\uFF08\u533F\u540D\u4FE1\u6E90\uFF09\r\n\u5185\u5BB9:
-    \u70ED\u95E8\u8BA8\u8BBA\u4E32 #AoshiDelay \u4E2D\uFF0C\u6709\u9AD8\u8D5E\u56DE\u590D\u58F0\u79F0\u5176\u521B\u4F5C\u529B\u67AF\u7AED\u3002\r\n\r\n[\u7EBF\u7D22\u6863\u6848\u5DF2\u751F\u6210]"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
   m_sharedMaterial: {fileID: -5848387286364068731, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
@@ -4261,6 +4251,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1487017804}
   m_CullTransparentMesh: 1
+--- !u!114 &1487017808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487017804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcd2b690cd3d9744cb63051d71e44447, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1508063834
 GameObject:
   m_ObjectHideFlags: 0
@@ -5813,6 +5815,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2089686178}
   m_CullTransparentMesh: 1
+--- !u!1 &2132212592
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2132212594}
+  - component: {fileID: 2132212593}
+  m_Layer: 0
+  m_Name: JustForTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2132212593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2132212592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7fed2742d4b7904d8ce493a58d5ffc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickableText: {fileID: 1487017808}
+  testClue: {fileID: 11400000, guid: 98412ddff85d9994e8bb73a5889e4ee8, type: 2}
+  keywordDatabase: {fileID: 11400000, guid: cb6e8576f0bf84e4ca181854ae997d49, type: 2}
+--- !u!4 &2132212594
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2132212592}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 951.5, y: 540, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2134668772
 GameObject:
   m_ObjectHideFlags: 0
@@ -5988,3 +6037,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1122142104}
+  - {fileID: 2132212594}

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0cbeb00849e6e844a21966c127b1526, type: 3}
+  m_Name: New Camera Clue Data
+  m_EditorClassIdentifier: 
+  id: 
+  displayName: 
+  Summary: 
+  Detail: 
+  searchable: 0
+  collected: 0
+  time:
+    month: 0
+    day: 0
+    hour: 0
+  image: {fileID: 0}
+  areas: []
