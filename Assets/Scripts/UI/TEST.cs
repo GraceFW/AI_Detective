@@ -13,7 +13,8 @@ public class ClueDetailViewTest : MonoBehaviour
     void Start()
     {
         Dictionary<string, string> clickableTerms = BuildClickableTerms();
-        clickableText.SetText(testClue.Detail, clickableTerms);
+        var textToShow = string.IsNullOrWhiteSpace(testClue.Detail_Mark) ? testClue.detailText : testClue.Detail_Mark;
+        clickableText.SetText(textToShow, clickableTerms);
     }
 
     Dictionary<string, string> BuildClickableTerms()

@@ -64,6 +64,11 @@ public class ClickableTMPText : MonoBehaviour, IPointerClickHandler
             string clueId = linkInfo.GetLinkID();
 
             Debug.Log($"[Clickable Text] Clicked clue id: {clueId}");
+
+            if (ClueManager.instance != null)
+            {
+                ClueManager.instance.RevealClue(clueId);
+            }
         }
     }
 }
