@@ -9,26 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0cbeb00849e6e844a21966c127b1526, type: 3}
-  m_Name: New Camera Clue Data
+  m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
+  m_Name: "0005\u62CD\u6444\u4EBA\u50CF"
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
-  summary: 
+  id: 0005
+  displayName: "\u62CD\u6444\u4EBA\u50CF"
+  summary: "\u4E00\u4E2A\u624B\u6301\u6C34\u679C\u5200\uFF0C\u9ED1\u8863\u7684\u7537\u5B50\uFF0C\u5E26\u7740\u9ED1\u8272\u68D2\u7403\u5E3D\u3002"
   detailText: 
   Detail_Mark: 
   searchable: 0
   collected: 0
-  time:
-    month: 0
-    day: 0
-    hour: 0
-  image: {fileID: 0}
-  areas:
-  - rect:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0
-      height: 0
-    reveals: {fileID: 0}
