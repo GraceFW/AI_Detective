@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 
   displayName: 
-  Summary: 
-  Detail: 
+  summary: 
+  detailText: 
+  Detail_Mark: 
   searchable: 0
   collected: 0
   time:
@@ -23,4 +24,11 @@ MonoBehaviour:
     day: 0
     hour: 0
   image: {fileID: 0}
-  areas: []
+  areas:
+  - rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    reveals: {fileID: 0}
