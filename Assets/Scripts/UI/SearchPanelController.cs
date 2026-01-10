@@ -130,6 +130,13 @@ public class SearchPanelController : MonoBehaviour
 
     private IEnumerator ExecuteCommandCoroutine(CommandType command, string searchText)
     {
+        // 只有 Search 指令时清空文本窗当前显示的内容
+        if (command == CommandType.Search)
+        {
+            _historyLog.Clear();
+            UpdateResultText();
+        }
+
         var commandStr = command == CommandType.Search ? "/search" : "/detect";
         var inputLine = $"> {commandStr} {searchText}\n";
 

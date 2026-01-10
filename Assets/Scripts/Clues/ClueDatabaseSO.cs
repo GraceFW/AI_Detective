@@ -46,7 +46,7 @@ public class ClueDatabaseSO : ScriptableObject
     }
 
     /// <summary>
-    /// 根据 displayName 模糊搜索（包含匹配）
+    /// 根据 displayName 精确搜索
     /// </summary>
     public ClueData SearchByDisplayName(string searchText)
     {
@@ -61,25 +61,11 @@ public class ClueDatabaseSO : ScriptableObject
             return null;
         }
 
-        // 优先精确匹配
+        // 精确匹配
         if (TryGetClueByDisplayName(trimmed, out var exactMatch))
         {
             return exactMatch;
         }
-
-        // 模糊匹配（包含搜索文本）
-        // foreach (var clue in clues)
-        // {
-        //     if (clue == null || string.IsNullOrEmpty(clue.displayName))
-        //     {
-        //         continue;
-        //     }
-
-        //     if (clue.displayName.Contains(trimmed) || trimmed.Contains(clue.displayName))
-        //     {
-        //         return clue;
-        //     }
-        // }
 
         return null;
     }
