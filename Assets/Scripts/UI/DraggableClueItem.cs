@@ -119,11 +119,10 @@ public class DraggableClueItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
         _canvasGroup.alpha = 1f;
         _canvasGroup.blocksRaycasts = true;
 
-        // 检测是否拖到了搜索框
-        var dropTarget = FindDropTarget(eventData);
-        if (dropTarget != null && _clueData != null)
+        // 检测是否拖到了任何有效的拖放目标
+        if (_clueData != null)
         {
-            dropTarget.OnClueDrop(_clueData);
+            CheckAllDropTargets(eventData);
         }
 
         // 回到原位置
@@ -131,30 +130,39 @@ public class DraggableClueItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
     }
 
     /// <summary>
-    /// 查找拖放目标
+    /// 检查所有拖放目标类型（SearchInputDropTarget 和 CameraDropTarget）
     /// </summary>
-    private SearchInputDropTarget FindDropTarget(PointerEventData eventData)
+    private void CheckAllDropTargets(PointerEventData eventData)
     {
         var results = new System.Collections.Generic.List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, results);
 
         foreach (var result in results)
         {
-            var dropTarget = result.gameObject.GetComponent<SearchInputDropTarget>();
-            if (dropTarget != null)
+            // 检查 SearchInputDropTarget
+            var searchTarget = result.gameObject.GetComponent<SearchInputDropTarget>();
+            if (searchTarget == null)
             {
-                return dropTarget;
+                searchTarget = result.gameObject.GetComponentInParent<SearchInputDropTarget>();
+            }
+            if (searchTarget != null)
+            {
+                searchTarget.OnClueDrop(_clueData);
+                return; // 找到目标后立即返回
             }
 
-            // 也检查父级
-            dropTarget = result.gameObject.GetComponentInParent<SearchInputDropTarget>();
-            if (dropTarget != null)
+            // 检查 CameraDropTarget
+            var cameraTarget = result.gameObject.GetComponent<CameraDropTarget>();
+            if (cameraTarget == null)
             {
-                return dropTarget;
+                cameraTarget = result.gameObject.GetComponentInParent<CameraDropTarget>();
+            }
+            if (cameraTarget != null)
+            {
+                cameraTarget.OnClueDrop(_clueData);
+                return; // 找到目标后立即返回
             }
         }
-
-        return null;
     }
 
     /// <summary>
