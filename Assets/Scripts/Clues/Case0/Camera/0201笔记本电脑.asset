@@ -50,10 +50,17 @@ MonoBehaviour:
       day: 3
       hour: 20
     image: {fileID: 21300000, guid: be588154d29146641b77c1f5409fc2a7, type: 3}
-    areas: []
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0.45
+        y: 0.2
+        width: 0.2
+        height: 0.7
+      reveals: {fileID: 11400000, guid: f21328a2118716e4ba4cb31df321c837, type: 2}
   - time:
       month: 5
       day: 3
-      hour: 20
+      hour: 19
     image: {fileID: 21300000, guid: 81c322f7a95a2e04c8a6d3cd8f905634, type: 3}
     areas: []
