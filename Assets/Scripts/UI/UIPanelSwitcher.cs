@@ -7,6 +7,7 @@ public class UIPanelSwitcher : MonoBehaviour
     [SerializeField] private RectTransform askPanel;
     [SerializeField] private RectTransform searchPanel;
     [SerializeField] private RectTransform recordPanel;
+    [SerializeField] private RectTransform resultPanel;
 
     [Header("Buttons")]
     [SerializeField] private Button leftButton;
@@ -21,7 +22,8 @@ public class UIPanelSwitcher : MonoBehaviour
     {
         Case1 = 0,
         Case2 = 1,
-        Case3 = 2
+        Case3 = 2,
+        Case4 = 3
     }
 
     private void Awake()
@@ -55,7 +57,7 @@ public class UIPanelSwitcher : MonoBehaviour
 
     private void OnRightClick()
     {
-        if (_currentCase == PanelCase.Case3) return;
+        if (_currentCase == PanelCase.Case4) return;
 
         _currentCase = _currentCase + 1;
         ApplyCase(_currentCase);
@@ -65,7 +67,7 @@ public class UIPanelSwitcher : MonoBehaviour
     private void RefreshButtonInteractable()
     {
         if (leftButton != null) leftButton.interactable = _currentCase != PanelCase.Case1;
-        if (rightButton != null) rightButton.interactable = _currentCase != PanelCase.Case3;
+        if (rightButton != null) rightButton.interactable = _currentCase != PanelCase.Case4;
     }
 
     private void ApplyCase(PanelCase panelCase)
@@ -81,24 +83,35 @@ public class UIPanelSwitcher : MonoBehaviour
         switch (panelCase)
         {
             case PanelCase.Case1:
-                // ASK 0,0; SEARCH 1920,-1920; RECORD 3840,-3840
+                // ASK 0,0; SEARCH 1920,-1920; RECORD 3840,-3840; RESULT 5760 -5760
                 askPanel.anchoredPosition = new Vector2(0f, 0f);
                 searchPanel.anchoredPosition = new Vector2(1920f, -1920f);
                 recordPanel.anchoredPosition = new Vector2(3840f, -3840f);
+                resultPanel.anchoredPosition = new Vector2(5760f, -5760f);
                 break;
 
             case PanelCase.Case2:
-                // ASK -1920,1920; SEARCH 0,0; RECORD 1920,-1920
+                // ASK -1920,1920; SEARCH 0,0; RECORD 1920,-1920, RESULT 3840, -3840
                 askPanel.anchoredPosition = new Vector2(-1920f, 1920f);
                 searchPanel.anchoredPosition = new Vector2(0f, 0f);
                 recordPanel.anchoredPosition = new Vector2(1920f, -1920f);
+                resultPanel.anchoredPosition = new Vector2(3840f, -3840f);
                 break;
 
             case PanelCase.Case3:
-                // ASK -3840,3840; SEARCH -1920,1920; RECORD 0,0
+                // ASK -3840,3840; SEARCH -1920,1920; RECORD 0,0, RESULT 1920 -1920
                 askPanel.anchoredPosition = new Vector2(-3840f, 3840f);
                 searchPanel.anchoredPosition = new Vector2(-1920f, 1920f);
                 recordPanel.anchoredPosition = new Vector2(0f, 0f);
+                resultPanel.anchoredPosition = new Vector2(1920f, -1920f);
+                break;
+
+            case PanelCase.Case4:
+                // ASK LEFT RESULT CENTER
+                askPanel.anchoredPosition = new Vector2(-5760f, 5760f);
+                searchPanel.anchoredPosition = new Vector2(-3840f, 3840f);
+                recordPanel.anchoredPosition = new Vector2(-1920f, 1920f);
+                resultPanel.anchoredPosition = new Vector2(0f, -0f);
                 break;
         }
     }

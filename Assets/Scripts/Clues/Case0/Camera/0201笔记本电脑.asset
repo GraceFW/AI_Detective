@@ -54,10 +54,17 @@ MonoBehaviour:
     - rect:
         serializedVersion: 2
         x: 0.45
-        y: 0.2
-        width: 0.2
-        height: 0.7
+        y: 0.15
+        width: 0.25
+        height: 0.75
       reveals: {fileID: 11400000, guid: f21328a2118716e4ba4cb31df321c837, type: 2}
+    - rect:
+        serializedVersion: 2
+        x: 0.65
+        y: 0
+        width: 0.2
+        height: 0.1
+      reveals: {fileID: 11400000, guid: 3065beccc0f35ca49870a1a78947b303, type: 2}
   - time:
       month: 5
       day: 3

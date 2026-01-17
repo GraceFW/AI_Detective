@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Clue/Clue Database")]
 public class ClueDatabaseSO : ScriptableObject
 {
+    // 本数据库包含的所有线索（在 Inspector 中手动指定）。用于运行时通过 id 查找 ClueData。
     public List<ClueData> clues = new List<ClueData>();
 
     private Dictionary<string, ClueData> _byId;
@@ -72,6 +73,7 @@ public class ClueDatabaseSO : ScriptableObject
 
     private void EnsureIndex()
     {
+        // 构建运行时索引字典以提升查找速度；重复 id 将被忽略。
         if (_byId != null && _byDisplayName != null)
         {
             return;

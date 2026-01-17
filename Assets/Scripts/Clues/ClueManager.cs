@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class ClueManager : MonoBehaviour
 {
+    // 简单的运行时单例（用于 Demo/测试）。正式项目可替换为更健壮的服务管理方式。
     public static ClueManager instance;
 
     [Header("Database")]
+    // 绑定一个包含所有 ClueData 资源的 ClueDatabaseSO。
     [SerializeField] private ClueDatabaseSO clueDatabase;
 
+    // 当线索首次被揭示/收集时触发。
     public event Action<ClueData> OnClueRevealed;
 
     private readonly HashSet<string> _revealedIds = new HashSet<string>(StringComparer.Ordinal);
@@ -38,6 +41,7 @@ public class ClueManager : MonoBehaviour
 
     public bool RevealClue(string clueId)
     {
+        // 幂等：若已揭示或参数/数据无效则返回 false。
         if (string.IsNullOrEmpty(clueId))
         {
             Debug.LogWarning("ClueManager.RevealClue called with empty clueId.");
@@ -64,6 +68,7 @@ public class ClueManager : MonoBehaviour
         _revealedIds.Add(clueId);
         clue.collected = true;
 
+        // 通知 UI / 叙事系统等监听者。
         OnClueRevealed?.Invoke(clue);
         Debug.Log($"[ClueManager] Revealed clue: {clue.id} / {clue.displayName}");
         return true;
