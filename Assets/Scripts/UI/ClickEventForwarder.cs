@@ -27,7 +27,7 @@ public class ClickEventForwarder : MonoBehaviour, IPointerClickHandler
             foreach (var handler in handlers)
             {
                 // 跳过自己，避免无限循环
-                if (handler != this)
+                if ((object)handler != this)
                 {
                     handler.OnPointerClick(eventData);
                 }

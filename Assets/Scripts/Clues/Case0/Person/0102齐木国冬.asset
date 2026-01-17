@@ -29,7 +29,7 @@ MonoBehaviour:
     \u70ED\u95E8\u8BA8\u8BBA\u4E32 #AoshiDelay \u4E2D\uFF0C\u6709\u9AD8\u8D5E\u56DE\u590D\u58F0\u79F0\u5176\u521B\u4F5C\u529B\u67AF\u7AED\u3002"
   Detail_Mark: 
   searchable: 1
-  collected: 0
+  collected: 1
   portrait: {fileID: 21300000, guid: f222342853135f44d86b8f42cd7a32fc, type: 3}
   canBeSummoned: 1
   baseDialogues:
@@ -45,6 +45,14 @@ MonoBehaviour:
     options: []
   - nodeId: 4
     text: "\u4ED6\u665A\u996D\u901A\u5E38\u4F1A\u4E3A\u4E86\u8D76\u7A3F\u5B9A\u5916\u5356\u3002\u5E73\u65F6\u753B\u7A3F\u7684\u65F6\u5019\u4F1A\u7528\u7B14\u8BB0\u672C\u7535\u8111\u753B\u7A3F\u3002"
+    nextNodeId: 11
+    options: []
+  - nodeId: 11
+    text: "\u6D4B\u8BD5\u5BF9\u8BDD\u6846\u533A\u57DF\u70B9\u51FB\u54CD\u5E941/2"
+    nextNodeId: 12
+    options: []
+  - nodeId: 12
+    text: "\u6D4B\u8BD5\u5BF9\u8BDD\u6846\u533A\u57DF\u70B9\u51FB\u54CD\u5E942/2\uFF0C\u6D4B\u8BD5\u5B8C\u6BD5"
     nextNodeId: 
     options: []
   fallbackDialogues:

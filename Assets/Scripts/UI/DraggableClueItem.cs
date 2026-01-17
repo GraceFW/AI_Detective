@@ -130,7 +130,7 @@ public class DraggableClueItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
     }
 
     /// <summary>
-    /// 检查所有拖放目标类型（SearchInputDropTarget 和 CameraDropTarget）
+    /// 检查所有拖放目标类型
     /// </summary>
     private void CheckAllDropTargets(PointerEventData eventData)
     {
@@ -160,6 +160,30 @@ public class DraggableClueItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
             if (cameraTarget != null)
             {
                 cameraTarget.OnClueDrop(_clueData);
+                return; // 找到目标后立即返回
+            }
+
+            // 检查 PersonSummonDropTarget (name对象)
+            var summonTarget = result.gameObject.GetComponent<PersonSummonDropTarget>();
+            if (summonTarget == null)
+            {
+                summonTarget = result.gameObject.GetComponentInParent<PersonSummonDropTarget>();
+            }
+            if (summonTarget != null)
+            {
+                summonTarget.OnClueDrop(_clueData);
+                return; // 找到目标后立即返回
+            }
+
+            // 检查 ClueShowDropTarget (person对象)
+            var clueShowTarget = result.gameObject.GetComponent<ClueShowDropTarget>();
+            if (clueShowTarget == null)
+            {
+                clueShowTarget = result.gameObject.GetComponentInParent<ClueShowDropTarget>();
+            }
+            if (clueShowTarget != null)
+            {
+                clueShowTarget.OnClueDrop(_clueData);
                 return; // 找到目标后立即返回
             }
         }
