@@ -139,6 +139,18 @@ public class DraggableClueItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
 
         foreach (var result in results)
         {
+            // 检查 SettlementClueDropSlot（结算界面线索槽位）
+            var settlementSlot = result.gameObject.GetComponent<SettlementClueDropSlot>();
+            if (settlementSlot == null)
+            {
+                settlementSlot = result.gameObject.GetComponentInParent<SettlementClueDropSlot>();
+            }
+            if (settlementSlot != null)
+            {
+                settlementSlot.OnClueDrop(_clueData);
+                return; // 找到目标后立即返回
+            }
+
             // 检查 SearchInputDropTarget
             var searchTarget = result.gameObject.GetComponent<SearchInputDropTarget>();
             if (searchTarget == null)
