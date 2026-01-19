@@ -19,6 +19,10 @@ public class DialogueUI : MonoBehaviour
     [Tooltip("penlu对象 - 显示对话文本")]
     [SerializeField] private TextMeshProUGUI dialogueText;
 
+    [Header("对话关键词点击收集（仅对话启用）")]
+    [Tooltip("关键词数据库：在对话文本中把关键词替换成可点击链接")]
+    [SerializeField] private CaseKeywordDatabase keywordDatabase;
+
     [Tooltip("choicecontainer - 选项容器")]
     [SerializeField] private Transform choiceContainer;
 
@@ -39,14 +43,34 @@ public class DialogueUI : MonoBehaviour
     private DialogueController _dialogueController;
     private List<GameObject> _currentChoiceButtons = new List<GameObject>();
 
+    private Dictionary<string, string> _clickableTerms;
+
     private void Awake()
     {
         _dialogueController = GetComponent<DialogueController>();
 
-        // 绑定按钮事件
+        // 绑定点击事件：优先使用对话框点击区域；如果没有，则直接挂在对话文本上
+        DialogueBoxClickHandler clickHandler = null;
         if (dialogueBoxButton != null)
         {
-            dialogueBoxButton.onClick.AddListener(OnDialogueBoxClick);
+            clickHandler = dialogueBoxButton.GetComponent<DialogueBoxClickHandler>();
+            if (clickHandler == null)
+            {
+                clickHandler = dialogueBoxButton.gameObject.AddComponent<DialogueBoxClickHandler>();
+            }
+        }
+        else if (dialogueText != null)
+        {
+            clickHandler = dialogueText.GetComponent<DialogueBoxClickHandler>();
+            if (clickHandler == null)
+            {
+                clickHandler = dialogueText.gameObject.AddComponent<DialogueBoxClickHandler>();
+            }
+        }
+
+        if (clickHandler != null)
+        {
+            clickHandler.Init(dialogueText, _dialogueController);
         }
 
         if (prevButton != null)
@@ -61,15 +85,12 @@ public class DialogueUI : MonoBehaviour
 
         // 初始化UI状态
         ClearDialogue();
+
+        _clickableTerms = BuildClickableTerms();
     }
 
     private void OnDestroy()
     {
-        if (dialogueBoxButton != null)
-        {
-            dialogueBoxButton.onClick.RemoveListener(OnDialogueBoxClick);
-        }
-
         if (prevButton != null)
         {
             prevButton.onClick.RemoveListener(OnPrevButtonClick);
@@ -107,7 +128,7 @@ public class DialogueUI : MonoBehaviour
     {
         if (dialogueText != null)
         {
-            dialogueText.text = text;
+            dialogueText.text = InjectLinks(text);
         }
 
         Debug.Log($"[DialogueUI] 显示对话: {text.Substring(0, Mathf.Min(20, text.Length))}...");
@@ -218,14 +239,62 @@ public class DialogueUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 对话框点击事件
+    /// 构建“关键词 -> 线索ID”的映射
     /// </summary>
-    private void OnDialogueBoxClick()
+    private Dictionary<string, string> BuildClickableTerms()
     {
-        if (_dialogueController != null)
+        var result = new Dictionary<string, string>();
+
+        if (keywordDatabase == null || keywordDatabase.keywords == null)
         {
-            _dialogueController.NextDialogue();
+            return result;
         }
+
+        foreach (var entry in keywordDatabase.keywords)
+        {
+            if (entry == null || string.IsNullOrEmpty(entry.term) || entry.revealsClue == null)
+            {
+                continue;
+            }
+
+            if (!result.ContainsKey(entry.term))
+            {
+                result.Add(entry.term, entry.revealsClue.id);
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 仅用于对话文本：把关键词替换为 TMP <link>，用于点击收集线索
+    /// </summary>
+    private string InjectLinks(string rawText)
+    {
+        if (string.IsNullOrEmpty(rawText))
+        {
+            return rawText;
+        }
+
+        if (_clickableTerms == null || _clickableTerms.Count == 0)
+        {
+            return rawText;
+        }
+
+        string result = rawText;
+
+        foreach (var pair in _clickableTerms)
+        {
+            string word = pair.Key;
+            string clueId = pair.Value;
+
+            result = result.Replace(
+                word,
+                $"<link=\"{clueId}\"><color=#4AA3FF>{word}</color></link>"
+            );
+        }
+
+        return result;
     }
 
     /// <summary>

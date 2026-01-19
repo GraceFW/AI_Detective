@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6a4e1a08df99db47b344219735b3174, type: 3}
-  m_Name: Case0Keyword
+  m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
+  m_Name: "0006\u6D4B\u8BD5"
   m_EditorClassIdentifier: 
-  keywords:
-  - term: "\u6D4B\u8BD5"
-    revealsClue: {fileID: 11400000, guid: 2520611bc580d13499d2868563bb1594, type: 2}
+  id: 0006
+  displayName: "\u6D4B\u8BD5"
+  summary: "\u53EA\u662F\u6D4B\u8BD5\n"
+  detailText: 
+  Detail_Mark: 
+  searchable: 1
+  collected: 0
