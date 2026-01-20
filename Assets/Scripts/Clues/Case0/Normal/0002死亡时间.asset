@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0002
   displayName: "\u6B7B\u4EA1\u65F6\u95F4"
-  summary: "\u524D\u4E00\u65E5\u7684\u665A\u95F47\uFF1A45\u81F38\uFF1A15\u4E4B\u95F4"
-  type: 0
+  summary: "\u6848\u53D1\u5F53\u65E5\u665A\u95F47\uFF1A45\u81F38\uFF1A15\u4E4B\u95F4"
+  detailText: 
+  Detail_Mark: 
   searchable: 0
   collected: 0
-  detailText: 
-  keywords: []
