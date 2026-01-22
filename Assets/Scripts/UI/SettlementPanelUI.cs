@@ -43,10 +43,22 @@ public class SettlementPanelUI : MonoBehaviour
     [Header("提交")]
     [SerializeField] private Button submitButton;
 
+    [Header("弹窗预制体")]
+    [Tooltip("结算成功面板预制体")]
+    [SerializeField] private SettlementSuccessPanel successPanelPrefab;
+
+    [Tooltip("错误提示窗口预制体")]
+    [SerializeField] private SettlementErrorDialog errorDialogPrefab;
+
+    [Tooltip("弹窗父对象（通常是 Canvas 或专门的弹窗容器）")]
+    [SerializeField] private Transform popupParent;
+
     [Header("问题配置")]
     [SerializeField] private List<SettlementQuestionConfig> questions = new List<SettlementQuestionConfig>();
 
     private readonly List<SettlementQuestionRowUI> _rows = new List<SettlementQuestionRowUI>();
+    private SettlementSuccessPanel _currentSuccessPanel;
+    private SettlementErrorDialog _currentErrorDialog;
 
     /// <summary>
     /// 当提交成功（全部填满）时回调
@@ -71,6 +83,12 @@ public class SettlementPanelUI : MonoBehaviour
         if (submitButton != null)
         {
             submitButton.onClick.RemoveListener(HandleSubmitClicked);
+        }
+
+        // 清理事件监听
+        if (_currentSuccessPanel != null)
+        {
+            _currentSuccessPanel.OnNextLevelClicked -= HandleNextLevelClicked;
         }
     }
 
@@ -130,6 +148,7 @@ public class SettlementPanelUI : MonoBehaviour
             if (!row.IsComplete())
             {
                 Debug.Log("[SettlementPanelUI] 提交失败：还有问题未填满线索。");
+                ShowErrorDialog("请完成所有问题的线索填写", SettlementErrorDialog.ErrorType.Incomplete);
                 return;
             }
         }
@@ -168,10 +187,99 @@ public class SettlementPanelUI : MonoBehaviour
         if (!allCorrect)
         {
             Debug.Log($"[SettlementPanelUI] 提交失败：存在错误答案。题目数={result.Count}，正确数={correctCount}");
+            ShowErrorDialog($"存在错误答案，请检查后重新提交。\n正确数：{correctCount}/{result.Count}", SettlementErrorDialog.ErrorType.Incorrect);
             return;
         }
 
         Debug.Log($"[SettlementPanelUI] 提交成功：全部正确。题目数={result.Count}");
         OnSubmitted?.Invoke(result);
+        ShowSuccessPanel(result);
+    }
+
+    /// <summary>
+    /// 显示成功面板
+    /// </summary>
+    private void ShowSuccessPanel(List<SettlementAnswerResult> results)
+    {
+        if (successPanelPrefab == null)
+        {
+            Debug.LogWarning("[SettlementPanelUI] successPanelPrefab 未配置，无法显示成功面板");
+            return;
+        }
+
+        // 如果已有成功面板，先销毁
+        if (_currentSuccessPanel != null)
+        {
+            Destroy(_currentSuccessPanel.gameObject);
+        }
+
+        if (popupParent == null)
+        {
+            // 尝试查找 Persistent 场景中的 Canvas
+            Canvas persistentCanvas = GameObject.Find("PopupCanvas")?.GetComponent<Canvas>();
+            if (persistentCanvas != null)
+            {
+                popupParent = persistentCanvas.transform;
+            }
+        }
+
+        // 确定父对象
+        Transform parent = popupParent != null ? popupParent : transform;
+
+        // 实例化成功面板
+        _currentSuccessPanel = Instantiate(successPanelPrefab, parent);
+        
+        // 监听下一关按钮事件
+        _currentSuccessPanel.OnNextLevelClicked += HandleNextLevelClicked;
+
+        // 显示面板
+        _currentSuccessPanel.Show(results);
+    }
+
+    /// <summary>
+    /// 显示错误对话框
+    /// </summary>
+    private void ShowErrorDialog(string message, SettlementErrorDialog.ErrorType type)
+    {
+        if (errorDialogPrefab == null)
+        {
+            Debug.LogWarning("[SettlementPanelUI] errorDialogPrefab 未配置，无法显示错误对话框");
+            return;
+        }
+
+        // 如果已有错误对话框，先销毁
+        if (_currentErrorDialog != null)
+        {
+            Destroy(_currentErrorDialog.gameObject);
+        }
+
+        if (popupParent == null)
+        {
+            // 尝试查找 Persistent 场景中的 Canvas
+            Canvas persistentCanvas = GameObject.Find("PopupCanvas")?.GetComponent<Canvas>();
+            if (persistentCanvas != null)
+            {
+                popupParent = persistentCanvas.transform;
+            }
+        }
+
+        // 确定父对象
+        Transform parent = popupParent != null ? popupParent : transform;
+
+        // 实例化错误对话框
+        _currentErrorDialog = Instantiate(errorDialogPrefab, parent);
+
+        // 显示对话框
+        _currentErrorDialog.Show(message, type);
+    }
+
+    /// <summary>
+    /// 处理下一关按钮点击
+    /// </summary>
+    private void HandleNextLevelClicked()
+    {
+        Debug.Log("[SettlementPanelUI] 下一关按钮被点击");
+        // 这里可以添加跳转到下一关的逻辑
+        // 例如：SceneManager.LoadScene("NextLevel");
     }
 }

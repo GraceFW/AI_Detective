@@ -124,14 +124,42 @@ public class DialogueUI : MonoBehaviour
     /// <summary>
     /// 显示对话文本
     /// </summary>
-    public void ShowDialogue(string text, bool hasOptions)
+    /// <param name="text">对话文本</param>
+    /// <param name="hasOptions">是否有选项</param>
+    /// <param name="useTypewriter">是否使用打字机效果（默认true，历史回溯时为false）</param>
+    public void ShowDialogue(string text, bool hasOptions, bool useTypewriter = true)
     {
         if (dialogueText != null)
         {
-            dialogueText.text = InjectLinks(text);
+            string processedText = InjectLinks(text);
+            
+            // 检查是否有打字机效果组件
+            TypewriterEffect typewriterEffect = dialogueText.GetComponent<TypewriterEffect>();
+            if (typewriterEffect != null && useTypewriter)
+            {
+                // 使用打字机效果显示文本
+                typewriterEffect.SetText(processedText);
+            }
+            else
+            {
+                // 直接设置文本（兼容旧代码或历史回溯时）
+                // 如果禁用了打字机效果但组件存在，需要停止打字机效果并直接显示全部文本
+                if (typewriterEffect != null && !useTypewriter)
+                {
+                    // 停止任何正在进行的打字机效果
+                    dialogueText.text = processedText;
+                    dialogueText.maxVisibleCharacters = processedText.Length;  // 确保显示全部文本
+                    dialogueText.ForceMeshUpdate();
+                }
+                else
+                {
+                    // 没有打字机效果组件，直接设置文本
+                    dialogueText.text = processedText;
+                }
+            }
         }
 
-        Debug.Log($"[DialogueUI] 显示对话: {text.Substring(0, Mathf.Min(20, text.Length))}...");
+        Debug.Log($"[DialogueUI] 显示对话: {text.Substring(0, Mathf.Min(20, text.Length))}... (打字机效果: {useTypewriter})");
     }
 
     /// <summary>
@@ -231,7 +259,16 @@ public class DialogueUI : MonoBehaviour
 
         if (dialogueText != null)
         {
-            dialogueText.text = "";
+            // 检查是否有打字机效果组件
+            TypewriterEffect typewriterEffect = dialogueText.GetComponent<TypewriterEffect>();
+            if (typewriterEffect != null)
+            {
+                typewriterEffect.Clear();
+            }
+            else
+            {
+                dialogueText.text = "";
+            }
         }
 
         ClearOptions();

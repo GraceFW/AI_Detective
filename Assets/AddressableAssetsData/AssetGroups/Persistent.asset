@@ -18,12 +18,17 @@ MonoBehaviour:
   m_GUID: 4fd69bf08316889438d375c07121fc01
   m_SerializeEntries:
   - m_GUID: 0307ced7d3a35934092e2c6388112020
-    m_Address: "Assets/Scenes/\u901A\u7528\u6A21\u677F.unity"
+    m_Address: "\u901A\u7528\u6A21\u677F"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 06b3365861bb6e340abcff8972f21203
+    m_Address: "\u5047\u88C5\u6211\u662F\u7B2C\u4E8C\u6848"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8c9cfa26abfee488c85f1582747f6a02
-    m_Address: "Assets/Scenes/\u6807\u9898\u754C\u9762.unity"
+    m_Address: "\u6807\u9898\u754C\u9762"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

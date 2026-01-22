@@ -138,7 +138,8 @@ public class DialogueController : MonoBehaviour
             var latestEntry = dialogueHistory.GetCurrent();
             if (latestEntry != null)
             {
-                dialogueUI.ShowDialogue(latestEntry.text, latestEntry.options != null && latestEntry.options.Count > 0);
+                // 回到最新时也不使用打字机效果，因为这是历史记录
+                dialogueUI.ShowDialogue(latestEntry.text, latestEntry.options != null && latestEntry.options.Count > 0, useTypewriter: false);
                 if (latestEntry.options != null && latestEntry.options.Count > 0)
                 {
                     dialogueUI.ShowOptions(latestEntry.options);
@@ -285,7 +286,8 @@ public class DialogueController : MonoBehaviour
         var entry = dialogueHistory.GetCurrent();
         if (entry != null)
         {
-            dialogueUI.ShowDialogue(entry.text, entry.options != null && entry.options.Count > 0);
+            // 历史回溯时不使用打字机效果，直接显示完整文本
+            dialogueUI.ShowDialogue(entry.text, entry.options != null && entry.options.Count > 0, useTypewriter: false);
             
             if (entry.options != null && entry.options.Count > 0)
             {

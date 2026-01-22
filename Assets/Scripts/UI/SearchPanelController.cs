@@ -35,6 +35,8 @@ public class SearchPanelController : MonoBehaviour
 
     private Coroutine _displayCoroutine;
     private StringBuilder _historyLog = new StringBuilder();
+    private string _lastDisplayedText = string.Empty;  // 记录上次显示的文本，用于追加模式
+    private bool _shouldClearOnNextUpdate = false;  // 标记下次更新是否应该清空（Search 命令）
 
     private enum CommandType
     {
@@ -53,7 +55,17 @@ public class SearchPanelController : MonoBehaviour
 
         if (resultText != null)
         {
-            resultText.text = string.Empty;
+            // 检查是否有打字机效果组件
+            TypewriterEffect typewriterEffect = resultText.GetComponent<TypewriterEffect>();
+            if (typewriterEffect != null)
+            {
+                typewriterEffect.Clear();
+            }
+            else
+            {
+                resultText.text = string.Empty;
+            }
+            _lastDisplayedText = string.Empty;
         }
 
         // 如果没有手动指定 ScrollRect，尝试自动查找
@@ -134,6 +146,8 @@ public class SearchPanelController : MonoBehaviour
         if (command == CommandType.Search)
         {
             _historyLog.Clear();
+            _lastDisplayedText = string.Empty;
+            _shouldClearOnNextUpdate = true;
             UpdateResultText();
         }
 
@@ -147,7 +161,7 @@ public class SearchPanelController : MonoBehaviour
         var executingLine = "执行中...\n";
         _historyLog.Append(executingLine);
         UpdateResultText();
-        ScrollToBottom();
+        // 不再手动调用 ScrollToBottom，打字机效果会自己处理滚动
 
         yield return new WaitForSeconds(executingDuration);
 
@@ -175,7 +189,7 @@ public class SearchPanelController : MonoBehaviour
 
         _historyLog.Append(resultLine);
         UpdateResultText();
-        ScrollToBottom();
+        // 不再手动调用 ScrollToBottom，打字机效果会自己处理滚动
 
         _displayCoroutine = null;
     }
@@ -235,9 +249,43 @@ public class SearchPanelController : MonoBehaviour
     {
         if (resultText != null)
         {
-            resultText.text = _historyLog.ToString();
-            // 强制更新文本网格，确保 preferredHeight 正确计算
-            resultText.ForceMeshUpdate();
+            string newText = _historyLog.ToString();
+            
+            // 检查是否有打字机效果组件
+            TypewriterEffect typewriterEffect = resultText.GetComponent<TypewriterEffect>();
+            if (typewriterEffect != null)
+            {
+                // 使用打字机效果
+                if (_shouldClearOnNextUpdate || string.IsNullOrEmpty(_lastDisplayedText))
+                {
+                    // 清空或首次显示：使用 SetText
+                    typewriterEffect.SetText(newText);
+                    _shouldClearOnNextUpdate = false;
+                }
+                else
+                {
+                    // 追加模式：计算新增文本
+                    if (newText.Length > _lastDisplayedText.Length && newText.StartsWith(_lastDisplayedText))
+                    {
+                        string addedText = newText.Substring(_lastDisplayedText.Length);
+                        typewriterEffect.AppendText(addedText);
+                    }
+                    else
+                    {
+                        // 如果文本不匹配（可能是被外部修改），使用 SetText
+                        typewriterEffect.SetText(newText);
+                    }
+                }
+            }
+            else
+            {
+                // 没有打字机效果：直接设置文本（兼容旧代码）
+                resultText.text = newText;
+                resultText.ForceMeshUpdate();
+            }
+            
+            // 更新最后显示的文本
+            _lastDisplayedText = newText;
         }
     }
 
@@ -282,7 +330,23 @@ public class SearchPanelController : MonoBehaviour
     public void ClearHistory()
     {
         _historyLog.Clear();
-        UpdateResultText();
+        _lastDisplayedText = string.Empty;
+        _shouldClearOnNextUpdate = true;
+        
+        // 如果有打字机效果，使用 Clear 方法
+        if (resultText != null)
+        {
+            TypewriterEffect typewriterEffect = resultText.GetComponent<TypewriterEffect>();
+            if (typewriterEffect != null)
+            {
+                typewriterEffect.Clear();
+            }
+            else
+            {
+                resultText.text = string.Empty;
+            }
+        }
+        
         ScrollToBottom();
     }
 
