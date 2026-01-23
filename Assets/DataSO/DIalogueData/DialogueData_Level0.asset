@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 155679d8aafb59145a4bf6382aed73ad, type: 3}
+  m_Name: DialogueData_Level0
+  m_EditorClassIdentifier: 
+  levelNumber: 0
+  dialogueSequences:
+  - triggerType: 0
+    waveNumber: 0
+    entries:
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: 1
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: 2
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u7CFB\u7EDF"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5DE5\u85E4\u65B0\u4E00"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 1
+  - triggerType: 1
+    waveNumber: 0
+    entries:
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: "\u7B2C\u4E00\u8F6E\u5BF9\u8BDD1"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: "\u7B2C\u4E00\u8F6E\u5BF9\u8BDD2"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 1
+    entries:
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: "\u7B2C\u4E8C\u8F6E\u5BF9\u8BDD1"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: "\u7B2C\u4E8C\u8F6E\u5BF9\u8BDD2"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 2
+    waveNumber: 0
+    entries:
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5173\u5361\u7ED3\u675F\u5BF9\u8BDD1"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5173\u5361\u7ED3\u675F\u5BF9\u8BDD2"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0

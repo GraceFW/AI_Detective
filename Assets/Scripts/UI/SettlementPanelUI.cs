@@ -56,9 +56,14 @@ public class SettlementPanelUI : MonoBehaviour
     [Header("问题配置")]
     [SerializeField] private List<SettlementQuestionConfig> questions = new List<SettlementQuestionConfig>();
 
+    [Header("对话配置")]
+    [Tooltip("当前关卡编号（用于触发LevelComplete对话）")]
+    [SerializeField] private int currentLevelNumber = 0;
+
     private readonly List<SettlementQuestionRowUI> _rows = new List<SettlementQuestionRowUI>();
     private SettlementSuccessPanel _currentSuccessPanel;
     private SettlementErrorDialog _currentErrorDialog;
+    private List<SettlementAnswerResult> _pendingSuccessResults;
 
     /// <summary>
     /// 当提交成功（全部填满）时回调
@@ -193,7 +198,10 @@ public class SettlementPanelUI : MonoBehaviour
 
         Debug.Log($"[SettlementPanelUI] 提交成功：全部正确。题目数={result.Count}");
         OnSubmitted?.Invoke(result);
-        ShowSuccessPanel(result);
+        
+        // 保存结算结果，触发LevelComplete对话
+        _pendingSuccessResults = result;
+        TriggerLevelCompleteDialogue();
     }
 
     /// <summary>
@@ -281,5 +289,40 @@ public class SettlementPanelUI : MonoBehaviour
         Debug.Log("[SettlementPanelUI] 下一关按钮被点击");
         // 这里可以添加跳转到下一关的逻辑
         // 例如：SceneManager.LoadScene("NextLevel");
+    }
+
+    /// <summary>
+    /// 触发LevelComplete对话
+    /// </summary>
+    private void TriggerLevelCompleteDialogue()
+    {
+        if (DialogueManager.Instance == null)
+        {
+            Debug.LogWarning("[SettlementPanelUI] DialogueManager未找到，直接显示成功面板");
+            ShowSuccessPanel(_pendingSuccessResults);
+            return;
+        }
+
+        // 触发LevelComplete对话，传入完成回调
+        DialogueManager.Instance.ShowDialogue(
+            levelNumber: currentLevelNumber,
+            triggerType: DialogueTriggerType.LevelComplete,
+            waveNumber: 0,
+            onComplete: OnLevelCompleteDialogueFinished,
+            isForced: true
+        );
+    }
+
+    /// <summary>
+    /// LevelComplete对话结束回调
+    /// </summary>
+    private void OnLevelCompleteDialogueFinished()
+    {
+        // 对话结束后显示成功面板
+        if (_pendingSuccessResults != null)
+        {
+            ShowSuccessPanel(_pendingSuccessResults);
+            _pendingSuccessResults = null;
+        }
     }
 }

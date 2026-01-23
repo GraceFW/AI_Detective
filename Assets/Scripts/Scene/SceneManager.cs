@@ -131,7 +131,10 @@ public class SceneManager : MonoBehaviour, ISaveable
 			yield return new WaitUntil(() => fadeComplete.WaitOne(0));
 			if (_shouldPlayMenuBootText)
 			{
-				FadeManager.Instance.PlayBootText(menuBootText, menuBootCharsPerSecond);
+				// 等待 PlayBootText 完全执行完毕
+				var bootTextComplete = new System.Threading.ManualResetEvent(false);
+				FadeManager.Instance.PlayBootText(menuBootText, menuBootCharsPerSecond, () => bootTextComplete.Set());
+				yield return new WaitUntil(() => bootTextComplete.WaitOne(0));
 			}
 			else
 			{
@@ -140,7 +143,7 @@ public class SceneManager : MonoBehaviour, ISaveable
 		}
 		// 卸载旧场景
 		yield return currentScene.sceneReference.UnLoadScene();
-		// 广播“场景卸载完成”事件
+		// 广播"场景卸载完成"事件
 		_unloadedSceneEvent?.RaiseEvent(); 
 		LoadNewScene(); // 加载新场景
 	}
