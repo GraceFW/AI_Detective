@@ -1,0 +1,167 @@
+BGM 系统说明（Persistent 场景）
+
+本说明用于指导你在 Persistent 顶层常驻场景 中配置并使用 BGM（背景音乐）系统。
+
+该系统支持：
+- 按场景自动切换 BGM（监听场景加载完成事件）
+- 按事件/按钮/解锁触发切换 BGM（通过 ScriptableObject 事件通道）
+- 淡出/淡入切换（使用 DOTween，与你项目已有 FadeManager 一致）
+
+------------------------------------------------------------
+
+1) 相关脚本位置
+脚本位于：Assets/Scripts/Audio/
+
+- BGMManager.cs
+  常驻管理器，挂在 Persistent 场景
+  监听“场景加载完成事件”并按映射表切 BGM
+  监听“BGM 请求事件”用于任意时刻切 BGM
+
+- BGMTrackSO.cs
+  曲目配置（AudioClip + 音量 + 是否循环）
+
+- SceneBGMMapSO.cs
+  场景与 BGM 的映射表（支持按具体场景、按 SceneType 兜底）
+
+- BGMTrackEventSO.cs
+  事件通道：GameEventSO<BGMTrackSO>
+
+- BGMPlayTrigger.cs（可选）
+  给 UI Button 用的触发器：Button OnClick 直接调用 Play() 即可 RaiseEvent
+
+------------------------------------------------------------
+
+2) 资产创建（你会用到的 3 类资产）
+
+2.1 创建曲目（BGMTrack）
+在 Project 窗口右键：
+Create/Audio/BGMTrack
+
+建议命名：
+- BGM_Menu
+- BGM_Level
+- BGM_Special
+
+在 Inspector 中设置：
+- clip：拖入你的 AudioClip
+- volume：音量（0~1）
+- loop：是否循环
+
+2.2 创建场景映射表（SceneBGMMap）
+右键：
+Create/Audio/SceneBGMMap
+
+该映射表支持两种配置方式：
+- byScene（按具体 GameSceneSO）：优先级更高，适合特殊场景
+- bySceneType（按 SceneType 兜底）：适合统一的 Menu/Level 默认 BGM
+
+推荐做法：
+- 先在 bySceneType 里配置：
+  Menu -> BGM_Menu
+  Level -> BGM_Level
+- 再在 byScene 里给某个具体 GameSceneSO 单独指定 BGM_Special（覆盖兜底）
+
+2.3 创建 BGM 请求事件（BGMTrackEventSO）
+右键：
+Create/Event/BGMTrackEventSO
+
+建议命名：
+- Evt_RequestBGM
+
+这个事件用于：
+- 按按钮切歌
+- 解锁触发切歌
+- 剧情触发切歌
+
+------------------------------------------------------------
+
+3) Persistent 场景中配置 BGMManager（关键）
+
+3.1 放置物体
+在 Persistent 场景 中创建一个空物体，例如：
+- AudioRoot
+
+在 AudioRoot 上挂：
+- BGMManager
+
+3.2 AudioSource
+- BGMManager 会自动补一个 AudioSource（如果没有）
+- 你也可以手动提前加上 AudioSource
+
+3.3 绑定事件与映射表
+在 BGMManager Inspector 中绑定：
+
+- Scene Loaded Event（GameSceneEventSO）
+  绑定 SceneManager 广播的“场景加载完成(带 GameSceneSO)”事件资产
+  对应 SceneManager 脚本中的 _loadedSceneEvent_1
+
+- Bgm Request Event（BGMTrackEventSO）
+  绑定 Evt_RequestBGM
+
+- Scene Bgm Map（SceneBGMMapSO）
+  绑定你创建的 SceneBGMMap
+
+其他参数可按需调整：
+- masterVolume
+- fadeOutDuration
+- fadeInDuration
+
+------------------------------------------------------------
+
+4) 两种切歌方式
+
+4.1 自动切歌：按场景加载完成
+当 SceneManager 加载新场景完成后，会广播 _loadedSceneEvent_1(GameSceneSO)。
+
+BGMManager 收到后会：
+- 从 SceneBGMMapSO 查找该场景对应的 BGMTrackSO
+- 找到则淡出/淡入切换到该曲目
+
+4.2 手动切歌：事件触发（按钮/解锁/剧情）
+
+方式 A（推荐）：使用 BGMPlayTrigger 绑定按钮
+1. 在按钮对象（或任意对象）上挂 BGMPlayTrigger
+2. Inspector 绑定：
+   - bgmRequestEvent = Evt_RequestBGM
+   - track = 目标 BGMTrackSO
+3. 在 Button 的 OnClick 中拖入该组件并选择：
+   - BGMPlayTrigger.Play()
+
+方式 B：脚本里直接 RaiseEvent
+在你的逻辑脚本中持有 BGMTrackEventSO 引用，然后：
+- bgmRequestEvent.RaiseEvent(track);
+
+------------------------------------------------------------
+
+5) 常见问题排查
+
+5.1 “切场景没有自动换 BGM”
+通常是 Scene Loaded Event 没绑定对：
+- BGMManager.sceneLoadedEvent 必须和 SceneManager._loadedSceneEvent_1 指向 同一个事件资产
+
+5.2 “有事件触发，但没播放音乐”
+检查：
+- BGMTrackSO.clip 是否为空
+- AudioRoot 是否在 Persistent 场景中常驻且未被销毁
+- 场景里是否有 AudioListener（一般在主相机上）
+
+5.3 “淡入淡出没效果/报错”
+本系统使用 DOTween：
+- 你项目已有 FadeManager 在用 DOTween，通常不会缺依赖
+- 如果 Console 提示 DOTween 缺失，需要先安装/启用 DOTween
+
+------------------------------------------------------------
+
+6) 推荐的资源组织方式（可选）
+建议在 Assets/Audios/ 下建立结构：
+- Assets/Audios/Clips/（音频文件）
+- Assets/Audios/Tracks/（BGMTrackSO）
+- Assets/Audios/Maps/（SceneBGMMapSO）
+- Assets/Audios/Events/（Evt_RequestBGM 等事件资产）
+
+------------------------------------------------------------
+
+7) 可选增强
+- 支持“同一曲目不同段落（Intro/Loop）”
+- 支持“多层 BGM（战斗层/紧张层）叠加”
+- 支持“BGM 状态保存/读档恢复”

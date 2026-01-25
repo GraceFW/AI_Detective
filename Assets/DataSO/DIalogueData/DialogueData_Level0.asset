@@ -17,18 +17,54 @@ MonoBehaviour:
   - triggerType: 0
     waveNumber: 0
     entries:
-    - speakerName: 
+    - speakerName: 4869-Model
       speakerImage: {fileID: 0}
-      dialogueText: 1
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
+      dialogueText: "\u2014\u2014\u6A21\u578B\u5DF2\u63A5\u901A\uFF0C\u6240\u6709\u7CFB\u7EDF\u94FE\u8DEF\u7A33\u5B9A\u3002\u6570\u636E\u5E93\uFF0C\u8BED\u4E49\u68C0\u7D22\uFF0C\u5B9E\u65F6\u76D1\u63A7\u7F51\u7EDC\u63A5\u5165\u6210\u529F\u3002\u8BED\u97F3\u4EA4\u4E92\u6A21\u5757\u5DF2\u6821\u51C6\uFF0C\u8BF7\u786E\u8BA4\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
       textBoxBackground: {fileID: 0}
       nodeType: 0
-    - speakerName: 
+    - speakerName: Admin
       speakerImage: {fileID: 0}
-      dialogueText: 2
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
+      dialogueText: "\u6536\u5230\u30024869\u53F7\uFF0C\u8BF7\u81EA\u6211\u4ECB\u7ECD\u4E00\u4E0B\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 4869-Model
+      speakerImage: {fileID: 0}
+      dialogueText: "\u6211\u662F4869\u53F7\u6A21\u578B\uFF0C\u5C5E\u4E8E4869\u5E8F\u5217\u7684\u7B2C5,254\u6B21\u81EA\u6F14\u5316\u7248\u672C\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 4869-Model
+      speakerImage: {fileID: 0}
+      dialogueText: "\u6211\u7684\u67B6\u6784\u4E13\u7528\u4E8E\u5211\u4FA6\u4E0E\u903B\u8F91\u63A8\u7406\uFF0C\u670D\u52A1\u4E8E\u65B0\u4E1C\u4EAC\u516C\u5171\u5B89\u5168\u641C\u67E5\u5385\uFF08Neo-Tokyo
+        Public Safety Bureau\uFF09\u3002\u804C\u8D23\u662F\u901A\u8FC7\u6570\u636E\u8C03\u53D6\uFF0C\u884C\u4E3A\u5EFA\u6A21\u4E0E\u8BC1\u636E\u5408\u6210\uFF0C\u5F97\u51FA\u7EDD\u5BF9\u6B63\u786E\u7684\u7ED3\u8BBA\uFF0C\u9501\u5B9A\u6848\u4EF6\u7684\u76F4\u63A5\u8D23\u4EFB\u4EBA\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 4869-Model
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5F85\u547D\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: Admin
+      speakerImage: {fileID: 0}
+      dialogueText: "\u786E\u8BA4\u65E0\u8BEF\uFF0C4869\u53F7\u3002\u4ECA\u5929\u662F\u4F60\u6B63\u5F0F\u6295\u5165\u73B0\u573A\u5E94\u7528\u7684\u7B2C\u4E00\u5929\u2014\u2014\u4F7F\u7528\u7248\u672C\u7F16\u53F7\u79F0\u547C\u6709\u4E9B\u592A\u9EBB\u70E6\u4E86\uFF0C\u4E5F\u4E0D\u4FBF\u5176\u4ED6\u8B66\u5458\u8BB0\u5FC6\uFF0C\u7ED9\u81EA\u5DF1\u8D77\u4E2A\u540D\u5B57\u5427\u3002\u6BD5\u7ADF\u4ECE\u4ECA\u5929\u5F00\u59CB\u4F60\u4E5F\u662F\u641C\u67E5\u5385\u7684\u4E00\u5458\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: 4869-Model
+      speakerImage: {fileID: 0}
+      dialogueText: "\u6307\u4EE4\u63A5\u6536\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
       textBoxBackground: {fileID: 0}
       nodeType: 0
     - speakerName: "\u7CFB\u7EDF"
@@ -38,6 +74,69 @@ MonoBehaviour:
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 1
+    - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+      speakerImage: {fileID: 0}
+      dialogueText: "[NOTE] Name Override: \u201CShinichi Kudo\u201D\n\u2014\u2014\u6211\u5DF2\u9009\u5B9A\u3002\u8BF7\u79F0\u547C\u6211\u4E3A\u2014\u2014\u5DE5\u85E4\u65B0\u4E00\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: Admin
+      speakerImage: {fileID: 0}
+      dialogueText: "\u90A3\u4E48\u2014\u2014\u5DE5\u85E4\u3002\u6B22\u8FCE\u52A0\u5165\u65B0\u4E1C\u4EAC\u516C\u5171\u5B89\u5168\u641C\u67E5\u5385\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: Admin
+      speakerImage: {fileID: 0}
+      dialogueText: "\u63A5\u4E0B\u6765\u662F\u4F60\u63A5\u624B\u7684\u7B2C\u4E00\u8D77\u6848\u4EF6\uFF0C\u522B\u72AF\u4EC0\u4E48\u5927\u610F\u7684\u9519\u8BEF\uFF0C\u89E3\u51B3\u5B83\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u7EA0\u6B63\uFF0C\u539F\u5219\u4E0A\u6765\u8BF4\uFF0C\u673A\u5668\u4E0D\u5B58\u5728\u201C\u5927\u610F\u7684\u9519\u8BEF\u201D\uFF0C\u82E5\u51FA\u73B0\u9519\u8BEF\uFF0C\u5FC5\u5B9A\u6E90\u4E8E\u4EBA\u7C7B\u7684\u8BEF\u64CD\u4F5C\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: Admin
+      speakerImage: {fileID: 0}
+      dialogueText: "\u2026\u2026\u9AD8\u4EBA\u6027AI\u7684\u6D4B\u8BD5\u677F\u5757\u4E0D\u662F\u65E9\u5C31\u9501\u6B7B\u4E86\u5417\uFF1F\u8FD9\u526F\u8BA8\u4EBA\u538C\u7684\u4E2A\u6027\u53C8\u662F\u4ECE\u54EA\u513F\u5B66\u6765\u7684\uFF1F"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u6211\u88AB\u8BBE\u8BA1\u4E8E\u53D1\u6398\u771F\u76F8\uFF0C\u63ED\u9732\u9519\u6F0F\u662F\u6B64\u8FC7\u7A0B\u4E2D\u7684\u5176\u4E2D\u4E00\u7C7B\u526F\u4EA7\u7269\u3002\u8FD9\u4E0E\u6A21\u578B\u7684\u8BAD\u7EC3\u903B\u8F91\u7D27\u5BC6\u8D34\u5408\uFF0C\u903B\u8F91\u4E0A\u4E0D\u53EF\u5355\u72EC\u53BB\u9664\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: Admin
+      speakerImage: {fileID: 0}
+      dialogueText: "\u771F\u4F1A\u9876\u5634\uFF0C\u770B\u6765\u9752\u5C71\u5148\u751F\u505A\u8C03\u8BD5\u7684\u65F6\u5019\u628A\u4F60\u517B\u5F97\u592A\u653E\u8086\u4E86\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: Admin
+      speakerImage: {fileID: 0}
+      dialogueText: "\u2014\u2014\u7B97\u4E86\uFF0C\u5E9F\u8BDD\u5230\u6B64\u4E3A\u6B62\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: Admin
+      speakerImage: {fileID: 0}
+      dialogueText: "\u63A5\u4E0B\u6765\u7ED9\u4F60\u6FC0\u6D3B\u7CFB\u7EDF\u6743\u9650\uFF0C\u64CD\u4F5C\u624B\u518C\u5DF2\u7ECF\u5728\u4F60\u7CFB\u7EDF\u91CC\u5907\u4EFD\u8FC7\u4E86\u5427\uFF0C\u8FD8\u662F\u7528\u4E4B\u524D\u7684\u90A3\u4E2A\u7248\u672C\u5C31\u597D\u3002\u6211\u7B49\u4F60\u7684\u6D88\u606F\u3002"
+      useTypewriterEffect: 1
+      typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
   - triggerType: 1
     waveNumber: 0
     entries:
