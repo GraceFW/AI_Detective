@@ -37,7 +37,7 @@ public class DataManager : MonoBehaviour
 	private void Update()
 	{
 		// 按下L加载保存的数据，测试用
-		if (Keyboard.current.lKey.wasPressedThisFrame)
+		if (Keyboard.current[Key.Semicolon].wasPressedThisFrame)
 			Load();
 	}
 
