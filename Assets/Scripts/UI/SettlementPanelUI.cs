@@ -153,7 +153,7 @@ public class SettlementPanelUI : MonoBehaviour
             if (!row.IsComplete())
             {
                 Debug.Log("[SettlementPanelUI] 提交失败：还有问题未填满线索。");
-                ShowErrorDialog("请完成所有问题的线索填写", SettlementErrorDialog.ErrorType.Incomplete);
+                ShowErrorDialog("请完成所有问题", SettlementErrorDialog.ErrorType.Incomplete);
                 return;
             }
         }
@@ -192,7 +192,7 @@ public class SettlementPanelUI : MonoBehaviour
         if (!allCorrect)
         {
             Debug.Log($"[SettlementPanelUI] 提交失败：存在错误答案。题目数={result.Count}，正确数={correctCount}");
-            ShowErrorDialog($"存在错误答案，请检查后重新提交。\n正确数：{correctCount}/{result.Count}", SettlementErrorDialog.ErrorType.Incorrect);
+            ShowErrorDialog($"存在错误答案", SettlementErrorDialog.ErrorType.Incorrect);
             return;
         }
 

@@ -13,7 +13,5 @@ MonoBehaviour:
   m_Name: Case0Keyword
   m_EditorClassIdentifier: 
   keywords:
-  - term: "\u6D4B\u8BD5"
-    revealsClue: {fileID: 11400000, guid: 2520611bc580d13499d2868563bb1594, type: 2}
-  - term: "\u9752\u886B\u5188\u4ED3"
-    revealsClue: {fileID: 11400000, guid: d51629779b7f5b944ad5cc8c03ccb873, type: 2}
+  - term: "\u7B14\u8BB0\u672C\u7535\u8111"
+    revealsClue: {fileID: 11400000, guid: 014c85e8cbe59a6418a341aac3e5ed6e, type: 2}
