@@ -30,7 +30,7 @@ public abstract class ClueData : ScriptableObject
 
     // 是否可被搜索系统纳入（如全文检索）。
     public bool searchable;
-
+    public bool collectable;
     // 是否已被收集/揭示。
     // 当前 Demo 在 ClueManager.RevealClue 中设置；后续可通过存档系统持久化。
     public bool collected;

@@ -18,4 +18,5 @@ MonoBehaviour:
   detailText: 
   Detail_Mark: 
   searchable: 0
+  collectable: 1
   collected: 0
