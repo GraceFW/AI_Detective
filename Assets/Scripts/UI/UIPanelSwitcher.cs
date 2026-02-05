@@ -33,8 +33,25 @@ public class UIPanelSwitcher : MonoBehaviour
 
     private void Start()
     {
-        if (leftButton != null) leftButton.onClick.AddListener(OnLeftClick);
-        if (rightButton != null) rightButton.onClick.AddListener(OnRightClick);
+        if (leftButton != null)
+        {
+            // [SFX] 为左右切换按钮添加音效组件
+            if (leftButton.GetComponent<PlaySfxOnClick>() == null)
+            {
+                leftButton.gameObject.AddComponent<PlaySfxOnClick>();
+            }
+            leftButton.onClick.AddListener(OnLeftClick);
+        }
+        
+        if (rightButton != null)
+        {
+            // [SFX] 为左右切换按钮添加音效组件
+            if (rightButton.GetComponent<PlaySfxOnClick>() == null)
+            {
+                rightButton.gameObject.AddComponent<PlaySfxOnClick>();
+            }
+            rightButton.onClick.AddListener(OnRightClick);
+        }
 
         ApplyCase(_currentCase);
         RefreshButtonInteractable();

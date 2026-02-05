@@ -25,10 +25,6 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     [Tooltip("短文本的长度阈值")]
     [SerializeField] private int shortTextLength = 10;
 
-    [Header("加速设置")]
-    [Tooltip("加速倍数（第一次点击/空格时）")]
-    [SerializeField] private float accelerationMultiplier = 4f;
-
     [Tooltip("双击时间窗口（秒）")]
     [SerializeField] private float doubleClickWindow = 0.5f;
 
@@ -42,6 +38,10 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     [Tooltip("完成时是否滚动到底部（默认true）")]
     [SerializeField] private bool scrollToBottomOnComplete = true;
 
+    [Header("音效设置")]
+    [Tooltip("是否启用打字机音效（仅在问讯/搜索界面启用，黑底滚代码不启用）")]
+    [SerializeField] private bool enableTypewriterSfx = false;
+
     // 私有变量
     private Coroutine _typewriterCoroutine;
     private string _targetText = string.Empty;  // 完整的目标文本
@@ -49,6 +49,7 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     private float _lastClickTime = -1f;  // 上次点击时间
     private bool _isAccelerating = false;  // 是否正在加速
     private ScrollRect _scrollRect;  // 可选的滚动视图，用于自动滚动
+    private float _acceleratedDelayPerChar = 0f;  // 加速时每个字符的固定延迟
 
     private void Awake()
     {
@@ -190,6 +191,14 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
         }
 
         _isAccelerating = false;
+        _acceleratedDelayPerChar = 0f;  // 重置加速延迟
+        
+        // [SFX] 如果启用了打字机音效，开始播放循环音效
+        if (enableTypewriterSfx && SfxManager.Instance != null)
+        {
+            SfxManager.Instance.PlayLoop(SfxId.TypewriterLoop, this);
+        }
+        
         _typewriterCoroutine = StartCoroutine(TypewriterCoroutine(startIndex, endIndex));
     }
 
@@ -211,7 +220,14 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
             targetText.maxVisibleCharacters = _targetText.Length;
         }
 
+        // [SFX] 如果启用了打字机音效，停止循环音效
+        if (enableTypewriterSfx && SfxManager.Instance != null)
+        {
+            SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
+        }
+
         _isAccelerating = false;
+        _acceleratedDelayPerChar = 0f;  // 重置加速延迟
     }
 
     /// <summary>
@@ -220,6 +236,7 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     private IEnumerator TypewriterCoroutine(int startIndex, int endIndex)
     {
         float delayPerCharacter = 1f / charactersPerSecond;
+        _acceleratedDelayPerChar = 0f;  // 重置加速延迟
 
         for (int i = startIndex; i < endIndex; i++)
         {
@@ -232,8 +249,35 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
             _currentVisibleCharacters = i + 1;
             targetText.maxVisibleCharacters = _currentVisibleCharacters;
 
-            // 计算延迟（如果正在加速，减少延迟）
-            float currentDelay = _isAccelerating ? delayPerCharacter / accelerationMultiplier : delayPerCharacter;
+            // 计算延迟
+            float currentDelay;
+            if (_isAccelerating)
+            {
+                // 如果加速延迟还未计算，现在计算（基于开始加速时的剩余字符数）
+                if (_acceleratedDelayPerChar <= 0f)
+                {
+                    int remainingChars = endIndex - i;
+                    if (remainingChars > 0)
+                    {
+                        float remainingTime = 1.0f; // 固定1秒
+                        _acceleratedDelayPerChar = remainingTime / remainingChars;
+                        // 确保延迟不为负数或过小
+                        _acceleratedDelayPerChar = Mathf.Max(_acceleratedDelayPerChar, 0.001f);
+                    }
+                    else
+                    {
+                        _acceleratedDelayPerChar = 0f; // 立即显示
+                    }
+                }
+                // 使用固定的加速延迟
+                currentDelay = _acceleratedDelayPerChar;
+            }
+            else
+            {
+                currentDelay = delayPerCharacter;
+                // 如果停止加速，重置加速延迟
+                _acceleratedDelayPerChar = 0f;
+            }
 
             yield return new WaitForSeconds(currentDelay);
 
@@ -248,6 +292,12 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
         // 确保显示所有字符
         _currentVisibleCharacters = _targetText.Length;
         targetText.maxVisibleCharacters = _targetText.Length;
+        
+        // [SFX] 打字完成，停止循环音效
+        if (enableTypewriterSfx && SfxManager.Instance != null)
+        {
+            SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
+        }
         
         // 完成时根据配置决定是否滚动到底部
         if (scrollToBottomOnComplete)
@@ -268,6 +318,12 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void SkipToEnd()
     {
+        // [SFX] 跳过时停止循环音效（StopTypewriter 中已处理，但这里确保停止）
+        if (enableTypewriterSfx && SfxManager.Instance != null)
+        {
+            SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
+        }
+        
         StopTypewriter();
         if (targetText != null)
         {
@@ -447,5 +503,16 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
             ScrollToBottomWithOffset(scrollOffset);
         }
     }
-}
 
+    /// <summary>
+    /// 对象禁用时兜底停止循环音效
+    /// </summary>
+    private void OnDisable()
+    {
+        // [SFX] 兜底停止循环音效，确保切界面/对象禁用时循环音必停
+        if (enableTypewriterSfx && SfxManager.Instance != null)
+        {
+            SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
+        }
+    }
+}

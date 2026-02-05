@@ -18,5 +18,6 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  nextLevelScene: {fileID: 11400000, guid: 66f25b2efd3ae1d43b4d778a0655c02d, type: 2}
   useFade: 1
   fadeDuration: 1.5

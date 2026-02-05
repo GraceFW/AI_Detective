@@ -75,11 +75,21 @@ public class DialogueUI : MonoBehaviour
 
         if (prevButton != null)
         {
+            // [SFX] 为对话翻页按钮添加音效组件
+            if (prevButton.GetComponent<PlaySfxOnClick>() == null)
+            {
+                prevButton.gameObject.AddComponent<PlaySfxOnClick>();
+            }
             prevButton.onClick.AddListener(OnPrevButtonClick);
         }
 
         if (nextButton != null)
         {
+            // [SFX] 为对话翻页按钮添加音效组件
+            if (nextButton.GetComponent<PlaySfxOnClick>() == null)
+            {
+                nextButton.gameObject.AddComponent<PlaySfxOnClick>();
+            }
             nextButton.onClick.AddListener(OnNextButtonClick);
         }
 
@@ -200,6 +210,13 @@ public class DialogueUI : MonoBehaviour
 
                 if (!isHistoryView)
                 {
+                    // [SFX] 为对话选项按钮添加音效组件
+                    var playSfx = buttonObj.GetComponent<PlaySfxOnClick>();
+                    if (playSfx == null)
+                    {
+                        playSfx = buttonObj.AddComponent<PlaySfxOnClick>();
+                    }
+                    
                     int optionIndex = i;  // 捕获索引
                     button.onClick.AddListener(() => OnOptionClick(optionIndex));
                 }

@@ -74,6 +74,11 @@ public class SettlementPanelUI : MonoBehaviour
     {
         if (submitButton != null)
         {
+            // [SFX] 为提交案件按钮添加音效组件
+            if (submitButton.GetComponent<PlaySfxOnClick>() == null)
+            {
+                submitButton.gameObject.AddComponent<PlaySfxOnClick>();
+            }
             submitButton.onClick.AddListener(HandleSubmitClicked);
         }
     }

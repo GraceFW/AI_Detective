@@ -75,6 +75,11 @@ public class SettlementSuccessPanel : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void Start()
+    {
+        GetNextLoadScene();
+    }
+
     private void OnDestroy()
     {
         if (nextLevelButton != null)
@@ -83,6 +88,41 @@ public class SettlementSuccessPanel : MonoBehaviour
         }
     }
 
+    private void GetNextLoadScene()
+    {
+        // 尝试从 SceneManager 获取currentScene
+        SceneManager sceneManager = FindObjectOfType<SceneManager>();
+        if (sceneManager == null)
+        {
+            Debug.LogError("未找到自定义的 SceneManager 组件！", this);
+            return;
+        }
+        if (sceneManager != null)
+        {
+            // 通过反射获取 currentScene 字段（因为它是 private）
+            var currentSceneField = typeof(SceneManager).GetField("currentScene", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            if (currentSceneField == null)
+            {
+                Debug.LogError("SceneManager 中未找到私有字段 currentScene！", this);
+                return;
+            }
+            if (currentSceneField != null)
+            {
+                var currentScene = currentSceneField.GetValue(sceneManager) as GameSceneSO;
+                if (currentScene.nextLevelScene != null)
+                {
+                    _nextLevelScene = currentScene.nextLevelScene;
+                    Debug.Log("成功获取下一个场景：" + _nextLevelScene.sceneReference.ToString(), this);
+                }
+                else
+                {
+                    Debug.LogWarning("currentScene 的 nextLevelScene 未赋值！", this);
+                }
+            }
+        }
+    }
     /// <summary>
     /// 显示结算成功面板
     /// </summary>

@@ -4,21 +4,49 @@ using UnityEngine;
 public class Data
 {
 	public bool isHavingSceneData = false;
-	public string sceneToSave;
+	
+	/// <summary>
+	/// 保存的场景标识（当前使用 GameSceneSO 的资源名）
+	/// </summary>
+	public string savedSceneId;
+	
 	public Dictionary<string, bool> boolSaveData = new Dictionary<string, bool>();
 
 	public void SaveGameScene(GameSceneSO savedScene)
 	{
-		sceneToSave = JsonUtility.ToJson(savedScene);
-		Debug.Log(savedScene);
+		if (savedScene == null)
+		{
+			Debug.LogWarning("[Data] SaveGameScene: savedScene is null");
+			savedSceneId = null;
+			return;
+		}
+
+		// 目前使用资源名作为场景标识；后续可替换为 GameSceneSO 内部的自定义 sceneId
+		savedSceneId = savedScene.name;
+		Debug.Log($"[Data] SaveGameScene: {savedSceneId}");
 	}
 
 	public GameSceneSO GetSavedScene()
 	{
-		var newScene = ScriptableObject.CreateInstance<GameSceneSO>();
-		JsonUtility.FromJsonOverwrite(sceneToSave, newScene);
+		if (string.IsNullOrEmpty(savedSceneId))
+		{
+			Debug.LogWarning("[Data] GetSavedScene: savedSceneId is null or empty");
+			return null;
+		}
 
-		return newScene;
+		if (SceneDatabaseSO.Instance == null)
+		{
+			Debug.LogWarning("[Data] GetSavedScene: SceneDatabaseSO.Instance is null，无法根据标识恢复场景");
+			return null;
+		}
+
+		var scene = SceneDatabaseSO.Instance.GetSceneByName(savedSceneId);
+		if (scene == null)
+		{
+			Debug.LogWarning($"[Data] GetSavedScene: 在 SceneDatabase 中未找到名为 {savedSceneId} 的 GameSceneSO");
+		}
+
+		return scene;
 	}
 
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4264163380803696389}
   - component: {fileID: 7830515841307315137}
   - component: {fileID: 2890646569906297316}
+  - component: {fileID: 6241853489783426487}
   m_Layer: 5
   m_Name: NextLevelButton
   m_TagString: Untagged
@@ -121,6 +122,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6241853489783426487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3301268717197710685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cb599e28e9818941b67fd7200a79701, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxId: 1
 --- !u!1 &4356611212197347108
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,6 +145,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3469029171630526549}
   - component: {fileID: 8084002699498671138}
+  - component: {fileID: 2206594126287101734}
   m_Layer: 5
   m_Name: SettlementSuccessPanel
   m_TagString: Untagged
@@ -177,9 +192,37 @@ MonoBehaviour:
   iconImage: {fileID: 0}
   nextLevelButton: {fileID: 2890646569906297316}
   _loadSceneEvent: {fileID: 11400000, guid: c59a45dd710d2904b8b78e9512a02897, type: 2}
-  _nextLevelScene: {fileID: 11400000, guid: e1c5c752308175048968757431a9dfec, type: 2}
+  _nextLevelScene: {fileID: 0}
   enableFadeAnimation: 1
   animationDuration: 0.3
+--- !u!114 &2206594126287101734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4356611212197347108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efb0aea5085b3914fbfcd7ece4bb4ce0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameEventSO: {fileID: 11400000, guid: 4cf5725f6899ba74689fa957df45c138, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8084002699498671138}
+        m_TargetAssemblyTypeName: SettlementSuccessPanel, Assembly-CSharp
+        m_MethodName: SetNextLevelScene
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4746803484782492431
 GameObject:
   m_ObjectHideFlags: 0

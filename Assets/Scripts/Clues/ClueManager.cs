@@ -21,12 +21,43 @@ public class ClueManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            InitializeClues();
         }
         else
         {
             Destroy(this.gameObject);
             return;
         }
+    }
+
+    /// <summary>
+    /// 初始化线索数据库：将所有线索的 collected 状态重置为 false
+    /// </summary>
+    private void InitializeClues()
+    {
+        if (clueDatabase == null)
+        {
+            Debug.LogWarning("[ClueManager] clueDatabase 未配置，无法初始化线索状态");
+            return;
+        }
+
+        if (clueDatabase.clues == null)
+        {
+            Debug.LogWarning("[ClueManager] clueDatabase.clues 为空");
+            return;
+        }
+
+        int resetCount = 0;
+        foreach (var clue in clueDatabase.clues)
+        {
+            if (clue != null)
+            {
+                clue.collected = false;
+                resetCount++;
+            }
+        }
+
+        Debug.Log($"[ClueManager] 已初始化 {resetCount} 个线索的 collected 状态为 false");
     }
 
     public bool IsRevealed(string clueId)
@@ -67,6 +98,12 @@ public class ClueManager : MonoBehaviour
 
         _revealedIds.Add(clueId);
         clue.collected = true;
+
+        // [SFX] 播放新线索提示音（仅在真正新增时播放）
+        if (SfxManager.Instance != null)
+        {
+            SfxManager.Instance.Play(SfxId.NewClue);
+        }
 
         // 通知 UI / 叙事系统等监听者。
         OnClueRevealed?.Invoke(clue);

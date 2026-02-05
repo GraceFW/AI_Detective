@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ClueListPanelUI : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class ClueListPanelUI : MonoBehaviour
     [SerializeField] private ClueDetailPopupUI popupPrefab;
 
     private readonly Dictionary<string, ClueListItemUI> _itemsById = new Dictionary<string, ClueListItemUI>();
+    private readonly Dictionary<string, ClueDetailPopupUI> _openPopupsById = new Dictionary<string, ClueDetailPopupUI>();
 
     private ClueManager _manager;
     private bool _subscribed;
@@ -108,6 +110,27 @@ public class ClueListPanelUI : MonoBehaviour
 
     private void HandleItemClicked(ClueData clue)
     {
+        if (clue == null || string.IsNullOrEmpty(clue.id))
+        {
+            return;
+        }
+
+        // 先清理所有无效引用
+        CleanupInvalidPopups();
+
+        // 检查该线索是否已有打开的弹窗
+        if (_openPopupsById.TryGetValue(clue.id, out var existingPopup))
+        {
+            // 如果弹窗存在且有效，则关闭它
+            if (existingPopup != null)
+            {
+                existingPopup.CloseAndDestroy();
+                _openPopupsById.Remove(clue.id);
+                return;
+            }
+        }
+
+        // 如果没有打开的弹窗，创建新的
         if (popupPrefab == null)
         {
             return;
@@ -116,5 +139,28 @@ public class ClueListPanelUI : MonoBehaviour
         var parent = popupParent != null ? popupParent : transform;
         var popup = Instantiate(popupPrefab, parent);
         popup.Show(clue);
+        
+        // 记录打开的弹窗
+        _openPopupsById[clue.id] = popup;
+    }
+
+    /// <summary>
+    /// 清理所有无效的弹窗引用
+    /// </summary>
+    private void CleanupInvalidPopups()
+    {
+        var keysToRemove = new List<string>();
+        foreach (var kvp in _openPopupsById)
+        {
+            if (kvp.Value == null)
+            {
+                keysToRemove.Add(kvp.Key);
+            }
+        }
+
+        foreach (var key in keysToRemove)
+        {
+            _openPopupsById.Remove(key);
+        }
     }
 }

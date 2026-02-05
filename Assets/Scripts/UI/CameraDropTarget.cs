@@ -209,7 +209,7 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
 
         if (hourDropdown != null)
         {
-            hour = hourDropdown.value;
+            hour = hourDropdown.value + 1;
         }
         else
         {

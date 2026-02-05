@@ -160,7 +160,8 @@ public class SceneManager : MonoBehaviour, ISaveable
 		_isLoading = false;
 		_loadedSceneEvent_0?.RaiseEvent(); // 场景加载完成事件
 		_loadedSceneEvent_1?.RaiseEvent(currentScene); //场景加载完毕事件，传递场景类型参数
-													   // 场景加载完后再淡入
+													   
+		// 场景加载完后再淡入
 		if (_shouldFade)
 		{
 			if (_shouldPlayMenuBootText)
@@ -191,6 +192,20 @@ public class SceneManager : MonoBehaviour, ISaveable
 		if (data.isHavingSceneData)
 		{
 			_sceneToLoad = data.GetSavedScene();
+			
+			if (_sceneToLoad == null)
+			{
+				Debug.LogWarning("[SceneManager] LoadData: 根据存档无法恢复 GameSceneSO，将尝试回到菜单场景。");
+				if (menuScene != null)
+				{
+					LoadScene(menuScene);
+				}
+				else
+				{
+					Debug.LogWarning("[SceneManager] LoadData: menuScene 也未配置，无法加载任何场景。");
+				}
+				return;
+			}
 
 			LoadScene(_sceneToLoad);
 		}

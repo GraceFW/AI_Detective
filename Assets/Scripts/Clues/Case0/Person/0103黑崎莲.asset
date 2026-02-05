@@ -36,6 +36,7 @@ MonoBehaviour:
     (21:10)\uFF1A\u9E1F\u4E4B\u53D6\u516C\u5BD3\u7684\u7BA1\u7406\u5F88\u677E\uFF0C\u5916\u5356\u5458\u53EF\u4EE5\u76F4\u63A5\u4E0A\u697C\u653E\u5728\u95E8\u53E3\u3002\r\nK_R
     (21:12)\uFF1A\u2026\u2026\r\nK_R (21:15)\uFF1A\u6211\u77E5\u9053\u4E86"
   searchable: 1
+  collectable: 1
   collected: 0
   portrait: {fileID: 21300000, guid: dbfa5188ffb7c704da03364bcd94239d, type: 3}
   canBeSummoned: 1

@@ -14,8 +14,8 @@ public class TextContentAutoHeight : MonoBehaviour
     [Tooltip("Content 的 RectTransform")]
     [SerializeField] private RectTransform contentRect;
 
-    [Tooltip("额外的底部边距")]
-    [SerializeField] private float bottomPadding = 20f;
+    // [Tooltip("额外的底部边距")]
+    // [SerializeField] private float bottomPadding = 20f;
 
     private void Awake()
     {
@@ -53,7 +53,8 @@ public class TextContentAutoHeight : MonoBehaviour
 
         // 设置 Content 高度
         var sizeDelta = contentRect.sizeDelta;
-        sizeDelta.y = textHeight + bottomPadding;
+        // sizeDelta.y = textHeight + bottomPadding;
+        sizeDelta.y = textHeight;
         contentRect.sizeDelta = sizeDelta;
     }
 }

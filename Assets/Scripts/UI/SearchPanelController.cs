@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// 搜索面板控制器
-/// 处理 /search 和 /detect 指令
+/// 处理 /detect、/sniff 和 /attack 指令
 /// </summary>
 public class SearchPanelController : MonoBehaviour
 {
@@ -36,12 +36,14 @@ public class SearchPanelController : MonoBehaviour
     private Coroutine _displayCoroutine;
     private StringBuilder _historyLog = new StringBuilder();
     private string _lastDisplayedText = string.Empty;  // 记录上次显示的文本，用于追加模式
-    private bool _shouldClearOnNextUpdate = false;  // 标记下次更新是否应该清空（Search 命令）
+    private bool _shouldClearOnNextUpdate = false;  // 标记下次更新是否应该清空（Detect 命令）
+    private int _sniffUsageCount = 0;  // Sniff使用次数统计（场景级别，不存档）
 
     private enum CommandType
     {
-        Search = 0,
-        Detect = 1
+        Detect = 0,
+        Sniff = 1,
+        Attack = 2
     }
 
     private void Start()
@@ -97,8 +99,9 @@ public class SearchPanelController : MonoBehaviour
         commandDropdown.ClearOptions();
         commandDropdown.AddOptions(new System.Collections.Generic.List<string>
         {
-            "/search",
-            "/detect"
+            "/Detect",
+            "/Sniff",
+            "/Attack"
         });
         commandDropdown.value = 0;
         commandDropdown.RefreshShownValue();
@@ -142,8 +145,8 @@ public class SearchPanelController : MonoBehaviour
 
     private IEnumerator ExecuteCommandCoroutine(CommandType command, string searchText)
     {
-        // 只有 Search 指令时清空文本窗当前显示的内容
-        if (command == CommandType.Search)
+        // 只有 Detect 指令时清空文本窗当前显示的内容
+        if (command == CommandType.Detect)
         {
             _historyLog.Clear();
             _lastDisplayedText = string.Empty;
@@ -151,7 +154,13 @@ public class SearchPanelController : MonoBehaviour
             UpdateResultText();
         }
 
-        var commandStr = command == CommandType.Search ? "/search" : "/detect";
+        string commandStr = command switch
+        {
+            CommandType.Detect => "/detect",
+            CommandType.Sniff => "/sniff",
+            CommandType.Attack => "/attack",
+            _ => "/detect"
+        };
         var inputLine = $"> {commandStr} {searchText}\n";
 
         // 添加输入行到历史
@@ -165,7 +174,7 @@ public class SearchPanelController : MonoBehaviour
 
         yield return new WaitForSeconds(executingDuration);
 
-        // 执行搜索逻辑
+        // 执行命令逻辑
         string resultLine;
 
         if (string.IsNullOrEmpty(searchText))
@@ -177,14 +186,13 @@ public class SearchPanelController : MonoBehaviour
         {
             var clue = clueDatabase.SearchByDisplayName(searchText);
             
-            if (command == CommandType.Search)
+            resultLine = command switch
             {
-                resultLine = ExecuteSearch(clue);
-            }
-            else
-            {
-                resultLine = ExecuteDetect(clue);
-            }
+                CommandType.Detect => ExecuteDetect(clue),
+                CommandType.Sniff => ExecuteSniff(clue),
+                CommandType.Attack => ExecuteAttack(clue),
+                _ => "[结果]：未知命令。\n\n"
+            };
         }
 
         _historyLog.Append(resultLine);
@@ -192,26 +200,6 @@ public class SearchPanelController : MonoBehaviour
         // 不再手动调用 ScrollToBottom，打字机效果会自己处理滚动
 
         _displayCoroutine = null;
-    }
-
-    /// <summary>
-    /// 执行 /search 命令
-    /// </summary>
-    private string ExecuteSearch(ClueData clue)
-    {
-        if (clue == null)
-        {
-            return "[结果]：未关联到高置信度结果。\n\n";
-        }
-
-        if (!clue.searchable)
-        {
-            return "[结果]：未关联到高置信度结果。\n\n";
-        }
-
-        // 显示详细信息
-        var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-        return $"[结果]：\n{detail}\n\n";
     }
 
     /// <summary>
@@ -224,25 +212,123 @@ public class SearchPanelController : MonoBehaviour
             return "[结果]：检定为低关联性信息。\n\n";
         }
 
-        // 采集线索
-        if (ClueManager.instance != null)
+        // 检查是否已收集（使用 clue.collected 字段）
+        bool isRevealed = clue.collected;
+        Debug.Log(clue.displayName + "线索收集状态：" + isRevealed);
+        Debug.Log(clue.id + "线索ID：" + clue.id);
+        Debug.Log(clue.searchable + "线索可搜索：" + clue.searchable);
+        Debug.Log(clue.collectable + "线索可收集：" + clue.collectable);
+        if (isRevealed && ClueManager.instance.IsRevealed(clue.id))
         {
-            var success = ClueManager.instance.RevealClue(clue.id);
-            if (success)
+            // 已被收集的线索
+            if (clue.searchable)
             {
-                return "[结果]：采集到关联线索。\n\n";
+                // 如果searchable，显示detailText（不再收集）
+                var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+                return $"[结果]：\n{detail}\n\n";
             }
             else
             {
-                // 可能已经采集过了
                 return "[结果]：该线索已存在于档案中。\n\n";
             }
         }
         else
         {
-            Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
-            return "[结果]：采集到关联线索。\n\n";
+            // 未收集的线索
+            bool shouldShowDetail = clue.searchable;
+            bool shouldCollect = clue.collectable;
+            
+            if (shouldShowDetail && shouldCollect)
+            {
+                // searchable且collectable：显示detailText + 收集 + 提示文本
+                var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+                
+                if (ClueManager.instance != null)
+                {
+                    Debug.Log("RevealClue: " + clue.id);
+                    ClueManager.instance.RevealClue(clue.id);
+                }
+                else
+                {
+                    Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
+                }
+                
+                return $"[结果]：\n{detail}\n[结果]：采集到关联线索。\n\n";
+            }
+            else if (shouldShowDetail && !shouldCollect)
+            {
+                // 只searchable不collectable：显示detailText（不收集）
+                var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+                return $"[结果]：\n{detail}\n\n";
+            }
+            else if (!shouldShowDetail && shouldCollect)
+            {
+                // collectable但不searchable：收集 + 提示文本（不显示detailText）
+                if (ClueManager.instance != null)
+                {
+                    ClueManager.instance.RevealClue(clue.id);
+                }
+                else
+                {
+                    Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
+                }
+                
+                return "[结果]：采集到关联线索。\n\n";
+            }
+            else
+            {
+                // 两个都不满足：既不显示文字也不收集
+                return "[结果]：检定为低关联性信息。\n\n";
+            }
         }
+    }
+
+    /// <summary>
+    /// 执行 /sniff 命令
+    /// </summary>
+    private string ExecuteSniff(ClueData clue)
+    {
+        if (clue == null)
+        {
+            return "[结果]：未获得数据探针。\n\n";
+        }
+
+        // 只对searchable的线索有效
+        if (!clue.searchable)
+        {
+            return "[结果]：未关联到高置信度结果。\n\n";
+        }
+
+        // 增加Sniff使用次数统计
+        _sniffUsageCount++;
+
+        // 检查是否有Detail_Mark
+        if (!string.IsNullOrWhiteSpace(clue.Detail_Mark))
+        {
+            // 有Detail_Mark：显示Detail_Mark
+            return $"[结果]：\n{clue.Detail_Mark}\n\n";
+        }
+        else
+        {
+            // 没有Detail_Mark：输出提示文本
+            return "[结果]：该线索暂无标记文本。\n\n";
+        }
+    }
+
+    /// <summary>
+    /// 执行 /attack 命令
+    /// </summary>
+    private string ExecuteAttack(ClueData clue)
+    {
+        return "[结果]：此版本暂时不支持该功能。\n\n";
+    }
+
+    /// <summary>
+    /// 获取Sniff使用次数（场景级别，不存档）
+    /// </summary>
+    public int GetSniffUsageCount()
+    {
+        return _sniffUsageCount;
     }
 
     private void UpdateResultText()
