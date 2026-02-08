@@ -64,8 +64,8 @@ MonoBehaviour:
     \u9F50\u6728\u56FD\u51AC\r\n\u65F6\u95F4: \u6848\u53D1\u524D\u4E00\u65E5 11:30\r\n\u4E3B\u9898:
     \u3010\u6700\u540E\u901A\u7252\u3011\r\n\r\n\u5373\u65F6\u901A\u8BAF (LINE):\r\n\u9ED8\u8BA4\u8D26\u6237\u4E3B\u8981\u804A\u5929\u8BB0\u5F55\u4E3A\u4E0E\u591A\u540D\u300A\u8230\u961FCollection\u300B\u73A9\u5BB6\u7684\u4EA4\u6D41\u7FA4\u7EC4\u3002\r\n\r\n\u672A\u53D1\u73B0\u4E0E\u53EF\u7591ID\u7684\u901A\u4FE1\u8BB0\u5F55\u3002"
   searchable: 1
-  collectable: 1
-  collected: 0
+  collectable: 0
+  collected: 1
   defaultImage: {fileID: 21300000, guid: dbc89c9aa91382f4d830e7fb705cba25, type: 3}
   defaultAreas: []
   frames:
