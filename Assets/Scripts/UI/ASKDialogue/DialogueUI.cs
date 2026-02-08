@@ -48,29 +48,13 @@ public class DialogueUI : MonoBehaviour
     private void Awake()
     {
         _dialogueController = GetComponent<DialogueController>();
-
-        // 绑定点击事件：优先使用对话框点击区域；如果没有，则直接挂在对话文本上
-        DialogueBoxClickHandler clickHandler = null;
-        if (dialogueBoxButton != null)
+        if (dialogueText != null)
         {
-            clickHandler = dialogueBoxButton.GetComponent<DialogueBoxClickHandler>();
-            if (clickHandler == null)
+            var typewriter = dialogueText.GetComponent<TypewriterEffect>();
+            if (typewriter != null)
             {
-                clickHandler = dialogueBoxButton.gameObject.AddComponent<DialogueBoxClickHandler>();
+                typewriter.InitDialogue(_dialogueController);
             }
-        }
-        else if (dialogueText != null)
-        {
-            clickHandler = dialogueText.GetComponent<DialogueBoxClickHandler>();
-            if (clickHandler == null)
-            {
-                clickHandler = dialogueText.gameObject.AddComponent<DialogueBoxClickHandler>();
-            }
-        }
-
-        if (clickHandler != null)
-        {
-            clickHandler.Init(dialogueText, _dialogueController);
         }
 
         if (prevButton != null)

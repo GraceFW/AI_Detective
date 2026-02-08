@@ -5,9 +5,17 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// 打字机效果脚本
-/// 为 TMP Text 组件提供打字机效果，支持替换和追加两种模式
-/// 可以挂载到包含 TMP Text 组件的对象上，或通过 Inspector 配置 Text 组件
+/// 打字机效果（TMP 版）
+/// - 支持 TMP 富文本（<color> <link> 等）
+/// - 打字机推进以“可见字符数”为准（避免富文本标签导致打字/音效拖延）
+/// - 支持：SetText / AppendText / Clear
+/// - 支持：单击加速、双击立即显示完
+/// - 支持：打字机循环音效（开始播，最后一个可见字出现立刻停）
+/// - 支持：对话框联动（打完后检测 link，否则 NextDialogue）
+///
+/// 重要约定：
+/// - _targetText 保存 raw string（包含富文本标签）
+/// - _currentVisibleCharacters 保存“已显示的可见字符数”
 /// </summary>
 public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
 {
@@ -16,20 +24,20 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TextMeshProUGUI targetText;
 
     [Header("速度设置")]
-    [Tooltip("每秒显示的字符数")]
+    [Tooltip("每秒显示的可见字符数")]
     [SerializeField] private float charactersPerSecond = 30f;
 
-    [Tooltip("是否跳过短文本的打字机效果")]
+    [Tooltip("是否跳过短文本的打字机效果（按可见字符数判断）")]
     [SerializeField] private bool skipTypingForShortText = false;
 
-    [Tooltip("短文本的长度阈值")]
+    [Tooltip("短文本的可见字符长度阈值")]
     [SerializeField] private int shortTextLength = 10;
 
     [Tooltip("双击时间窗口（秒）")]
     [SerializeField] private float doubleClickWindow = 0.5f;
 
     [Header("滚动设置")]
-    [Tooltip("滚动频率（每N个字符滚动一次，默认30）")]
+    [Tooltip("滚动频率（每N个字符检查一次）")]
     [SerializeField] private int scrollFrequency = 30;
 
     [Tooltip("滚动偏移量（0-1，不完全到底部，保留可见区域，默认0.05即5%）")]
@@ -42,30 +50,37 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     [Tooltip("是否启用打字机音效（仅在问讯/搜索界面启用，黑底滚代码不启用）")]
     [SerializeField] private bool enableTypewriterSfx = false;
 
-    // 私有变量
+    [Header("对话框联动（可选）")]
+    [Tooltip("是否启用：打完字后点击空白进入下一句；点击 link 收集线索")]
+    [SerializeField] private bool enableDialoguePanelClick = false;
+
+    [SerializeField] private DialogueController dialogueController;
+
+    // --------- 内部状态（注意：可见字符 vs raw string） ---------
     private Coroutine _typewriterCoroutine;
-    private string _targetText = string.Empty;  // 完整的目标文本
-    private int _currentVisibleCharacters = 0;  // 当前已显示的字符数
-    private float _lastClickTime = -1f;  // 上次点击时间
-    private bool _isAccelerating = false;  // 是否正在加速
-    private ScrollRect _scrollRect;  // 可选的滚动视图，用于自动滚动
-    private float _acceleratedDelayPerChar = 0f;  // 加速时每个字符的固定延迟
+
+    // raw string（包含富文本标签）
+    private string _targetText = string.Empty;
+
+    // 已显示的“可见字符数”
+    private int _currentVisibleCharacters = 0;
+
+    // 点击加速/双击
+    private float _lastClickTime = -1f;
+    private bool _isAccelerating = false;
+    private float _acceleratedDelayPerChar = 0f;
+
+    // 自动滚动（可选）
+    private ScrollRect _scrollRect;
 
     private void Awake()
     {
-        // 如果没有手动指定，自动获取 Text 组件
         if (targetText == null)
-        {
             targetText = GetComponent<TextMeshProUGUI>();
-        }
 
-        // 尝试查找 ScrollRect（用于自动滚动）
         if (targetText != null)
-        {
             _scrollRect = targetText.GetComponentInParent<ScrollRect>();
-        }
 
-        // 初始化文本
         if (targetText != null)
         {
             targetText.text = string.Empty;
@@ -74,7 +89,22 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
-    /// 设置新文本（替换模式）
+    /// 注入对话控制器（用于 NextDialogue）
+    /// </summary>
+    public void InitDialogue(DialogueController controller)
+    {
+        dialogueController = controller;
+        enableDialoguePanelClick = controller != null;
+    }
+
+    /// <summary>
+    /// 当前是否正在打字
+    /// </summary>
+    public bool IsTyping => _typewriterCoroutine != null;
+
+    /// <summary>
+    /// 设定新文本（替换模式）
+    /// 注意：打字机的终点按“可见字符数”计算，避免富文本标签造成拖延
     /// </summary>
     public void SetText(string text)
     {
@@ -84,39 +114,35 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        // 停止当前打字机效果
-        StopTypewriter();
+        StopTypewriterInternal(completeVisible: false);
 
-        // 设置目标文本
         _targetText = text ?? string.Empty;
         _currentVisibleCharacters = 0;
 
-        // 设置完整文本到 TMP（但隐藏所有字符）
+        // 先把 raw string 设置给 TMP，然后 ForceMeshUpdate，让 TMP 计算 textInfo.characterCount
         targetText.text = _targetText;
         targetText.maxVisibleCharacters = 0;
         targetText.ForceMeshUpdate();
 
-        // 如果文本为空，直接返回
-        if (string.IsNullOrEmpty(_targetText))
+        int totalVisible = GetTotalVisibleCharacters();
+
+        if (totalVisible <= 0)
+            return;
+
+        // 以可见字符数判断“短文本”
+        if (skipTypingForShortText && totalVisible <= shortTextLength)
         {
+            targetText.maxVisibleCharacters = totalVisible;
+            _currentVisibleCharacters = totalVisible;
             return;
         }
 
-        // 检查是否需要跳过短文本
-        if (skipTypingForShortText && _targetText.Length <= shortTextLength)
-        {
-            // 直接显示全部文本
-            targetText.maxVisibleCharacters = _targetText.Length;
-            _currentVisibleCharacters = _targetText.Length;
-            return;
-        }
-
-        // 开始打字机效果
-        StartTypewriter(0, _targetText.Length);
+        StartTypewriter(0, totalVisible);
     }
 
     /// <summary>
     /// 追加文本（追加模式）
+    /// 注意：start/end 都以“可见字符索引”计算，而不是 raw string length
     /// </summary>
     public void AppendText(string text)
     {
@@ -127,42 +153,40 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
         }
 
         if (string.IsNullOrEmpty(text))
-        {
             return;
-        }
 
-        // 停止当前打字机效果
-        StopTypewriter();
-
-        // 追加到目标文本
-        int startIndex = _currentVisibleCharacters;
-        _targetText += text;
-        _currentVisibleCharacters = startIndex;
-
-        // 更新 TMP 文本
-        targetText.text = _targetText;
-        targetText.maxVisibleCharacters = startIndex;
+        // 在追加前，先让 TMP 计算当前可见字符数（旧终点）
         targetText.ForceMeshUpdate();
+        int oldVisible = GetTotalVisibleCharacters();
 
-        // 检查是否需要跳过短文本
-        if (skipTypingForShortText && text.Length <= shortTextLength)
+        StopTypewriterInternal(completeVisible: false);
+
+        _targetText += text;
+
+        // 更新 TMP，计算追加后的可见字符数（新终点）
+        targetText.text = _targetText;
+        targetText.ForceMeshUpdate();
+        int newVisible = GetTotalVisibleCharacters();
+
+        // 从 oldVisible 开始打新增部分
+        _currentVisibleCharacters = Mathf.Clamp(oldVisible, 0, newVisible);
+        targetText.maxVisibleCharacters = _currentVisibleCharacters;
+
+        int addedVisible = Mathf.Max(0, newVisible - oldVisible);
+
+        if (skipTypingForShortText && addedVisible <= shortTextLength)
         {
-            // 直接显示全部文本
-            _currentVisibleCharacters = _targetText.Length;
-            targetText.maxVisibleCharacters = _targetText.Length;
-            if (scrollToBottomOnComplete)
-            {
-                ScrollToBottom();
-            }
-            else
-            {
-                ScrollToBottomWithOffset(scrollOffset);
-            }
+            _currentVisibleCharacters = newVisible;
+            targetText.maxVisibleCharacters = newVisible;
+
+            if (scrollToBottomOnComplete) ScrollToBottom();
+            else ScrollToBottomWithOffset(scrollOffset);
+
             return;
         }
 
-        // 开始打字机效果（只显示新增部分）
-        StartTypewriter(startIndex, _targetText.Length);
+        if (newVisible > oldVisible)
+            StartTypewriter(oldVisible, newVisible);
     }
 
     /// <summary>
@@ -170,9 +194,10 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public void Clear()
     {
-        StopTypewriter();
+        StopTypewriterInternal(completeVisible: false);
         _targetText = string.Empty;
         _currentVisibleCharacters = 0;
+
         if (targetText != null)
         {
             targetText.text = string.Empty;
@@ -181,31 +206,28 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
-    /// 开始打字机效果
+    /// 开始打字机（start/end 都是“可见字符索引”）
     /// </summary>
-    private void StartTypewriter(int startIndex, int endIndex)
+    private void StartTypewriter(int startVisibleIndex, int endVisibleIndex)
     {
         if (_typewriterCoroutine != null)
-        {
             StopCoroutine(_typewriterCoroutine);
-        }
 
         _isAccelerating = false;
-        _acceleratedDelayPerChar = 0f;  // 重置加速延迟
-        
-        // [SFX] 如果启用了打字机音效，开始播放循环音效
+        _acceleratedDelayPerChar = 0f;
+
+        // [SFX] 开始播放循环音效
         if (enableTypewriterSfx && SfxManager.Instance != null)
-        {
             SfxManager.Instance.PlayLoop(SfxId.TypewriterLoop, this);
-        }
-        
-        _typewriterCoroutine = StartCoroutine(TypewriterCoroutine(startIndex, endIndex));
+
+        _typewriterCoroutine = StartCoroutine(TypewriterCoroutine(startVisibleIndex, endVisibleIndex));
     }
 
     /// <summary>
-    /// 停止打字机效果
+    /// 停止打字机（内部用）
+    /// completeVisible=true 表示立即显示完“全部可见字符”
     /// </summary>
-    private void StopTypewriter()
+    private void StopTypewriterInternal(bool completeVisible)
     {
         if (_typewriterCoroutine != null)
         {
@@ -213,306 +235,299 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
             _typewriterCoroutine = null;
         }
 
-        // 立即完成当前显示
-        if (targetText != null && _currentVisibleCharacters < _targetText.Length)
-        {
-            _currentVisibleCharacters = _targetText.Length;
-            targetText.maxVisibleCharacters = _targetText.Length;
-        }
-
-        // [SFX] 如果启用了打字机音效，停止循环音效
+        // [SFX] 停止循环音效（StopTypewriter 不允许漏停）
         if (enableTypewriterSfx && SfxManager.Instance != null)
-        {
             SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
-        }
 
         _isAccelerating = false;
-        _acceleratedDelayPerChar = 0f;  // 重置加速延迟
+        _acceleratedDelayPerChar = 0f;
+
+        if (targetText == null)
+            return;
+
+        // 如果需要立即完成显示：按“可见字符总数”完成（而不是 raw string length）
+        if (completeVisible)
+        {
+            targetText.ForceMeshUpdate();
+            int totalVisible = GetTotalVisibleCharacters();
+            _currentVisibleCharacters = totalVisible;
+            targetText.maxVisibleCharacters = totalVisible;
+            return;
+        }
     }
 
     /// <summary>
-    /// 打字机协程
+    /// 打字机协程（start/end 都是“可见字符索引”）
+    /// 关键：结束时音效必须立即停止（用 finally 兜底）
     /// </summary>
-    private IEnumerator TypewriterCoroutine(int startIndex, int endIndex)
+    private IEnumerator TypewriterCoroutine(int startVisibleIndex, int endVisibleIndex)
     {
-        float delayPerCharacter = 1f / charactersPerSecond;
-        _acceleratedDelayPerChar = 0f;  // 重置加速延迟
+        // 防御：确保速度合法
+        float delayPerCharacter = charactersPerSecond > 0f ? (1f / charactersPerSecond) : 0f;
+        _acceleratedDelayPerChar = 0f;
 
-        for (int i = startIndex; i < endIndex; i++)
+        try
         {
-            // 检查是否被中断（文本可能已更改）
-            if (i >= _targetText.Length)
+            for (int i = startVisibleIndex; i < endVisibleIndex; i++)
             {
-                break;
-            }
+                _currentVisibleCharacters = i + 1;
+                targetText.maxVisibleCharacters = _currentVisibleCharacters;
 
-            _currentVisibleCharacters = i + 1;
-            targetText.maxVisibleCharacters = _currentVisibleCharacters;
-
-            // 计算延迟
-            float currentDelay;
-            if (_isAccelerating)
-            {
-                // 如果加速延迟还未计算，现在计算（基于开始加速时的剩余字符数）
-                if (_acceleratedDelayPerChar <= 0f)
+                // 计算每个可见字符的等待时间
+                float currentDelay;
+                if (_isAccelerating)
                 {
-                    int remainingChars = endIndex - i;
-                    if (remainingChars > 0)
+                    // 加速：剩余字符固定在 1 秒内打完
+                    if (_acceleratedDelayPerChar <= 0f)
                     {
-                        float remainingTime = 1.0f; // 固定1秒
-                        _acceleratedDelayPerChar = remainingTime / remainingChars;
-                        // 确保延迟不为负数或过小
-                        _acceleratedDelayPerChar = Mathf.Max(_acceleratedDelayPerChar, 0.001f);
+                        int remainingChars = endVisibleIndex - i;
+                        if (remainingChars > 0)
+                        {
+                            float remainingTime = 1.0f;
+                            _acceleratedDelayPerChar = Mathf.Max(remainingTime / remainingChars, 0.001f);
+                        }
+                        else
+                        {
+                            _acceleratedDelayPerChar = 0f;
+                        }
                     }
-                    else
-                    {
-                        _acceleratedDelayPerChar = 0f; // 立即显示
-                    }
+                    currentDelay = _acceleratedDelayPerChar;
                 }
-                // 使用固定的加速延迟
-                currentDelay = _acceleratedDelayPerChar;
-            }
-            else
-            {
-                currentDelay = delayPerCharacter;
-                // 如果停止加速，重置加速延迟
-                _acceleratedDelayPerChar = 0f;
+                else
+                {
+                    currentDelay = delayPerCharacter;
+                    _acceleratedDelayPerChar = 0f;
+                }
+
+                if (currentDelay > 0f)
+                    yield return new WaitForSeconds(currentDelay);
+                else
+                    yield return null;
+
+                // 适度检查滚动（不是每个字符都做）
+                if (scrollFrequency > 0 && (i % scrollFrequency == 0))
+                    yield return StartCoroutine(CheckAndScrollIfNeeded());
             }
 
-            yield return new WaitForSeconds(currentDelay);
+            // 确保显示到 endVisibleIndex（可见字符数）
+            _currentVisibleCharacters = endVisibleIndex;
+            targetText.maxVisibleCharacters = endVisibleIndex;
 
-            // 检查是否需要滚动：只有当文本填满可见区域时才滚动
-            // 等待一帧让 TextContentAutoHeight 更新完成
-            if (i % scrollFrequency == 0)
-            {
-                yield return StartCoroutine(CheckAndScrollIfNeeded());
-            }
-        }
+            // 完成后滚动
+            if (scrollToBottomOnComplete) ScrollToBottom();
+            else ScrollToBottomWithOffset(scrollOffset);
 
-        // 确保显示所有字符
-        _currentVisibleCharacters = _targetText.Length;
-        targetText.maxVisibleCharacters = _targetText.Length;
-        
-        // [SFX] 打字完成，停止循环音效
-        if (enableTypewriterSfx && SfxManager.Instance != null)
-        {
-            SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
+            // 刷新 mesh，保证 link 的几何信息可用于点击命中
+            targetText.ForceMeshUpdate();
+            Canvas.ForceUpdateCanvases();
         }
-        
-        // 完成时根据配置决定是否滚动到底部
-        if (scrollToBottomOnComplete)
+        finally
         {
-            ScrollToBottom();
-        }
-        else
-        {
-            ScrollToBottomWithOffset(scrollOffset);
-        }
+            // [SFX] 无论如何，打字结束/中断都必须停循环音效
+            if (enableTypewriterSfx && SfxManager.Instance != null)
+                SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
 
-        _typewriterCoroutine = null;
-        _isAccelerating = false;
-    }
-
-    /// <summary>
-    /// 立即显示全部文本
-    /// </summary>
-    private void SkipToEnd()
-    {
-        // [SFX] 跳过时停止循环音效（StopTypewriter 中已处理，但这里确保停止）
-        if (enableTypewriterSfx && SfxManager.Instance != null)
-        {
-            SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
-        }
-        
-        StopTypewriter();
-        if (targetText != null)
-        {
-            _currentVisibleCharacters = _targetText.Length;
-            targetText.maxVisibleCharacters = _targetText.Length;
-            if (scrollToBottomOnComplete)
-            {
-                ScrollToBottom();
-            }
-            else
-            {
-                ScrollToBottomWithOffset(scrollOffset);
-            }
+            _typewriterCoroutine = null;
+            _isAccelerating = false;
+            _acceleratedDelayPerChar = 0f;
         }
     }
 
     /// <summary>
-    /// 处理点击事件（加速功能）
-    /// </summary>
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        HandleAcceleration();
-    }
-
-    /// <summary>
-    /// 检测空格键（加速功能）
-    /// </summary>
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            HandleAcceleration();
-        }
-    }
-
-    /// <summary>
-    /// 处理加速逻辑
+    /// 双击/单击加速逻辑
     /// </summary>
     private void HandleAcceleration()
     {
-        // 如果没有正在进行的打字机效果，忽略
         if (_typewriterCoroutine == null)
-        {
             return;
-        }
 
         float currentTime = Time.time;
 
-        // 检查是否为双击（在时间窗口内）
         if (_lastClickTime > 0 && (currentTime - _lastClickTime) < doubleClickWindow)
         {
-            // 双击：立即显示全部文本
+            // 双击：立即显示完“可见字符”
             SkipToEnd();
             _lastClickTime = -1f;
         }
         else
         {
-            // 单击：加速打字机效果
+            // 单击：进入加速状态
             _isAccelerating = true;
             _lastClickTime = currentTime;
         }
     }
 
     /// <summary>
-    /// 滚动到底部（完全到底部）
+    /// 立即显示全部文本（按可见字符总数）
     /// </summary>
+    public void SkipToEnd()
+    {
+        // StopTypewriterInternal 会兜底停循环音效
+        StopTypewriterInternal(completeVisible: true);
+
+        if (targetText != null)
+        {
+            if (scrollToBottomOnComplete) ScrollToBottom();
+            else ScrollToBottomWithOffset(scrollOffset);
+
+            targetText.ForceMeshUpdate();
+            Canvas.ForceUpdateCanvases();
+        }
+    }
+
+    /// <summary>
+    /// 点击逻辑（你指定的交互规则）
+    /// 1) 打字中：任何点击先加速/双击跳过（禁止点 link）
+    /// 2) 打字结束：允许检测 link（命中则收集线索）
+    /// 3) 未命中 link：NextDialogue
+    /// </summary>
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (targetText == null)
+            return;
+
+        // 1) 正在打字：任何点击都先加速（不允许点 link）
+        if (IsTyping)
+        {
+            HandleAcceleration();
+            return;
+        }
+
+        // 2) 打字结束后，才允许检测 link
+        targetText.ForceMeshUpdate();
+        Canvas.ForceUpdateCanvases();
+
+        Camera cam = null;
+        if (eventData != null && eventData.pressEventCamera != null)
+        {
+            cam = eventData.pressEventCamera;
+        }
+        else
+        {
+            var canvas = targetText.canvas;
+            if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                cam = canvas.worldCamera;
+        }
+
+        int linkIndex = TMP_TextUtilities.FindIntersectingLink(targetText, eventData.position, cam);
+        if (linkIndex != -1)
+        {
+            var linkInfo = targetText.textInfo.linkInfo[linkIndex];
+            string clueId = linkInfo.GetLinkID();
+
+            Debug.Log($"[TypewriterEffect] 点击线索链接: {clueId}");
+
+            if (ClueManager.instance != null)
+                ClueManager.instance.RevealClue(clueId);
+
+            return;
+        }
+
+        // 3) 空白：下一句
+        if (enableDialoguePanelClick && dialogueController != null)
+            dialogueController.NextDialogue();
+    }
+
+    /// <summary>
+    /// 空格键加速（保留你的习惯）
+    /// </summary>
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+            HandleAcceleration();
+    }
+
+    /// <summary>
+    /// 计算当前文本的可见字符总数
+    /// 注意：必须在 targetText.text 设置后 ForceMeshUpdate() 过，textInfo 才可靠
+    /// </summary>
+    private int GetTotalVisibleCharacters()
+    {
+        if (targetText == null || targetText.textInfo == null)
+            return 0;
+
+        // TMP 这里的 characterCount 是“可见字符数量”（不包含富文本标签字符）
+        return Mathf.Max(0, targetText.textInfo.characterCount);
+    }
+
+    // ---------- 滚动相关（保留你原来的实现，略微做了语义对齐） ----------
+
     private void ScrollToBottom()
     {
         ScrollToBottomWithOffset(0f);
     }
 
-    /// <summary>
-    /// 滚动到底部（带偏移量）
-    /// </summary>
-    /// <param name="offset">偏移量（0-1，0表示完全到底部）</param>
     private void ScrollToBottomWithOffset(float offset)
     {
         if (_scrollRect != null)
-        {
-            // 使用协程延迟滚动，确保文本已更新
             StartCoroutine(ScrollToBottomCoroutine(offset));
-        }
     }
 
-    /// <summary>
-    /// 滚动到底部协程
-    /// </summary>
-    /// <param name="offset">偏移量（0-1，0表示完全到底部）</param>
     private IEnumerator ScrollToBottomCoroutine(float offset = 0f)
     {
-        yield return null;  // 等待一帧，确保 TextMeshPro 已更新
-
-        // 强制更新 Canvas
+        yield return null;
         Canvas.ForceUpdateCanvases();
 
-        // 滚动到底部（verticalNormalizedPosition = 0 表示底部）
-        // offset 值越大，保留的可见区域越多
         if (_scrollRect != null)
-        {
             _scrollRect.verticalNormalizedPosition = Mathf.Clamp01(offset);
-        }
     }
-
-    /// <summary>
-    /// 检查打字机效果是否正在进行
-    /// </summary>
-    public bool IsTyping => _typewriterCoroutine != null;
 
     /// <summary>
     /// 检查并滚动（如果需要）
-    /// 考虑 TextContentAutoHeight 脚本的影响
-    /// 检测当前显示的文本是否填满可见区域
     /// </summary>
     private IEnumerator CheckAndScrollIfNeeded()
     {
         if (targetText == null || _scrollRect == null)
-        {
             yield break;
-        }
 
-        // 等待一帧，让 TextContentAutoHeight 在 LateUpdate 中更新完成
+        // 等待一帧，让布局更新完成
         yield return null;
 
-        // 强制更新文本网格和布局
         targetText.ForceMeshUpdate();
         Canvas.ForceUpdateCanvases();
 
-        // 获取 ScrollRect 的 viewport 和 content
-        RectTransform viewport = _scrollRect.viewport;
-        if (viewport == null)
-        {
-            viewport = _scrollRect.GetComponent<RectTransform>();
-        }
-
+        RectTransform viewport = _scrollRect.viewport != null ? _scrollRect.viewport : _scrollRect.GetComponent<RectTransform>();
         RectTransform content = _scrollRect.content;
+
         if (viewport == null || content == null)
-        {
             yield break;
-        }
 
-        // 获取 viewport 的本地坐标高度
         float viewportHeight = viewport.rect.height;
-
-        // 获取 content 的本地坐标高度（由 TextContentAutoHeight 根据完整文本设置）
         float contentHeight = content.rect.height;
 
-        // 如果 content 高度小于等于 viewport 高度，说明还没填满，不需要滚动
         if (contentHeight <= viewportHeight)
-        {
             yield break;
-        }
 
-        // 获取当前显示的文本的实际渲染高度
-        // 使用 textInfo 来获取当前显示的行数和高度
         if (targetText.textInfo == null || targetText.textInfo.lineCount == 0)
-        {
             yield break;
-        }
 
-        // 获取当前显示的最后一行
-        int lastVisibleLine = Mathf.Min(targetText.textInfo.lineCount - 1, 
-            targetText.maxVisibleLines > 0 ? targetText.maxVisibleLines - 1 : targetText.textInfo.lineCount - 1);
-        
-        if (lastVisibleLine < 0)
-        {
+        int lastLine = targetText.textInfo.lineCount - 1;
+        if (lastLine < 0)
             yield break;
-        }
 
-        // 获取最后一行的高度信息
-        var lastLineInfo = targetText.textInfo.lineInfo[lastVisibleLine];
-        // 计算当前显示的文本的实际高度（从第一行到最后一行的底部）
+        var lastLineInfo = targetText.textInfo.lineInfo[lastLine];
         float currentDisplayHeight = lastLineInfo.ascender - targetText.textInfo.lineInfo[0].descender;
 
-        // 如果当前显示的文本高度超过 viewport 高度，说明已经填满，需要滚动
         if (currentDisplayHeight > viewportHeight)
-        {
             ScrollToBottomWithOffset(scrollOffset);
-        }
     }
 
     /// <summary>
-    /// 对象禁用时兜底停止循环音效
+    /// 对象禁用时兜底停止循环音效（防止切界面残留）
     /// </summary>
     private void OnDisable()
     {
-        // [SFX] 兜底停止循环音效，确保切界面/对象禁用时循环音必停
         if (enableTypewriterSfx && SfxManager.Instance != null)
-        {
             SfxManager.Instance.StopLoop(SfxId.TypewriterLoop, this);
+
+        // 可选：禁用时也强制停协程，避免残留状态
+        if (_typewriterCoroutine != null)
+        {
+            StopCoroutine(_typewriterCoroutine);
+            _typewriterCoroutine = null;
         }
+
+        _isAccelerating = false;
+        _acceleratedDelayPerChar = 0f;
     }
 }

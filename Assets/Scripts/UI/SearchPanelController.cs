@@ -145,8 +145,8 @@ public class SearchPanelController : MonoBehaviour
 
     private IEnumerator ExecuteCommandCoroutine(CommandType command, string searchText)
     {
-        // 只有 Detect 指令时清空文本窗当前显示的内容
-        if (command == CommandType.Detect)
+        //  Detect/Sniff 指令时清空文本窗当前显示的内容
+        if (command == CommandType.Detect || command == CommandType.Sniff)
         {
             _historyLog.Clear();
             _lastDisplayedText = string.Empty;
@@ -225,7 +225,7 @@ public class SearchPanelController : MonoBehaviour
             {
                 // 如果searchable，显示detailText（不再收集）
                 var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-                return $"[结果]：\n{detail}\n\n";
+                return $"\n{detail}\n\n";
             }
             else
             {
@@ -253,13 +253,13 @@ public class SearchPanelController : MonoBehaviour
                     Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
                 }
                 
-                return $"[结果]：\n{detail}\n[结果]：采集到关联线索。\n\n";
+                return $"\n{detail}\n[结果]：采集到关联线索。\n\n";
             }
             else if (shouldShowDetail && !shouldCollect)
             {
                 // 只searchable不collectable：显示detailText（不收集）
                 var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-                return $"[结果]：\n{detail}\n\n";
+                return $"\n{detail}\n\n";
             }
             else if (!shouldShowDetail && shouldCollect)
             {
@@ -306,7 +306,7 @@ public class SearchPanelController : MonoBehaviour
         if (!string.IsNullOrWhiteSpace(clue.Detail_Mark))
         {
             // 有Detail_Mark：显示Detail_Mark
-            return $"[结果]：\n{clue.Detail_Mark}\n\n";
+            return $"\n{clue.Detail_Mark}\n\n";
         }
         else
         {
