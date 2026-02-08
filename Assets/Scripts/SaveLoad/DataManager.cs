@@ -15,6 +15,8 @@ public class DataManager : MonoBehaviour
 	private Data saveData;
 	// 存档文件在资源管理器中的目录
 	private string jsonFolder;
+	[Tooltip("是否是测试模式")]
+	public bool isTest;
 
 	private void Awake()
 	{
@@ -37,7 +39,7 @@ public class DataManager : MonoBehaviour
 	private void Update()
 	{
 		// 按下L加载保存的数据，测试用
-		if (Keyboard.current[Key.Semicolon].wasPressedThisFrame)
+		if (Keyboard.current[Key.L].wasPressedThisFrame && isTest)
 			Load();
 	}
 
