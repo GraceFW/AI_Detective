@@ -22,7 +22,7 @@ MonoBehaviour:
     maxSimultaneous: 2
     cooldown: 0
   - id: 1
-    clip: {fileID: 8300000, guid: 457a8c0828ec4834f95c61c7d3e61072, type: 3}
+    clip: {fileID: 8300000, guid: ee2e610006422004bb78d09d06d82c6f, type: 3}
     volume: 0.9
     loop: 0
     pitchMin: 1
@@ -30,7 +30,7 @@ MonoBehaviour:
     maxSimultaneous: 8
     cooldown: 0.08
   - id: 2
-    clip: {fileID: 8300000, guid: 595add6fd9250094fb05d619bbd2fa17, type: 3}
+    clip: {fileID: 8300000, guid: 1c6db94ffb9fa6948baf648186307eda, type: 3}
     volume: 0.9
     loop: 0
     pitchMin: 1
