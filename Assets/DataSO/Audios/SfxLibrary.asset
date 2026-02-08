@@ -15,7 +15,7 @@ MonoBehaviour:
   entries:
   - id: 0
     clip: {fileID: 8300000, guid: 8e2a5a6875a33384dbfdcae0fd9c7d78, type: 3}
-    volume: 0.5
+    volume: 0.6
     loop: 1
     pitchMin: 0.98
     pitchMax: 1.02
@@ -28,7 +28,7 @@ MonoBehaviour:
     pitchMin: 1
     pitchMax: 1
     maxSimultaneous: 8
-    cooldown: 0.08
+    cooldown: 0
   - id: 2
     clip: {fileID: 8300000, guid: 1c6db94ffb9fa6948baf648186307eda, type: 3}
     volume: 0.9
