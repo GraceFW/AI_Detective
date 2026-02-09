@@ -1130,7 +1130,7 @@ MonoBehaviour:
   blackGroup: {fileID: 1356604906}
   titleRoot: {fileID: 1729561244}
   initialBlackHoldDuration: 4
-  fadeInFromBlackDuration: 3
+  fadeInFromBlackDuration: 2
   fadeOutToBlackDuration: 0.6
   titleFadeInFromBlackDuration: 0.6
   skipFadeOnSecondPress: 0

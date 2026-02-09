@@ -1066,7 +1066,7 @@ MonoBehaviour:
   menuScene: {fileID: 11400000, guid: 66f25b2efd3ae1d43b4d778a0655c02d, type: 2}
   currentScene: {fileID: 0}
   playBootTextWhenLeaveMenu: 1
-  menuBootCharsPerSecond: 600
+  menuBootCharsPerSecond: 900
   menuBootText: "> Initializing Core Modules...\n   [OK] Neural Lattice Activated\n  
     [OK] Memory Core Synced\n   [OK] Ethical Constraint Net Calibrated\n   [OK] Forensic
     Data Ports Connected\n   [OK] Urban Surveillance Grid: ONLINE\n   [OK] Voice
