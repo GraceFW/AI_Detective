@@ -71,16 +71,12 @@ MonoBehaviour:
     - nodeId: 5
       text: "\u8FD9\u662F\u6211\u6240\u8D1F\u8D23\u7684\u520A\u7269\u3002\n\u6700\u8FD1\u8BFB\u8005\u5BF9\u5B83\u7684\u6028\u6C14\u5F88\u91CD\u3002"
       nextNodeId: 
-      options:
-      - optionText: "\u4F60\u5BF9\u4ED6\u5E73\u65F6\u7684\u4E60\u60EF\u6709\u4EC0\u4E48\u4E86\u89E3\uFF1F"
-        nextNodeId: 4
+      options: []
     singleUse: 0
   - shownClue: {fileID: 11400000, guid: bf2cbad49f241f549a4f01a141efbb68, type: 2}
     dialogues:
     - nodeId: 6
       text: "\u6211\u4E0D\u592A\u6E05\u695A\uFF0C\u6211\u6CA1\u6709\u5230\u573A\u3002"
       nextNodeId: 
-      options:
-      - optionText: "\u4F60\u5BF9\u4ED6\u5E73\u65F6\u7684\u4E60\u60EF\u6709\u4EC0\u4E48\u4E86\u89E3\uFF1F"
-        nextNodeId: 4
+      options: []
     singleUse: 0
