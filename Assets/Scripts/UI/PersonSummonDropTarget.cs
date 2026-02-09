@@ -12,6 +12,9 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
     [Tooltip("对话控制器")]
     [SerializeField] private DialogueController dialogueController;
 
+    [Tooltip("不可传唤时显示的提示文字（挂TimedTextTip）")]
+    [SerializeField] private GameObject cannotSummonTip;
+
     [Header("高亮效果（可选）")]
     [Tooltip("拖拽悬停时的高亮颜色")]
     [SerializeField] private Color highlightColor = new Color(0.3f, 0.6f, 1f, 0.3f);
@@ -67,6 +70,10 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
         if (!personClue.canBeSummoned)
         {
             Debug.Log($"[PersonSummonDropTarget] {personClue.displayName} 此人暂不可传唤");
+            if (cannotSummonTip != null)
+            {
+                cannotSummonTip.SetActive(true);
+            }
             ClearHighlight();
             return;
         }
