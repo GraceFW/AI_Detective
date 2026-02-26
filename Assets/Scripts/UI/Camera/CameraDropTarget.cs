@@ -18,14 +18,14 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
     [SerializeField] private Image screenImage;
 
     [Header("时间选择器")]
-    [Tooltip("Month下拉框")]
-    [SerializeField] private TMP_Dropdown monthDropdown;
-
     [Tooltip("Date下拉框")]
     [SerializeField] private TMP_Dropdown dateDropdown;
 
     [Tooltip("Hour下拉框")]
     [SerializeField] private TMP_Dropdown hourDropdown;
+
+    [Tooltip("Minute下拉框")]
+    [SerializeField] private TMP_Dropdown minuteDropdown;
 
     [Header("默认显示")]
     [Tooltip("无数据时显示的图像")]
@@ -158,7 +158,7 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
         // 获取当前时间
         CameraTime currentTime = GetCurrentTime();
 
-        // 获取对应时间的监控画面
+        // 获取对应时间的监控画面,修改为时间段从这里切入
         CameraFrameView frameView = _currentCameraClue.GetFrameOrDefault(currentTime);
         _currentFrameView = frameView; // 缓存当前帧
 
@@ -185,18 +185,11 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
     /// </summary>
     private CameraTime GetCurrentTime()
     {
-        int month = 1;
         int day = 1;
         int hour = 0;
+        int minute = 0;
 
-        if (monthDropdown != null)
-        {
-            month = monthDropdown.value + 1;
-        }
-        else
-        {
-            Debug.LogWarning("[CameraDropTarget] monthDropdown 未配置，使用默认值 1");
-        }
+       
 
         if (dateDropdown != null)
         {
@@ -204,19 +197,28 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
         }
         else
         {
-            Debug.LogWarning("[CameraDropTarget] dateDropdown 未配置，使用默认值 1");
+            Debug.LogWarning("[CameraDropTarget] dateDropdown 未配置，请检查inspector视图是否正确赋值");
         }
 
         if (hourDropdown != null)
         {
-            hour = hourDropdown.value + 1;
+            hour = hourDropdown.value;
         }
         else
         {
-            Debug.LogWarning("[CameraDropTarget] hourDropdown 未配置，使用默认值 0");
+            Debug.LogWarning("[CameraDropTarget] hourDropdown 未配置，请检查inspector视图是否正确赋值");
         }
 
-        return new CameraTime(month, day, hour);
+         if (minuteDropdown != null)
+        {
+            minute = minuteDropdown.value;
+        }
+        else
+        {
+            Debug.LogWarning("[CameraDropTarget] minuteDropdown 未配置，请检查inspector视图是否正确赋值");
+        }
+
+        return new CameraTime(day, hour, minute);
     }
 
     /// <summary>

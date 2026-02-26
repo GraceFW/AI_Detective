@@ -71,7 +71,7 @@ public class CameraClueData : ClueData
             if (f == null) continue;
 
             // You can relax this matching rule later if needed.
-            if (f.time.month != time.month || f.time.day != time.day)
+            if (f.time.minute != time.minute || f.time.day != time.day)
                 continue;
 
             int diff = Mathf.Abs(f.time.hour - time.hour);
@@ -123,46 +123,68 @@ public readonly struct CameraFrameView
     }
 }
 
-[Serializable]
-public struct CameraTime
+/// <summary>
+/// 摄像头时间结构体（日/时/分）
+/// </summary>
+[Serializable] // 确保能在 Inspector 面板显示
+public struct CameraTime : IEquatable<CameraTime> // 实现强类型 Equals，性能更好
 {
-    public int month;
+    // 字段顺序为「日→时→分」
     public int day;
     public int hour;
+    public int minute;
 
-    public CameraTime(int month, int day, int hour)
+    public CameraTime(int day, int hour, int minute)
     {
-        this.month = month;
         this.day = day;
         this.hour = hour;
+        this.minute = minute;
     }
 
+    // 实现强类型 Equals（比 object 版本性能更高）
+    public bool Equals(CameraTime other)
+    {
+        return day == other.day && hour == other.hour && minute == other.minute;
+    }
+
+    // 重写 object Equals（兼容旧代码）
     public override bool Equals(object obj)
     {
-        if (obj is CameraTime other)
-            return month == other.month && day == other.day && hour == other.hour;
-        return false;
+        return obj is CameraTime other && Equals(other);
     }
 
+    // 修复4：哈希计算顺序和字段/Equals 一致（day→hour→minute），保证一致性
     public override int GetHashCode()
     {
         unchecked
         {
             int hash = 17;
-            hash = hash * 31 + month;
             hash = hash * 31 + day;
             hash = hash * 31 + hour;
+            hash = hash * 31 + minute;
             return hash;
         }
     }
 
-    public override string ToString() => $"{month:00}/{day:00} {hour:00}:00";
+    // 修复5：移除末尾多余空格，格式改为「00日 00:00」，更符合中文显示习惯
+    public override string ToString() => $"{day:00}日 {hour:00}:{minute:00}";
+
+    // 可选：重载 == 和 != 运算符，使用更便捷
+    public static bool operator ==(CameraTime left, CameraTime right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(CameraTime left, CameraTime right)
+    {
+        return !left.Equals(right);
+    }
 }
 
 [Serializable]
 public class ClickableArea
 {
-    [Tooltip("Normalized Rect (0�C1)")]
+    [Tooltip("Normalized Rect (0�C1)")]
     public Rect rect;
 
     [Tooltip("Clue revealed when this area is clicked")]

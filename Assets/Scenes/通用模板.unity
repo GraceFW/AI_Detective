@@ -513,8 +513,9 @@ GameObject:
   - component: {fileID: 104427882}
   - component: {fileID: 104427881}
   - component: {fileID: 104427880}
+  - component: {fileID: 104427883}
   m_Layer: 5
-  m_Name: Month
+  m_Name: Date
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -616,6 +617,44 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: 12
       m_Image: {fileID: 0}
+    - m_Text: 13
+      m_Image: {fileID: 0}
+    - m_Text: 14
+      m_Image: {fileID: 0}
+    - m_Text: 15
+      m_Image: {fileID: 0}
+    - m_Text: 16
+      m_Image: {fileID: 0}
+    - m_Text: 17
+      m_Image: {fileID: 0}
+    - m_Text: 18
+      m_Image: {fileID: 0}
+    - m_Text: 19
+      m_Image: {fileID: 0}
+    - m_Text: 20
+      m_Image: {fileID: 0}
+    - m_Text: 21
+      m_Image: {fileID: 0}
+    - m_Text: 22
+      m_Image: {fileID: 0}
+    - m_Text: 23
+      m_Image: {fileID: 0}
+    - m_Text: 24
+      m_Image: {fileID: 0}
+    - m_Text: 25
+      m_Image: {fileID: 0}
+    - m_Text: 26
+      m_Image: {fileID: 0}
+    - m_Text: 27
+      m_Image: {fileID: 0}
+    - m_Text: 28
+      m_Image: {fileID: 0}
+    - m_Text: 29
+      m_Image: {fileID: 0}
+    - m_Text: 30
+      m_Image: {fileID: 0}
+    - m_Text: 31
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -670,6 +709,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 104427878}
   m_CullTransparentMesh: 1
+--- !u!114 &104427883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104427878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03ea5ce459c94941ad5c7babeb50ce2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _timeType: 0
+  _customMinValue: 1
+  _customMaxValue: 31
+  _displayFormat: '{0}'
 --- !u!1 &120119450
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,8 +737,9 @@ GameObject:
   - component: {fileID: 120119454}
   - component: {fileID: 120119453}
   - component: {fileID: 120119452}
+  - component: {fileID: 120119455}
   m_Layer: 5
-  m_Name: Date
+  m_Name: Hour
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -809,20 +865,6 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: 24
       m_Image: {fileID: 0}
-    - m_Text: 25
-      m_Image: {fileID: 0}
-    - m_Text: 26
-      m_Image: {fileID: 0}
-    - m_Text: 27
-      m_Image: {fileID: 0}
-    - m_Text: 28
-      m_Image: {fileID: 0}
-    - m_Text: 29
-      m_Image: {fileID: 0}
-    - m_Text: 30
-      m_Image: {fileID: 0}
-    - m_Text: 31
-      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -877,6 +919,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 120119450}
   m_CullTransparentMesh: 1
+--- !u!114 &120119455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120119450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03ea5ce459c94941ad5c7babeb50ce2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _timeType: 1
+  _customMinValue: 0
+  _customMaxValue: 23
+  _displayFormat: '{0:D2}'
 --- !u!1 &164883306
 GameObject:
   m_ObjectHideFlags: 0
@@ -3802,7 +3860,7 @@ GameObject:
   - component: {fileID: 657413206}
   - component: {fileID: 657413205}
   m_Layer: 5
-  m_Name: "\u65E5"
+  m_Name: "\u65F6"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3847,7 +3905,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u65E5"
+  m_text: "\u65F6"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
   m_sharedMaterial: {fileID: -5848387286364068731, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
@@ -6847,8 +6905,9 @@ GameObject:
   - component: {fileID: 1345778118}
   - component: {fileID: 1345778117}
   - component: {fileID: 1345778116}
+  - component: {fileID: 1345778119}
   m_Layer: 5
-  m_Name: Hour
+  m_Name: Minute
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6974,6 +7033,10 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: 24
       m_Image: {fileID: 0}
+    - m_Text: 24
+      m_Image: {fileID: 0}
+    - m_Text: 24
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -7028,6 +7091,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1345778114}
   m_CullTransparentMesh: 1
+--- !u!114 &1345778119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345778114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03ea5ce459c94941ad5c7babeb50ce2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _timeType: 2
+  _customMinValue: 0
+  _customMaxValue: 59
+  _displayFormat: '{0:D2}'
 --- !u!1 &1353976847
 GameObject:
   m_ObjectHideFlags: 0
@@ -8757,9 +8836,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraNameText: {fileID: 1689235536}
   screenImage: {fileID: 574409979}
-  monthDropdown: {fileID: 104427880}
-  dateDropdown: {fileID: 120119452}
-  hourDropdown: {fileID: 1345778116}
+  dateDropdown: {fileID: 104427880}
+  hourDropdown: {fileID: 120119452}
+  minuteDropdown: {fileID: 1345778116}
   noDataSprite: {fileID: 21300000, guid: dbc89c9aa91382f4d830e7fb705cba25, type: 3}
   highlightColor: {r: 0.3, g: 0.6, b: 1, a: 0.3}
   highlightImage: {fileID: 1709585833}
@@ -9248,7 +9327,7 @@ GameObject:
   - component: {fileID: 1734521542}
   - component: {fileID: 1734521541}
   m_Layer: 5
-  m_Name: "\u6708"
+  m_Name: "\u65E5"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9293,7 +9372,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u6708"
+  m_text: "\u65E5"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
   m_sharedMaterial: {fileID: -5848387286364068731, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
@@ -11713,7 +11792,7 @@ GameObject:
   - component: {fileID: 2134668775}
   - component: {fileID: 2134668774}
   m_Layer: 5
-  m_Name: "\u65F6"
+  m_Name: "\u5206"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11758,7 +11837,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u65F6"
+  m_text: "\u5206"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
   m_sharedMaterial: {fileID: -5848387286364068731, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
