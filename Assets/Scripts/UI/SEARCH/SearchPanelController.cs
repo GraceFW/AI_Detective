@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -14,8 +14,8 @@ public class SearchPanelController : MonoBehaviour
     [Tooltip("命令下拉框 (TMP_Dropdown)")]
     [SerializeField] private TMP_Dropdown commandDropdown;
 
-    [Tooltip("搜索输入框 (TMP_InputField)")]
-    [SerializeField] private TMP_InputField searchInput;
+    [Tooltip("Detect指令输入框 (TMP_InputField)")]
+    [SerializeField] private TMP_InputField detectInput;
 
     [Tooltip("结果显示文本 (TextMeshProUGUI)")]
     [SerializeField] private TextMeshProUGUI resultText;
@@ -50,9 +50,9 @@ public class SearchPanelController : MonoBehaviour
     {
         InitializeDropdown();
 
-        if (searchInput != null)
+        if (detectInput != null)
         {
-            searchInput.onSubmit.AddListener(OnSubmit);
+            detectInput.onSubmit.AddListener(OnSubmit);
         }
 
         if (resultText != null)
@@ -83,9 +83,9 @@ public class SearchPanelController : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (searchInput != null)
+        if (detectInput != null)
         {
-            searchInput.onSubmit.RemoveListener(OnSubmit);
+            detectInput.onSubmit.RemoveListener(OnSubmit);
         }
     }
 
@@ -124,9 +124,9 @@ public class SearchPanelController : MonoBehaviour
         ExecuteCommand(command, searchText);
 
         // 清空输入框
-        if (searchInput != null)
+        if (detectInput != null)
         {
-            searchInput.text = string.Empty;
+            detectInput.text = string.Empty;
         }
     }
 
@@ -170,7 +170,7 @@ public class SearchPanelController : MonoBehaviour
         var executingLine = "执行中...\n";
         _historyLog.Append(executingLine);
         UpdateResultText();
-        // 不再手动调用 ScrollToBottom，打字机效果会自己处理滚动
+        // 不再手动调用 ScrollToBottom，打字机效果（TypewriterEffect.cs）会自己处理滚动
 
         yield return new WaitForSeconds(executingDuration);
 
@@ -202,91 +202,116 @@ public class SearchPanelController : MonoBehaviour
         _displayCoroutine = null;
     }
 
-    /// <summary>
-    /// 执行 /detect 命令
-    /// </summary>
-    private string ExecuteDetect(ClueData clue)
-    {
-        if (clue == null)
-        {
-            return "[结果]：检定为低关联性信息。\n\n";
-        }
+/// <summary>
+/// 执行 /detect 命令（兼容Attack解锁内容）
+/// </summary>
+private string ExecuteDetect(ClueData clue)
+{
+	if (clue == null)
+	{
+		return "[结果]：检定为低关联性信息。\n\n";
+	}
 
-        // 检查是否已收集（使用 clue.collected 字段）
-        bool isRevealed = clue.collected;
-        Debug.Log(clue.displayName + "线索收集状态：" + isRevealed);
-        Debug.Log(clue.id + "线索ID：" + clue.id);
-        Debug.Log(clue.searchable + "线索可搜索：" + clue.searchable);
-        Debug.Log(clue.collectable + "线索可收集：" + clue.collectable);
-        if (isRevealed && ClueManager.instance.IsRevealed(clue.id))
-        {
-            // 已被收集的线索
-            if (clue.searchable)
-            {
-                // 如果searchable，显示detailText（不再收集）
-                var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-                return $"\n{detail}\n\n";
-            }
-            else
-            {
-                return "[结果]：该线索已存在于档案中。\n\n";
-            }
-        }
-        else
-        {
-            // 未收集的线索
-            bool shouldShowDetail = clue.searchable;
-            bool shouldCollect = clue.collectable;
-            
-            if (shouldShowDetail && shouldCollect)
-            {
-                // searchable且collectable：显示detailText + 收集 + 提示文本
-                var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-                
-                if (ClueManager.instance != null)
-                {
-                    Debug.Log("RevealClue: " + clue.id);
-                    ClueManager.instance.RevealClue(clue.id);
-                }
-                else
-                {
-                    Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
-                }
-                
-                return $"\n{detail}\n[结果]：采集到关联线索。\n\n";
-            }
-            else if (shouldShowDetail && !shouldCollect)
-            {
-                // 只searchable不collectable：显示detailText（不收集）
-                var detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-                return $"\n{detail}\n\n";
-            }
-            else if (!shouldShowDetail && shouldCollect)
-            {
-                // collectable但不searchable：收集 + 提示文本（不显示detailText）
-                if (ClueManager.instance != null)
-                {
-                    ClueManager.instance.RevealClue(clue.id);
-                }
-                else
-                {
-                    Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
-                }
-                
-                return "[结果]：采集到关联线索。\n\n";
-            }
-            else
-            {
-                // 两个都不满足：既不显示文字也不收集
-                return "[结果]：检定为低关联性信息。\n\n";
-            }
-        }
-    }
+	// 检查是否已收集（使用 clue.collected 字段）
+	bool isRevealed = clue.collected;
+	Debug.Log(clue.displayName + "线索收集状态：" + isRevealed);
+	Debug.Log(clue.id + "线索ID：" + clue.id);
+	Debug.Log(clue.detectable + "线索可搜索：" + clue.detectable);
+	Debug.Log(clue.collectable + "线索可收集：" + clue.collectable);
 
-    /// <summary>
-    /// 执行 /sniff 命令
-    /// </summary>
-    private string ExecuteSniff(ClueData clue)
+	// 基础文本构建
+	StringBuilder detectResult = new StringBuilder();
+	if (isRevealed && ClueManager.instance.IsRevealed(clue.id))
+	{
+		// 已被收集的线索
+		if (clue.detectable)
+		{
+			// 如果detectable，显示detailText
+			string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+			detectResult.AppendLine($"\n{detail}");
+
+			// 追加已解锁的Attack内容（如果配置了直接展示）
+			if (clue.isAttackContentUnlocked && clue.showAttackContentDirectly && !string.IsNullOrEmpty(clue.attackUnlockContent))
+			{
+				detectResult.AppendLine("\n【解锁的保护内容】：");
+				detectResult.AppendLine(clue.attackUnlockContent);
+			}
+		}
+		else
+		{
+			detectResult.AppendLine("[结果]：该线索已存在于档案中。");
+		}
+	}
+	else
+	{
+		// 未收集的线索
+		bool shouldShowDetail = clue.detectable;
+		bool shouldCollect = clue.collectable;
+
+		if (shouldShowDetail && shouldCollect)
+		{
+			// searchable且collectable：显示detailText + 收集 + 提示文本
+			string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+			detectResult.AppendLine($"\n{detail}");
+
+			if (ClueManager.instance != null)
+			{
+				Debug.Log("RevealClue: " + clue.id);
+				ClueManager.instance.RevealClue(clue.id);
+			}
+			else
+			{
+				Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
+			}
+
+			// 追加已解锁的Attack内容（如果配置了直接展示）
+			if (clue.isAttackContentUnlocked && clue.showAttackContentDirectly && !string.IsNullOrEmpty(clue.attackUnlockContent))
+			{
+				detectResult.AppendLine("\n【解锁的保护内容】：");
+				detectResult.AppendLine(clue.attackUnlockContent);
+			}
+
+			detectResult.AppendLine("[结果]：采集到关联线索。");
+		}
+		else if (shouldShowDetail && !shouldCollect)
+		{
+			// 只detectable不collectable：显示detailText（不收集）
+			string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+			detectResult.AppendLine($"\n{detail}");
+
+			// 这里没有写追加已解锁的Attack内容，因为根据设计，只有collectable的线索才会被RevealClue，从而可能解锁Attack内容
+		
+        }
+		else if (!shouldShowDetail && shouldCollect)
+		{
+			// collectable但不detectable：收集 + 提示文本（不显示detailText）
+			if (ClueManager.instance != null)
+			{
+				ClueManager.instance.RevealClue(clue.id);
+			}
+			else
+			{
+				Debug.LogWarning("SearchPanelController: ClueManager.instance 为空。");
+			}
+
+			detectResult.AppendLine("[结果]：采集到关联线索。");
+		}
+		else
+		{
+			// 两个都不满足：既不显示文字也不收集
+			detectResult.AppendLine("[结果]：检定为低关联性信息。");
+		}
+	}
+
+	// 补充换行符保持格式统一
+	detectResult.AppendLine("\n");
+	return detectResult.ToString();
+}
+
+	/// <summary>
+	/// 执行 /sniff 命令
+	/// </summary>
+	private string ExecuteSniff(ClueData clue)
     {
         if (clue == null)
         {
@@ -294,7 +319,7 @@ public class SearchPanelController : MonoBehaviour
         }
 
         // 只对searchable的线索有效
-        if (!clue.searchable)
+        if (!clue.detectable)
         {
             return "[结果]：未关联到高置信度结果。\n\n";
         }
@@ -315,18 +340,57 @@ public class SearchPanelController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 执行 /attack 命令
-    /// </summary>
-    private string ExecuteAttack(ClueData clue)
-    {
-        return "[结果]：此版本暂时不支持该功能。\n\n";
-    }
+	/// <summary>
+	/// 执行 /attack 命令（密码验证+解锁新内容）
+	/// </summary>
+	private string ExecuteAttack(ClueData clue)
+	{
+		if (clue == null)
+		{
+			return "[结果]：未找到对应线索，无法执行骇入指令。\n\n";
+		}
 
-    /// <summary>
-    /// 获取Sniff使用次数（场景级别，不存档）
-    /// </summary>
-    public int GetSniffUsageCount()
+		// 空输入校验
+		string inputKey = detectInput.text?.Trim() ?? string.Empty;
+		if (string.IsNullOrEmpty(inputKey))
+		{
+			return "[结果]：未输入相关秘钥，无法验证权限。\n\n";
+		}
+
+		// 线索是否支持Attack校验
+		if (string.IsNullOrEmpty(clue.attackKey) || string.IsNullOrEmpty(clue.attackUnlockContent))
+		{
+			return "[结果]：该线索不可骇入。\n\n";
+		}
+
+		// 密码验证
+		if (inputKey != clue.attackKey)
+		{
+			return "[结果]：秘钥错误，权限验证失败，无法解锁加密内容。\n\n";
+		}
+
+		// 密码正确：解锁新内容
+		if (clue.collected && !clue.isAttackContentUnlocked)
+		{
+			clue.isAttackContentUnlocked = true;
+			Debug.Log($"线索 [{clue.displayName}] 的Attack内容已解锁");
+			return $"[结果]：骇入成功！已解锁新内容：\n{clue.attackUnlockContent}\n\n";
+		}
+		else if (clue.collected && clue.isAttackContentUnlocked && clue.showAttackContentDirectly)
+		{
+			// 已解锁，直接展示
+			return $"[结果]：该线索加密内容已解锁，内容如下：\n{clue.attackUnlockContent}\n\n";
+		}
+        else
+        {
+            return "[结果]：特殊骇入程序已启动！！！\n这都被你发现了！但请通过Detect指令查看完整内容。\n\n";
+		}
+	}
+
+	/// <summary>
+	/// 获取Sniff使用次数（场景级别，不存档）
+	/// </summary>
+	public int GetSniffUsageCount()
     {
         return _sniffUsageCount;
     }
@@ -441,10 +505,10 @@ public class SearchPanelController : MonoBehaviour
     /// </summary>
     public void SetSearchText(string text)
     {
-        if (searchInput != null)
+        if (detectInput != null)
         {
-            searchInput.text = text;
-            searchInput.ActivateInputField();
+            detectInput.text = text;
+            detectInput.ActivateInputField();
         }
     }
 
@@ -453,7 +517,7 @@ public class SearchPanelController : MonoBehaviour
     /// </summary>
     public RectTransform GetSearchInputRect()
     {
-        return searchInput != null ? searchInput.GetComponent<RectTransform>() : null;
+        return detectInput != null ? detectInput.GetComponent<RectTransform>() : null;
     }
 }
 
