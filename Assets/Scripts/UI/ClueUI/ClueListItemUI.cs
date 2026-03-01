@@ -9,8 +9,11 @@ using UnityEngine.UI;
 /// </summary>
 public class ClueListItemUI : MonoBehaviour
 {
+
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private Button button;
+    [SerializeField] private Image backgroundImage;
+    
 
     private ClueData _clue;
     private Component _draggable; // 使用 Component 类型避免编译顺序问题
@@ -96,11 +99,13 @@ public class ClueListItemUI : MonoBehaviour
         {
             ClueId = null;
             if (nameText != null) nameText.text = string.Empty;
+            ApplyClueColor(null);
             return;
         }
 
         ClueId = clue.id;
         if (nameText != null) nameText.text = clue.displayName;
+        ApplyClueColor(clue);
 
         // 同步绑定到拖拽组件
         if (_draggable != null && clue != null)
@@ -114,5 +119,40 @@ public class ClueListItemUI : MonoBehaviour
     private void HandleButtonClicked()
     {
         OnClicked?.Invoke(_clue);
+    }
+
+    private void ApplyClueColor(ClueData clue)
+    {
+        if (backgroundImage == null)
+        {
+            backgroundImage = GetComponent<Image>();
+        }
+
+        if (backgroundImage == null)
+        {
+            return;
+        }
+
+        backgroundImage.color = GetColorByClueType(clue);
+    }
+
+    private static Color32 GetColorByClueType(ClueData clue)
+    {
+        if (clue is NormalClueData)
+        {
+            return new Color32(0x20, 0x20, 0x73, 0xFF);
+        }
+
+        if (clue is PersonClueData)
+        {
+            return new Color32(0xC0, 0x78, 0x46, 0xFF);
+        }
+
+        if (clue is CameraClueData)
+        {
+            return new Color32(0x4A, 0x4A, 0x4A, 0xFF);
+        }
+
+        return new Color32(0x20, 0x20, 0x73, 0xFF);
     }
 }
