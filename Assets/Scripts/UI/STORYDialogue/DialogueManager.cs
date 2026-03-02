@@ -62,9 +62,11 @@ public class DialogueManager : MonoBehaviour
     [Header("场景映射配置（用于从场景获取关卡编号）")]
     [Tooltip("场景名到关卡编号的映射表（用于TriggerNextWaveSpawnDialogue自动获取关卡）")]
     [SerializeField] private List<SceneLevelMapping> sceneMappings = new List<SceneLevelMapping>();
-    
-    // 当前对话状态
-    private DialogueSequence currentSequence;
+
+	public int CurrentLevelNumber => currentLevelNumber;
+
+	// 当前对话状态
+	private DialogueSequence currentSequence;
     private int currentEntryIndex = 0;
     private bool isTyping = false;
     private bool isDialogueActive = false;
@@ -775,6 +777,24 @@ public class DialogueManager : MonoBehaviour
         _waveSpawnTriggerCounts.Clear();
         Debug.Log("[DialogueManager] 所有关卡的 WaveSpawn 触发次数已重置");
     }
+
+	public void PlaySequence(DialogueSequence sequence, System.Action onComplete = null, bool isForced = false)
+	{
+		if (sequence == null || sequence.entries == null || sequence.entries.Length == 0)
+		{
+			onComplete?.Invoke();
+			return;
+		}
+
+		if (isDialogueActive)
+		{
+			Debug.LogWarning("[DialogueManager] 对话正在播放中，忽略PlaySequence调用");
+			return;
+		}
+
+		this.isForced = isForced;
+		StartCoroutine(ShowDialogueSequence(sequence, onComplete));
+	}
 }
 
 

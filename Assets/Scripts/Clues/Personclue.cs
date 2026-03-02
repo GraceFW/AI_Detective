@@ -54,8 +54,10 @@ public class DialogueNode
 [System.Serializable]
 public class DialogueOption
 {
-    // 选项按钮显示文本。
-    public string optionText;
+    // 选项ID
+	public string optionId;
+	// 选项按钮显示文本。
+	public string optionText;
 
     [Tooltip("Next dialogue node id")]
     // 选择该选项后跳转到的节点ID。

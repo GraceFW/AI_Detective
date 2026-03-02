@@ -40,7 +40,10 @@ public class DialogueUI : MonoBehaviour
     [Tooltip("对话框点击区域")]
     [SerializeField] private Button dialogueBoxButton;
 
-    private DialogueController _dialogueController;
+	[Header("Root Interaction Lock")]
+	[SerializeField] private CanvasGroup rootCanvasGroup;
+
+	private DialogueController _dialogueController;
     private List<GameObject> _currentChoiceButtons = new List<GameObject>();
 
     private Dictionary<string, string> _clickableTerms;
@@ -367,5 +370,13 @@ public class DialogueUI : MonoBehaviour
             _dialogueController.NavigateHistory(1);
         }
     }
+	public void SetInteractable(bool interactable)
+	{
+		if (rootCanvasGroup == null) return;
+		rootCanvasGroup.interactable = interactable;
+		rootCanvasGroup.blocksRaycasts = interactable;
+		// 可选：插播时置灰
+		// rootCanvasGroup.alpha = interactable ? 1f : 1f;
+	}
 }
 

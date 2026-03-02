@@ -10,7 +10,8 @@ public enum DialogueTriggerType
 {
     LevelStart,      // 关卡开始
     WaveSpawn,       // 波次生成（波次：案件中不同时间点的对话）
-    LevelComplete    // 关卡完成
+    LevelComplete,    // 关卡完成
+    None
 }
 
 /// <summary>

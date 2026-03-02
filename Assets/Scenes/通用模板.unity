@@ -2640,6 +2640,7 @@ MonoBehaviour:
   prevButton: {fileID: 2004872361}
   nextButton: {fileID: 282705724}
   dialogueBoxButton: {fileID: 0}
+  rootCanvasGroup: {fileID: 0}
 --- !u!114 &361593137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2654,6 +2655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueUI: {fileID: 361593136}
   dialogueHistory: {fileID: 361593135}
+  optionDialogueDb: {fileID: 11400000, guid: f8a2031411134134ebf1bda5f0d06782, type: 2}
 --- !u!1 &382759278
 GameObject:
   m_ObjectHideFlags: 0
@@ -8575,6 +8577,7 @@ GameObject:
   - component: {fileID: 1475180834}
   - component: {fileID: 1475180836}
   - component: {fileID: 1475180835}
+  - component: {fileID: 1475180837}
   m_Layer: 5
   m_Name: ASK
   m_TagString: Untagged
@@ -8647,6 +8650,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1475180833}
   m_CullTransparentMesh: 1
+--- !u!225 &1475180837
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475180833}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1489350940
 GameObject:
   m_ObjectHideFlags: 0

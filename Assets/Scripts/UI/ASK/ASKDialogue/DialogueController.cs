@@ -10,9 +10,11 @@ public class DialogueController : MonoBehaviour
     [Header("组件引用")]
     [SerializeField] private DialogueUI dialogueUI;
     [SerializeField] private DialogueHistory dialogueHistory;
+	[SerializeField] private InterrogationOptionDialogueDatabaseSO optionDialogueDb;
 
-    // 当前对话人物
-    private PersonClueData _currentPerson;
+	private bool _optionLocked = false;
+	// 当前对话人物
+	private PersonClueData _currentPerson;
     
     // 当前对话节点
     private DialogueNode _currentNode;
@@ -214,47 +216,109 @@ public class DialogueController : MonoBehaviour
 
         var option = _currentNode.options[optionIndex];
         Debug.Log($"[DialogueController] 选择选项: {option.optionText}");
+		// ====== 插播拦截：先播剧情 ======
+		if (optionDialogueDb != null && DialogueManager.Instance != null && _currentPerson != null)
+		{
+			int level = DialogueManager.Instance.CurrentLevelNumber; // 你需要在 DialogueManager 加这个getter
+			string personId = _currentPerson.id;
+			string nodeId = _currentNode.nodeId;
 
-        // 清空选项显示
-        dialogueUI.ClearOptions();
+			// 推荐使用 optionId；如果你暂时没加，就用 optionIndex.ToString()
+			string optionId = !string.IsNullOrEmpty(option.optionId) ? option.optionId : optionIndex.ToString();
 
-        // 跳转到选项对应的节点
-        if (!string.IsNullOrEmpty(option.nextNodeId))
-        {
-            // 先查找当前对话列表
-            var nextNode = FindNodeById(option.nextNodeId, _currentDialogueNodes);
+			if (optionDialogueDb.TryGet(level, personId, nodeId, optionId, out var entry) &&
+				entry.sequence != null)
+			{
+				_optionLocked = true;
+
+				// 锁问讯UI，防止乱点/穿透
+				dialogueUI.SetInteractable(false);
+				dialogueUI.ClearOptions(); // 可选：先把选项隐藏，避免视觉上还能点
+
+				DialogueManager.Instance.PlaySequence(entry.sequence, () =>
+				{
+					// 播完恢复问讯UI
+					dialogueUI.SetInteractable(true);
+					_optionLocked = false;
+
+					// 播完再执行原本的选项跳转逻辑
+					ContinueSelectOption(optionIndex);
+				}, entry.isForced);
+
+				return;
+			}
+		}
+
+		// 没命中插播配置：走原本逻辑
+		ContinueSelectOption(optionIndex);
+
+        // 旧代码=====================================================================================
+		//// 清空选项显示
+		//dialogueUI.ClearOptions();
+
+  //      // 跳转到选项对应的节点
+  //      if (!string.IsNullOrEmpty(option.nextNodeId))
+  //      {
+  //          // 先查找当前对话列表
+  //          var nextNode = FindNodeById(option.nextNodeId, _currentDialogueNodes);
             
-            // 如果找不到，再查找baseDialogues（线索对话的选项可能指向baseDialogues）
-            if (nextNode == null && _currentPerson != null && _currentPerson.baseDialogues != null)
-            {
-                nextNode = FindNodeById(option.nextNodeId, _currentPerson.baseDialogues);
-                // 如果节点在baseDialogues中找到，切换当前对话列表
-                if (nextNode != null)
-                {
-                    _currentDialogueNodes = _currentPerson.baseDialogues;
-                }
-            }
+  //          // 如果找不到，再查找baseDialogues（线索对话的选项可能指向baseDialogues）
+  //          if (nextNode == null && _currentPerson != null && _currentPerson.baseDialogues != null)
+  //          {
+  //              nextNode = FindNodeById(option.nextNodeId, _currentPerson.baseDialogues);
+  //              // 如果节点在baseDialogues中找到，切换当前对话列表
+  //              if (nextNode != null)
+  //              {
+  //                  _currentDialogueNodes = _currentPerson.baseDialogues;
+  //              }
+  //          }
             
-            if (nextNode != null)
-            {
-                LoadDialogueNode(nextNode);
-            }
-            else
-            {
-                Debug.LogWarning($"[DialogueController] 找不到选项对应的节点ID: {option.nextNodeId}");
-                EndDialogue();
-            }
-        }
-        else
-        {
-            EndDialogue();
-        }
+  //          if (nextNode != null)
+  //          {
+  //              LoadDialogueNode(nextNode);
+  //          }
+  //          else
+  //          {
+  //              Debug.LogWarning($"[DialogueController] 找不到选项对应的节点ID: {option.nextNodeId}");
+  //              EndDialogue();
+  //          }
+  //      }
+  //      else
+  //      {
+  //          EndDialogue();
+  //      }==========================================================================================
     }
 
-    /// <summary>
-    /// 历史浏览
-    /// </summary>
-    public void NavigateHistory(int direction)
+	private void ContinueSelectOption(int optionIndex)
+	{
+		var option = _currentNode.options[optionIndex];
+		Debug.Log($"[DialogueController] 选择选项: {option.optionText}");
+
+		dialogueUI.ClearOptions();
+
+		if (!string.IsNullOrEmpty(option.nextNodeId))
+		{
+			var nextNode = FindNodeById(option.nextNodeId, _currentDialogueNodes);
+
+			if (nextNode == null && _currentPerson != null && _currentPerson.baseDialogues != null)
+			{
+				nextNode = FindNodeById(option.nextNodeId, _currentPerson.baseDialogues);
+				if (nextNode != null) _currentDialogueNodes = _currentPerson.baseDialogues;
+			}
+
+			if (nextNode != null) LoadDialogueNode(nextNode);
+			else EndDialogue();
+		}
+		else
+		{
+			EndDialogue();
+		}
+	}
+
+	/// <summary>
+	/// 历史浏览
+	/// </summary>
+	public void NavigateHistory(int direction)
     {
         if (direction < 0)
         {

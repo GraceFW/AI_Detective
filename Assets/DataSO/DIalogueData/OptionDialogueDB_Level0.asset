@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22dfe2c4deda8244b9002f158d8f754a, type: 3}
+  m_Name: OptionDialogueDB_Level0
+  m_EditorClassIdentifier: 
+  entries:
+  - levelNumber: 0
+    personId: "\u9F50\u6728\u56FD\u51AC"
+    nodeId: 1
+    optionId: testOption1
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u6D4B\u8BD5\u54581"
+        speakerImage: {fileID: 0}
+        dialogueText: "\u6D4B\u8BD51"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+      - speakerName: "\u6D4B\u8BD5\u54582"
+        speakerImage: {fileID: 0}
+        dialogueText: "\u6D4B\u8BD52"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+    isForced: 0
