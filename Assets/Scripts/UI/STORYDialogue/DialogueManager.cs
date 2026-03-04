@@ -243,7 +243,7 @@ public class DialogueManager : MonoBehaviour
         onDialogueComplete = onComplete;
         isDialogueActive = true;
         isWaitingForSpecialNode = false;
-        
+        currentTriggerType = sequence.triggerType;
         // 触发对话开始事件
         if (dialogueStartEvent != null)
         {
@@ -564,9 +564,9 @@ public class DialogueManager : MonoBehaviour
         {
             NameInputDialog.Instance.Hide();
         }
-        
-        // 重置状态
-        isTyping = false;
+
+		// 重置状态,不能重置对话序列的触发类型，否则会导致事件系统无法正确识别当前对话类型
+		isTyping = false;
         isDialogueActive = false;
         isWaitingForSpecialNode = false;
         currentSequence = null;

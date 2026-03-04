@@ -31,7 +31,7 @@ public class ClueManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 初始化线索数据库：将所有线索的 collected 状态重置为 false
+    /// 初始化线索数据库：将所有线索的 collected 状态重置为 false等等
     /// </summary>
     private void InitializeClues()
     {
@@ -53,7 +53,8 @@ public class ClueManager : MonoBehaviour
             if (clue != null)
             {
                 clue.collected = false;
-                resetCount++;
+                clue.showAttackContentDirectly = true;
+				resetCount++;
             }
         }
 
@@ -98,6 +99,7 @@ public class ClueManager : MonoBehaviour
 
         _revealedIds.Add(clueId);
         clue.collected = true;
+        clue.showAttackContentDirectly = true;
 
         // [SFX] 播放新线索提示音（仅在真正新增时播放）
         if (SfxManager.Instance != null)

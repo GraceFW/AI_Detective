@@ -216,14 +216,15 @@ public class DialogueController : MonoBehaviour
 
         var option = _currentNode.options[optionIndex];
         Debug.Log($"[DialogueController] 选择选项: {option.optionText}");
+
 		// ====== 插播拦截：先播剧情 ======
 		if (optionDialogueDb != null && DialogueManager.Instance != null && _currentPerson != null)
 		{
-			int level = DialogueManager.Instance.CurrentLevelNumber; // 你需要在 DialogueManager 加这个getter
+			int level = DialogueManager.Instance.CurrentLevelNumber; // 需要在 DialogueManager 加这个getter
 			string personId = _currentPerson.id;
 			string nodeId = _currentNode.nodeId;
 
-			// 推荐使用 optionId；如果你暂时没加，就用 optionIndex.ToString()
+			// 推荐使用 optionId；如果暂时没加，就用 optionIndex.ToString()
 			string optionId = !string.IsNullOrEmpty(option.optionId) ? option.optionId : optionIndex.ToString();
 
 			if (optionDialogueDb.TryGet(level, personId, nodeId, optionId, out var entry) &&

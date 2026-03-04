@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entries:
   - levelNumber: 0
-    personId: "\u9F50\u6728\u56FD\u51AC"
+    personId: 0102
     nodeId: 1
     optionId: testOption1
     sequence:

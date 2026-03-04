@@ -530,6 +530,7 @@ public class SearchPanelController : MonoBehaviour
 		}
 		else
 		{
+			clue.isAttackContentUnlocked = true; // 即使之前未收集，只要密码正确也解锁内容（但不展示）
 			return "[结果]：特殊骇入程序已启动！！！\n这都被你发现了！但请通过Detect指令查看完整内容。\n\n";
 		}
 	}
