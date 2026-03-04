@@ -15,12 +15,12 @@ MonoBehaviour:
   id: 0004
   displayName: "\u6C34\u679C\u5200"
   detectable: 0
-  collectable: 1
+  collectable: 0
   collected: 0
   attackKey: 
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
   attackUnlockContent: 
-  summary: "\u51FA\u73B0\u5728\u7535\u8111\u6444\u50CF\u5934\u4E2D\uFF0C\u6CBE\u7740\u8840\u7684\u6C34\u679C\u5200\uFF0C\u88AB\u4E00\u4E2A\u9ED1\u8863\u7537\u5B50\u63E1\u7740\u3002"
+  summary: "\u51FA\u73B0\u5728\u7535\u8111\u6444\u50CF\u5934\u4E2D\uFF0C\u6CBE\u7740\u8840\u7684\u6C34\u679C\u5200\uFF0C\u88AB\u4E00\u4E2A\u9ED1\u8863\u7537\u5B50\u63E1\u7740"
   detailText: 
   Detail_Mark: 

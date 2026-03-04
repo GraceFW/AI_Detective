@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0002
   displayName: "\u6B7B\u4EA1\u65F6\u95F4"
-  detectable: 1
+  detectable: 0
   collectable: 1
   collected: 0
   attackKey: 
