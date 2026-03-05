@@ -31,6 +31,23 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
     [Tooltip("无数据时显示的图像")]
     [SerializeField] private Sprite noDataSprite;
 
+    [Header("读条UI")]
+    [Tooltip("读条UI根节点（用于显示/隐藏）")]
+    [SerializeField] private GameObject loadingRoot;
+
+    [Tooltip("读条填充Image（白色条）。将通过修改 RectTransform 宽度来实现填充效果")]
+    [SerializeField] private Image loadingFillImage;
+
+    [Tooltip("读条填充条的最大宽度（像素）。留空/<=0 则使用当前 RectTransform 的宽度作为最大宽度")]
+    [SerializeField] private float loadingFillMaxWidth = 0f;
+
+    [Tooltip("每次切换画面前的读条时长（秒）")]
+    [SerializeField] private float loadingDuration = 0.5f;
+
+    [Tooltip("读条期间 screenImage 显示的背景图片（可选）")]
+    [SerializeField] private Sprite loadingBackgroundSprite;
+    
+
     [Header("高亮效果")]
     [Tooltip("拖拽悬停时的高亮颜色")]
     [SerializeField] private Color highlightColor = new Color(0.3f, 0.6f, 1f, 0.3f);
@@ -54,6 +71,13 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
     private CameraFrameView? _currentFrameView; // 缓存当前显示的帧数据
     private readonly List<GameObject> _debugBorders = new List<GameObject>(); // 调试边框对象列表
 
+    private Coroutine _refreshCoroutine;
+    private int _refreshRequestId;
+
+    private RectTransform _loadingFillRect;
+    private Vector2 _loadingFillOriginalSize;
+    private float _loadingFillWidth;
+
     private void Awake()
     {
         if (highlightImage != null)
@@ -72,6 +96,28 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
             {
                 forwarder = screenImage.gameObject.AddComponent<ClickEventForwarder>();
                 Debug.Log("[CameraDropTarget] 已在 screenImage 上添加 ClickEventForwarder");
+            }
+        }
+
+        if (loadingRoot != null)
+        {
+            loadingRoot.SetActive(false);
+        }
+
+        if (loadingFillImage != null)
+        {
+            _loadingFillRect = loadingFillImage.rectTransform;
+            if (_loadingFillRect != null)
+            {
+                _loadingFillOriginalSize = _loadingFillRect.sizeDelta;
+
+                _loadingFillWidth = loadingFillMaxWidth > 0f ? loadingFillMaxWidth : _loadingFillOriginalSize.x;
+                if (_loadingFillWidth < 0f)
+                {
+                    _loadingFillWidth = 0f;
+                }
+
+                SetLoadingFill01(0f);
             }
         }
     }
@@ -169,7 +215,11 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
             {
                 screenImage.sprite = frameView.image;
                 Debug.Log($"[CameraDropTarget] 显示监控画面，时间: {currentTime}");
-            }           
+            }
+            else
+            {
+                screenImage.sprite = noDataSprite;
+            }
         }
         else
         {
@@ -226,10 +276,79 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
     /// </summary>
     public void RefreshDisplay()
     {
-        if (_currentCameraClue != null)
+        if (_currentCameraClue == null)
+        {
+            return;
+        }
+
+        _refreshRequestId++;
+
+        if (_refreshCoroutine != null)
+        {
+            StopCoroutine(_refreshCoroutine);
+            _refreshCoroutine = null;
+        }
+
+        _refreshCoroutine = StartCoroutine(RefreshDisplayWithLoading(_refreshRequestId));
+    }
+
+    private System.Collections.IEnumerator RefreshDisplayWithLoading(int requestId)
+    {
+        if (_currentCameraClue == null)
+        {
+            yield break;
+        }
+
+        if (loadingRoot == null || loadingFillImage == null || _loadingFillRect == null || loadingDuration <= 0f)
         {
             UpdateDisplay();
+            yield break;
         }
+
+        if (screenImage != null && loadingBackgroundSprite != null)
+        {
+            screenImage.sprite = loadingBackgroundSprite;
+        }
+
+        SetLoadingFill01(0f);
+        loadingRoot.SetActive(true);
+
+        float elapsed = 0f;
+        while (elapsed < loadingDuration)
+        {
+            if (requestId != _refreshRequestId)
+            {
+                yield break;
+            }
+
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / loadingDuration);
+            SetLoadingFill01(t);
+            yield return null;
+        }
+
+        if (requestId != _refreshRequestId)
+        {
+            yield break;
+        }
+
+        SetLoadingFill01(1f);
+        loadingRoot.SetActive(false);
+
+        UpdateDisplay();
+        _refreshCoroutine = null;
+    }
+
+    private void SetLoadingFill01(float t)
+    {
+        if (_loadingFillRect == null)
+        {
+            return;
+        }
+
+        t = Mathf.Clamp01(t);
+        float width = _loadingFillWidth * t;
+        _loadingFillRect.sizeDelta = new Vector2(width, _loadingFillOriginalSize.y);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

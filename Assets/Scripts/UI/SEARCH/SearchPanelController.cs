@@ -507,13 +507,13 @@ public class SearchPanelController : MonoBehaviour
 		// 线索是否支持Attack校验
 		if (string.IsNullOrEmpty(clue.attackKey) || string.IsNullOrEmpty(clue.attackUnlockContent))
 		{
-			return "[结果]：该线索不可骇入。\n\n";
+			return "[结果]：未找到骇入端点。\n\n";
 		}
 
 		// 密码验证
 		if (inputKey != clue.attackKey)
 		{
-			return "[结果]：秘钥错误，权限验证失败，无法解锁加密内容。\n\n";
+			return "[结果]：权限验证无效，骇入失败，无法解锁加密内容。\n\n";
 		}
 
 		// 密码正确：解锁新内容
@@ -531,7 +531,7 @@ public class SearchPanelController : MonoBehaviour
 		else
 		{
 			clue.isAttackContentUnlocked = true; // 即使之前未收集，只要密码正确也解锁内容（但不展示）
-			return "[结果]：特殊骇入程序已启动！！！\n这都被你发现了！但请通过Detect指令查看完整内容。\n\n";
+			return "[结果]：骇入成功！\n使用/Detect收集线索以获得完整内容。\n\n";
 		}
 	}
 
