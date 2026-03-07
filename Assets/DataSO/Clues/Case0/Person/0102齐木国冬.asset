@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "\u9F50\u6728\u56FD\u51AC"
   detectable: 1
   collectable: 1
-  collected: 0
+  collected: 1
   attackKey: 
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
@@ -35,7 +35,7 @@ MonoBehaviour:
     text: "\u6211\u662F\u62A5\u8B66\u7684\u4EBA\uFF0C\u662F\u9752\u6749\u5188\u4ED3\u7684\u8D23\u4EFB\u7F16\u8F91\u3002"
     nextNodeId: 
     options:
-    - optionId: testOption1
+    - optionId: "\u63CF\u8FF0\u4E00\u4E0B\u4F60\u770B\u5230\u7684\u6848\u53D1\u73B0\u573A\uFF1F"
       optionText: "\u63CF\u8FF0\u4E00\u4E0B\u4F60\u770B\u5230\u7684\u6848\u53D1\u73B0\u573A\uFF1F"
       nextNodeId: 2
   - nodeId: 2
@@ -66,7 +66,7 @@ MonoBehaviour:
       text: "\u8FD9\u662F\u6211\u6240\u8D1F\u8D23\u7684\u6F2B\u753B\u5BB6\u3002"
       nextNodeId: 
       options:
-      - optionId: 
+      - optionId: "\u4F60\u5BF9\u4ED6\u5E73\u65F6\u7684\u4E60\u60EF\u6709\u4EC0\u4E48\u4E86\u89E3\uFF1F"
         optionText: "\u4F60\u5BF9\u4ED6\u5E73\u65F6\u7684\u4E60\u60EF\u6709\u4EC0\u4E48\u4E86\u89E3\uFF1F"
         nextNodeId: 4
     singleUse: 0
