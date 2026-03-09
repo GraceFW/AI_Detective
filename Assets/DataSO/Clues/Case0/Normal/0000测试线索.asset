@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
+  m_Name: "0000\u6D4B\u8BD5\u7EBF\u7D22"
+  m_EditorClassIdentifier: 
+  id: 0000
+  displayName: "\u6D4B\u8BD5\u7EBF\u7D22"
+  detectable: 1
+  collectable: 1
+  collected: 0
+  attackKey: 
+  isAttackContentUnlocked: 0
+  showAttackContentDirectly: 1
+  attackUnlockContent: 
+  summary: "\u8FD9\u4E2A\u7EBF\u7D22\u7528\u6765\u6D4B\u8BD5"
+  detailText: 
+  Detail_Mark: "<link=\"0004\">\u6C34\u679C\u5200</link>\n<link=\"0004\">\u6C34\u679C\u52001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</link>"

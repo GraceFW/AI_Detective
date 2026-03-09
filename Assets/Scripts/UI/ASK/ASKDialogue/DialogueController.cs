@@ -230,7 +230,7 @@ public class DialogueController : MonoBehaviour
 			if (optionDialogueDb.TryGet(level, personId, nodeId, optionId, out var entry) &&
 				entry.sequence != null)
 			{
-				_optionLocked = true;
+				this._optionLocked = true;
 
 				// 锁问讯UI，防止乱点/穿透
 				dialogueUI.SetInteractable(false);
@@ -240,7 +240,7 @@ public class DialogueController : MonoBehaviour
 				{
 					// 播完恢复问讯UI
 					dialogueUI.SetInteractable(true);
-					_optionLocked = false;
+					this._optionLocked = false;
 
 					// 播完再执行原本的选项跳转逻辑
 					ContinueSelectOption(optionIndex);

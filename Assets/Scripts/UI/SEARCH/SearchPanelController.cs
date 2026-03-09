@@ -44,7 +44,7 @@ public class SearchPanelController : MonoBehaviour
 	private StringBuilder _historyLog = new StringBuilder();
 	private string _lastDisplayedText = string.Empty;  // 记录上次显示的文本，用于追加模式
 	private bool _shouldClearOnNextUpdate = false;  // 标记下次更新是否应该清空（Detect 命令）
-	private int _sniffUsageCount = 0;  // Sniff使用次数统计（场景级别，不存档）
+	// private int _sniffUsageCount = 0;  // Sniff使用次数统计（场景级别，不存档）
 
 	private enum CommandType
 	{
@@ -143,7 +143,6 @@ public class SearchPanelController : MonoBehaviour
 		commandDropdown.AddOptions(new System.Collections.Generic.List<string>
 		{
 			"/Detect",
-			"/Sniff",
 			"/Attack"
 		});
 		commandDropdown.value = 0;
@@ -337,7 +336,7 @@ public class SearchPanelController : MonoBehaviour
 			resultLine = command switch
 			{
 				CommandType.Detect => ExecuteDetect(clue),
-				CommandType.Sniff => ExecuteSniff(clue),
+				// CommandType.Sniff => ExecuteSniff(clue),
 				_ => "[结果]：未知命令。\n\n"
 			};
 		}
@@ -374,8 +373,10 @@ public class SearchPanelController : MonoBehaviour
 			if (clue.detectable)
 			{
 				// 如果detectable，显示detailText
-				string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-				detectResult.AppendLine($"\n{detail}");
+				// string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+				// detectResult.AppendLine($"\n{detail}");
+				string detail_new = string.IsNullOrWhiteSpace(clue.Detail_Mark) ? clue.summary : clue.Detail_Mark;
+				detectResult.AppendLine($"\n{detail_new}");
 
 				// 追加已解锁的Attack内容（如果配置了直接展示）
 				if (clue.isAttackContentUnlocked && clue.showAttackContentDirectly && !string.IsNullOrEmpty(clue.attackUnlockContent))
@@ -398,8 +399,11 @@ public class SearchPanelController : MonoBehaviour
 			if (shouldShowDetail && shouldCollect)
 			{
 				// searchable且collectable：显示detailText + 收集 + 提示文本
-				string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-				detectResult.AppendLine($"\n{detail}");
+				//string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+				//detectResult.AppendLine($"\n{detail}");
+				string detail_test = string.IsNullOrWhiteSpace(clue.Detail_Mark) ? clue.summary : clue.Detail_Mark;
+				detectResult.AppendLine($"\n{detail_test}");
+				
 
 				if (ClueManager.instance != null)
 				{
@@ -424,8 +428,10 @@ public class SearchPanelController : MonoBehaviour
 			else if (shouldShowDetail && !shouldCollect)
 			{
 				// 只detectable不collectable：显示detailText（不收集）
-				string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
-				detectResult.AppendLine($"\n{detail}");
+				//string detail = string.IsNullOrWhiteSpace(clue.detailText) ? clue.summary : clue.detailText;
+				//detectResult.AppendLine($"\n{detail}");
+				string detail_test = string.IsNullOrWhiteSpace(clue.Detail_Mark) ? clue.summary : clue.Detail_Mark;
+				detectResult.AppendLine($"\n{detail_test}");
 
 				// 这里没有写追加已解锁的Attack内容，因为根据设计，只有collectable的线索才会被RevealClue，从而可能解锁Attack内容
 			}
@@ -455,37 +461,46 @@ public class SearchPanelController : MonoBehaviour
 		return detectResult.ToString();
 	}
 
+	#region Sniff功能（已删）
 	/// <summary>
 	/// 执行 /sniff 命令
 	/// </summary>
-	private string ExecuteSniff(ClueData clue)
-	{
-		if (clue == null)
-		{
-			return "[结果]：未获得数据探针。\n\n";
-		}
+	//private string ExecuteSniff(ClueData clue)
+	//{
+	//	if (clue == null)
+	//	{
+	//		return "[结果]：未获得数据探针。\n\n";
+	//	}
 
-		// 只对searchable的线索有效
-		if (!clue.detectable)
-		{
-			return "[结果]：未关联到高置信度结果。\n\n";
-		}
+	//	// 只对searchable的线索有效
+	//	if (!clue.detectable)
+	//	{
+	//		return "[结果]：未关联到高置信度结果。\n\n";
+	//	}
 
-		// 增加Sniff使用次数统计
-		_sniffUsageCount++;
+	//	// 增加Sniff使用次数统计
+	//	_sniffUsageCount++;
 
-		// 检查是否有Detail_Mark
-		if (!string.IsNullOrWhiteSpace(clue.Detail_Mark))
-		{
-			// 有Detail_Mark：显示Detail_Mark
-			return $"\n{clue.Detail_Mark}\n\n";
-		}
-		else
-		{
-			// 没有Detail_Mark：输出提示文本
-			return "[结果]：该线索暂无标记文本。\n\n";
-		}
-	}
+	//	// 检查是否有Detail_Mark
+	//	if (!string.IsNullOrWhiteSpace(clue.Detail_Mark))
+	//	{
+	//		// 有Detail_Mark：显示Detail_Mark
+	//		return $"\n{clue.Detail_Mark}\n\n";
+	//	}
+	//	else
+	//	{
+	//		// 没有Detail_Mark：输出提示文本
+	//		return "[结果]：该线索暂无标记文本。\n\n";
+	//	}
+	//}
+	/// <summary>
+	/// 获取Sniff使用次数（场景级别，不存档）
+	/// </summary>
+	//public int GetSniffUsageCount()
+	//{
+	//	return _sniffUsageCount;
+	//}
+	#endregion
 
 	/// <summary>
 	/// 执行 /attack 命令（密码验证+解锁新内容）
@@ -533,14 +548,6 @@ public class SearchPanelController : MonoBehaviour
 			clue.isAttackContentUnlocked = true; // 即使之前未收集，只要密码正确也解锁内容（但不展示）
 			return "[结果]：骇入成功！\n使用/Detect收集线索以获得完整内容。\n\n";
 		}
-	}
-
-	/// <summary>
-	/// 获取Sniff使用次数（场景级别，不存档）
-	/// </summary>
-	public int GetSniffUsageCount()
-	{
-		return _sniffUsageCount;
 	}
 
 	private void UpdateResultText()
