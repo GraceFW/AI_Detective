@@ -17,3 +17,5 @@ MonoBehaviour:
     revealsClue: {fileID: 11400000, guid: 014c85e8cbe59a6418a341aac3e5ed6e, type: 2}
   - term: "\u6B7B\u4EA1\u65F6\u95F4"
     revealsClue: {fileID: 11400000, guid: 63ef9207359878743a60aa61fe742017, type: 2}
+  - term: "\u4E8C\u91CD\u8EAB\u4FA6\u63A2\u4E8B\u4EF6\u7C3F"
+    revealsClue: {fileID: 11400000, guid: 4ebb1d9b4f9aa0d4787b0b5f4925077b, type: 2}

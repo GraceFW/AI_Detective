@@ -5134,6 +5134,41 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &773839253
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 773839254}
+  m_Layer: 5
+  m_Name: HighlightHover
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &773839254
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773839253}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 0.9090909, z: 0.9090909}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1850121191}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &774353908
 GameObject:
   m_ObjectHideFlags: 0
@@ -6704,6 +6739,9 @@ GameObject:
   - component: {fileID: 1085428043}
   - component: {fileID: 1085428042}
   - component: {fileID: 1085428045}
+  - component: {fileID: 1085428047}
+  - component: {fileID: 1085428048}
+  - component: {fileID: 1085428046}
   m_Layer: 5
   m_Name: DialogueText
   m_TagString: Untagged
@@ -6848,8 +6886,64 @@ MonoBehaviour:
   scrollOffset: 0.05
   scrollToBottomOnComplete: 1
   enableTypewriterSfx: 1
-  enableDialoguePanelClick: 0
+--- !u!114 &1085428046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085428041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05a92484a3d367d439bd1040c99b82eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tmp: {fileID: 1085428042}
+  typewriter: {fileID: 1085428045}
+  hoverVisual: {fileID: 1085428048}
+  enableHover: 1
+  disableHoverWhileTyping: 1
+  changeCursorOnHover: 1
+  handCursor: {fileID: 0}
+  handCursorHotspot: {x: 6, y: 0}
+  handlerBehaviours:
+  - {fileID: 1085428047}
   dialogueController: {fileID: 0}
+  enableBlankClickNextDialogue: 1
+--- !u!114 &1085428047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085428041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7425bf1830cd18c498e033e169521352, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1085428048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085428041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 839a8e27ee1ca3e47a25b0b50c650d56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverTextColor:
+    serializedVersion: 2
+    rgba: 4287425535
+  highlightParent: {fileID: 773839254}
+  markerColor: {r: 1, g: 1, b: 0, a: 0.45}
+  paddingX: 6
+  paddingY: 2
+  fixedMarkerHeight: 0
+  ignoreInvisibleCharacters: 1
+  markerSprite: {fileID: 0}
 --- !u!1 &1117863282
 GameObject:
   m_ObjectHideFlags: 0
@@ -7517,8 +7611,6 @@ MonoBehaviour:
   scrollOffset: 0.05
   scrollToBottomOnComplete: 1
   enableTypewriterSfx: 1
-  enableDialoguePanelClick: 0
-  dialogueController: {fileID: 0}
 --- !u!114 &1235553418
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7575,6 +7667,8 @@ MonoBehaviour:
   handCursorHotspot: {x: 6, y: 0}
   handlerBehaviours:
   - {fileID: 1235553419}
+  dialogueController: {fileID: 0}
+  enableBlankClickNextDialogue: 1
 --- !u!1 &1241974375
 GameObject:
   m_ObjectHideFlags: 0
@@ -10201,7 +10295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b586ce728e10c74a8135479c381b12b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardTarget: {fileID: 1085428041}
+  forwardTarget: {fileID: 0}
 --- !u!1 &1688325097
 GameObject:
   m_ObjectHideFlags: 0
@@ -11140,6 +11234,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 773839254}
   - {fileID: 1085428044}
   m_Father: {fileID: 1672572590}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

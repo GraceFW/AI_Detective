@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -42,6 +42,7 @@ public class ClickableTMPText : MonoBehaviour, IPointerClickHandler
                 word,
                 $"<link=\"{clueId}\"><color=#4AA3FF>{word}</color></link>"
             );
+            Debug.Log("ClickCollectTMP: link植入成功");
         }
 
         return result;

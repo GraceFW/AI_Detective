@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,10 +54,6 @@ public class DialogueUI : MonoBehaviour
         if (dialogueText != null)
         {
             var typewriter = dialogueText.GetComponent<TypewriterEffect>();
-            if (typewriter != null)
-            {
-                typewriter.InitDialogue(_dialogueController);
-            }
         }
 
         if (prevButton != null)
@@ -333,6 +329,7 @@ public class DialogueUI : MonoBehaviour
                 word,
                 $"<link=\"{clueId}\"><color=#4AA3FF>{word}</color></link>"
             );
+            Debug.Log("DialogueUI : Link格式植入成功！！！");
         }
 
         return result;

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -50,6 +50,13 @@ public class InteractiveTextView : MonoBehaviour, IPointerMoveHandler, IPointerE
 	[Header("Handlers (Business Logic)")]
 	[Tooltip("可插拔的交互处理器（例如：线索、百科、NPC等）。把实现了 IInteractiveLinkHandler 的脚本拖进来。")]
 	[SerializeField] private List<MonoBehaviour> handlerBehaviours = new List<MonoBehaviour>();
+
+	[Header("Dialogue")]
+	[Tooltip("可选：用于点击空白时推进下一句对话")]
+	[SerializeField] private DialogueController dialogueController;
+
+	[Tooltip("是否允许点击空白区域时推进下一句")]
+	[SerializeField] private bool enableBlankClickNextDialogue = true;
 
 	private readonly List<IInteractiveLinkHandler> _handlers = new List<IInteractiveLinkHandler>();
 
@@ -122,40 +129,64 @@ public class InteractiveTextView : MonoBehaviour, IPointerMoveHandler, IPointerE
 		ClearHover();
 	}
 
-	/// <summary>
-	/// 点击事件：打字中不处理 link；打字结束命中 link 则交给 handler
+	/// 统一点击入口（工业收口版）
+	///
+	/// 规则：
+	/// 1. 如果正在打字，则本次点击交给 TypewriterEffect 处理（单击加速 / 双击跳过）
+	/// 2. 如果打字已结束且点到了 link，则交给对应 handler 处理
+	/// 3. 如果打字已结束且没有点到 link，则按配置决定是否推进下一句对话
 	/// </summary>
 	public void OnPointerClick(PointerEventData eventData)
 	{
 		if (tmp == null || eventData == null)
 			return;
 
-		// 与你的 TypewriterEffect 规则一致：打字中不允许点 link
-		if (typewriter != null && typewriter.IsTyping)
+		// 1) 打字中：优先交给打字机处理点击（加速 / 双击跳过）
+		if (typewriter != null && typewriter.HandleTypingClick())
+		{
 			return;
+		}
 
+		// 2) 打字结束：检测是否点击到了 link
+		tmp.ForceMeshUpdate();
+		Canvas.ForceUpdateCanvases();
+
+		// Overlay 模式下 camera 传 null
 		int linkIndex = TMP_TextUtilities.FindIntersectingLink(tmp, eventData.position, null);
-		if (linkIndex == -1)
-			return;
 
-		string linkId = tmp.textInfo.linkInfo[linkIndex].GetLinkID();
-
-		// 组装上下文（以后你想做 tooltip、打开面板、播放音效都可以用 ctx）
-		var ctx = new InteractiveLinkContext
+		if (linkIndex != -1)
 		{
-			view = this,
-			tmp = tmp,
-			pointerEventData = eventData
-		};
+			string linkId = tmp.textInfo.linkInfo[linkIndex].GetLinkID();
 
-		// 找到第一个能处理该 linkId 的 handler 并执行
-		foreach (var h in _handlers)
-		{
-			if (h != null && h.CanHandle(linkId))
+			var ctx = new InteractiveLinkContext
 			{
-				h.OnClick(linkId, ctx);
-				return;
+				view = this,
+				tmp = tmp,
+				pointerEventData = eventData
+			};
+
+			foreach (var h in _handlers)
+			{
+				if (h != null && h.CanHandle(linkId))
+				{
+					h.OnClick(linkId, ctx);
+					return;
+				}
 			}
+
+			// 命中了 link，但没有 handler 能处理，则直接返回，不推进下一句
+			return;
+		}
+
+		// 3) 打字结束且没点到 link：空白点击推进下一句
+		// 事实上，该脚本目前只用于Search界面和Ask界面，而这两个界面的功能有独立于对话系统的脚本控制
+		// 于是这一行代码大抵是永远不会调用的
+		// TODO：重构整个项目的对话系统，升级为条件于数据驱动的叙事框架，这样就可以在ASK、Search、对话系统三者间复用一套代码了
+		// 道阻险长
+		if (enableBlankClickNextDialogue && dialogueController != null)
+		{
+			Debug.LogWarning("你貌似进入了不该调用的逻辑区域");
+			dialogueController.NextDialogue();
 		}
 	}
 

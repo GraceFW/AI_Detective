@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -82,6 +82,7 @@ public class ClueManager : MonoBehaviour
 
         if (_revealedIds.Contains(clueId))
         {
+            Debug.Log($"ClueManager:已解锁该线索 {clueId}");
             return false;
         }
 

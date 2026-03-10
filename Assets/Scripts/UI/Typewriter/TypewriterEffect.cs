@@ -17,7 +17,7 @@ using UnityEngine.UI;
 /// - _targetText 保存 raw string（包含富文本标签）
 /// - _currentVisibleCharacters 保存“已显示的可见字符数”
 /// </summary>
-public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
+public class TypewriterEffect : MonoBehaviour
 {
     [Header("组件配置")]
     [Tooltip("目标文本组件（如果为空，将自动获取）")]
@@ -49,12 +49,6 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     [Header("音效设置")]
     [Tooltip("是否启用打字机音效（仅在问讯/搜索界面启用，黑底滚代码不启用）")]
     [SerializeField] private bool enableTypewriterSfx = false;
-
-    [Header("对话框联动（可选）")]
-    [Tooltip("是否启用：打完字后点击空白进入下一句；点击 link 收集线索")]
-    [SerializeField] private bool enableDialoguePanelClick = false;
-
-    [SerializeField] private DialogueController dialogueController;
 
     // --------- 内部状态（注意：可见字符 vs raw string） ---------
     private Coroutine _typewriterCoroutine;
@@ -89,15 +83,6 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
-    /// 注入对话控制器（用于 NextDialogue）
-    /// </summary>
-    public void InitDialogue(DialogueController controller)
-    {
-        dialogueController = controller;
-        enableDialoguePanelClick = controller != null;
-    }
-
-    /// <summary>
     /// 当前是否正在打字
     /// </summary>
     public bool IsTyping => _typewriterCoroutine != null;
@@ -107,6 +92,7 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
 	{
 		string finalText = DialogueTextPreprocessor.Process(rawText, keywordDatabase);
 		SetText(finalText);
+        Debug.Log("TypewriterEffect：link格式植入成功");
 	}
 
 	/// <summary>
@@ -349,10 +335,30 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    /// <summary>
-    /// 双击/单击加速逻辑
-    /// </summary>
-    private void HandleAcceleration()
+	/// <summary>
+	/// 处理“打字过程中的点击”。
+	///
+	/// 职责：
+	/// - 如果当前正在打字，则执行原有的单击加速 / 双击跳过逻辑
+	/// - 如果当前不在打字，则什么也不做
+	///
+	/// 返回值：
+	/// - true  : 本次点击已被打字机消费（例如用于加速/跳过）
+	/// - false : 当前不在打字，本次点击不归打字机处理
+	/// </summary>
+	public bool HandleTypingClick()
+	{
+		if (!IsTyping)
+			return false;
+
+		HandleAcceleration();
+		return true;
+	}
+
+	/// <summary>
+	/// 双击/单击加速逻辑
+	/// </summary>
+	private void HandleAcceleration()
     {
         if (_typewriterCoroutine == null)
             return;
@@ -391,63 +397,65 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    /// <summary>
-    /// 点击逻辑（你指定的交互规则）
-    /// 1) 打字中：任何点击先加速/双击跳过（禁止点 link）
-    /// 2) 打字结束：允许检测 link（命中则收集线索）
-    /// 3) 未命中 link：NextDialogue
-    /// </summary>
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (targetText == null)
-            return;
+	#region 点击检测（已移除逻辑）
+	/// <summary>
+	/// 点击逻辑
+	/// 1) 打字中：任何点击先加速/双击跳过（禁止点 link）
+	/// 2) 打字结束：允许检测 link（命中则收集线索）
+	/// 3) 未命中 link：NextDialogue
+	/// </summary>
+	//public void OnPointerClick(PointerEventData eventData)
+	//{
+	//    if (targetText == null)
+	//        return;
 
-        // 1) 正在打字：任何点击都先加速（不允许点 link）
-        if (IsTyping)
-        {
-            HandleAcceleration();
-            return;
-        }
+	//    // 1) 正在打字：任何点击都先加速（不允许点 link）
+	//    if (IsTyping)
+	//    {
+	//        HandleAcceleration();
+	//        return;
+	//    }
 
-        // 2) 打字结束后，才允许检测 link
-        targetText.ForceMeshUpdate();
-        Canvas.ForceUpdateCanvases();
+	//    // 2) 打字结束后，才允许检测 link
+	//    targetText.ForceMeshUpdate();
+	//    Canvas.ForceUpdateCanvases();
 
-        Camera cam = null;
-        if (eventData != null && eventData.pressEventCamera != null)
-        {
-            cam = eventData.pressEventCamera;
-        }
-        else
-        {
-            var canvas = targetText.canvas;
-            if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                cam = canvas.worldCamera;
-        }
+	//    Camera cam = null;
+	//    if (eventData != null && eventData.pressEventCamera != null)
+	//    {
+	//        cam = eventData.pressEventCamera;
+	//    }
+	//    else
+	//    {
+	//        var canvas = targetText.canvas;
+	//        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+	//            cam = canvas.worldCamera;
+	//    }
 
-        int linkIndex = TMP_TextUtilities.FindIntersectingLink(targetText, eventData.position, cam);
-        if (linkIndex != -1)
-        {
-            var linkInfo = targetText.textInfo.linkInfo[linkIndex];
-            string clueId = linkInfo.GetLinkID();
+	//    int linkIndex = TMP_TextUtilities.FindIntersectingLink(targetText, eventData.position, cam);
+	//    if (linkIndex != -1)
+	//    {
+	//        var linkInfo = targetText.textInfo.linkInfo[linkIndex];
+	//        string clueId = linkInfo.GetLinkID();
 
-            Debug.Log($"[TypewriterEffect] 点击线索链接: {clueId}");
+	//        Debug.Log($"[TypewriterEffect] 点击线索链接: {clueId}");
 
-            if (ClueManager.instance != null)
-                ClueManager.instance.RevealClue(clueId);
+	//        if (ClueManager.instance != null)
+	//            ClueManager.instance.RevealClue(clueId);
 
-            return;
-        }
+	//        return;
+	//    }
 
-        // 3) 空白：下一句
-        if (enableDialoguePanelClick && dialogueController != null)
-            dialogueController.NextDialogue();
-    }
+	//    // 3) 空白：下一句
+	//    if (enableDialoguePanelClick && dialogueController != null)
+	//        dialogueController.NextDialogue();
+	//}
+	#endregion
 
-    /// <summary>
-    /// 空格键加速（保留你的习惯）
-    /// </summary>
-    private void Update()
+	/// <summary>
+	/// 空格键加速（保留你的习惯）
+	/// </summary>
+	private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
             HandleAcceleration();
