@@ -34,6 +34,9 @@ public class SearchPanelController : MonoBehaviour
 	[Tooltip("线索数据库")]
 	[SerializeField] private ClueDatabaseSO clueDatabase;
 
+	[Tooltip("关键词=>线索 索引库")]
+	[SerializeField] private CaseKeywordDatabase caseKeyword;
+
 	[Tooltip("\"执行中...\" 显示时长")]
 	[SerializeField] private float executingDuration = 0.8f;
 
@@ -564,7 +567,7 @@ public class SearchPanelController : MonoBehaviour
 				if (_shouldClearOnNextUpdate || string.IsNullOrEmpty(_lastDisplayedText))
 				{
 					// 清空或首次显示：使用 SetText
-					typewriterEffect.SetText(newText);
+					typewriterEffect.SetProcessedText(newText, caseKeyword);
 					_shouldClearOnNextUpdate = false;
 				}
 				else
@@ -573,12 +576,12 @@ public class SearchPanelController : MonoBehaviour
 					if (newText.Length > _lastDisplayedText.Length && newText.StartsWith(_lastDisplayedText))
 					{
 						string addedText = newText.Substring(_lastDisplayedText.Length);
-						typewriterEffect.AppendText(addedText);
+						typewriterEffect.AppendProcessedText(addedText, caseKeyword);
 					}
 					else
 					{
 						// 如果文本不匹配（可能是被外部修改），使用 SetText
-						typewriterEffect.SetText(newText);
+						typewriterEffect.SetProcessedText(newText, caseKeyword);
 					}
 				}
 			}

@@ -2332,6 +2332,7 @@ MonoBehaviour:
   resultText: {fileID: 1235553415}
   scrollRect: {fileID: 1008985827}
   clueDatabase: {fileID: 11400000, guid: e8c628df68d5ae54cbd9062715ecf89d, type: 2}
+  caseKeyword: {fileID: 11400000, guid: cb6e8576f0bf84e4ca181854ae997d49, type: 2}
   executingDuration: 0.8
   scrollDelay: 0.05
 --- !u!1 &313646157

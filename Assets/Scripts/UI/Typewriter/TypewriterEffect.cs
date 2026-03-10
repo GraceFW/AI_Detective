@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -102,11 +102,18 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
     /// </summary>
     public bool IsTyping => _typewriterCoroutine != null;
 
-    /// <summary>
-    /// 设定新文本（替换模式）
-    /// 注意：打字机的终点按“可见字符数”计算，避免富文本标签造成拖延
-    /// </summary>
-    public void SetText(string text)
+    // 包装一个便携入口，用来控制文本向富文本的转变
+	public void SetProcessedText(string rawText, CaseKeywordDatabase keywordDatabase)
+	{
+		string finalText = DialogueTextPreprocessor.Process(rawText, keywordDatabase);
+		SetText(finalText);
+	}
+
+	/// <summary>
+	/// 设定新文本（替换模式）
+	/// 注意：打字机的终点按“可见字符数”计算，避免富文本标签造成拖延
+	/// </summary>
+	public void SetText(string text)
     {
         if (targetText == null)
         {
@@ -140,11 +147,20 @@ public class TypewriterEffect : MonoBehaviour, IPointerClickHandler
         StartTypewriter(0, totalVisible);
     }
 
-    /// <summary>
-    /// 追加文本（追加模式）
-    /// 注意：start/end 都以“可见字符索引”计算，而不是 raw string length
-    /// </summary>
-    public void AppendText(string text)
+	/// <summary>
+	/// 追加“原始文本”，先做预处理，再以追加模式显示。
+	/// </summary>
+	public void AppendProcessedText(string rawText, CaseKeywordDatabase keywordDatabase)
+	{
+		string finalText = DialogueTextPreprocessor.Process(rawText, keywordDatabase);
+		AppendText(finalText);
+	}
+
+	/// <summary>
+	/// 追加文本（追加模式）
+	/// 注意：start/end 都以“可见字符索引”计算，而不是 raw string length
+	/// </summary>
+	public void AppendText(string text)
     {
         if (targetText == null)
         {
