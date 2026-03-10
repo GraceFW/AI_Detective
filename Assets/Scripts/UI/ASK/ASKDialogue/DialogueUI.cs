@@ -4,376 +4,447 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 对话UI管理器
-/// 负责更新UI显示和处理UI事件
+/// 对话 UI 管理器
+///
+/// 核心职责：
+/// 1. 管理人物名字、头像、对话文本、选项按钮、导航按钮等 UI 显示
+/// 2. 在显示对话文本前，调用 DialogueTextPreprocessor 对原始文本做预处理
+/// 3. 将预处理后的富文本交给 TypewriterEffect 或 TMP 直接显示
+/// 4. 处理选项点击、历史翻页等 UI 事件
+///
+/// 设计边界：
+/// - 本类不再自行实现关键词扫描和 <link> 注入
+/// - 本类不再维护“关键词 -> 线索ID”的本地缓存
+/// - 交互文本的自动标注统一交给 DialogueTextPreprocessor / InteractiveTextMarkupBuilder
+/// - 文本的 hover / click 交互统一交给 InteractiveTextView
+///
+/// 这样做的好处：
+/// - DialogueUI 只负责“显示”
+/// - 文本构建逻辑从 UI 层剥离，职责更清晰
+/// - 后续扩展 NPC / 地点 / 术语点击时，无需再修改 DialogueUI
 /// </summary>
 public class DialogueUI : MonoBehaviour
 {
-    [Header("UI组件")]
-    [Tooltip("name对象 - 显示人物名字")]
-    [SerializeField] private TextMeshProUGUI nameText;
+	[Header("基础 UI 组件")]
+	[Tooltip("显示人物名字的 TMP 文本")]
+	[SerializeField] private TextMeshProUGUI nameText;
 
-    [Tooltip("person对象 - 显示人物头像")]
-    [SerializeField] private Image portraitImage;
+	[Tooltip("显示人物头像的 Image")]
+	[SerializeField] private Image portraitImage;
 
-    [Tooltip("penlu对象 - 显示对话文本")]
-    [SerializeField] private TextMeshProUGUI dialogueText;
+	[Tooltip("显示对话正文的 TMP 文本")]
+	[SerializeField] private TextMeshProUGUI dialogueText;
 
-    [Header("对话关键词点击收集（仅对话启用）")]
-    [Tooltip("关键词数据库：在对话文本中把关键词替换成可点击链接")]
-    [SerializeField] private CaseKeywordDatabase keywordDatabase;
+	[Header("交互文本预处理")]
+	[Tooltip("关键词数据库：用于将原始对话文本中的关键词自动处理为可点击 link")]
+	[SerializeField] private CaseKeywordDatabase keywordDatabase;
 
-    [Tooltip("choicecontainer - 选项容器")]
-    [SerializeField] private Transform choiceContainer;
+	[Header("选项 UI")]
+	[Tooltip("选项按钮容器")]
+	[SerializeField] private Transform choiceContainer;
 
-    [Tooltip("选项按钮预制体")]
-    [SerializeField] private GameObject choiceButtonPrefab;
+	[Tooltip("选项按钮预制体")]
+	[SerializeField] private GameObject choiceButtonPrefab;
 
-    [Header("导航按钮（可选）")]
-    [Tooltip("上一条按钮")]
-    [SerializeField] private Button prevButton;
+	[Header("导航按钮（可选）")]
+	[Tooltip("上一条按钮（历史回看）")]
+	[SerializeField] private Button prevButton;
 
-    [Tooltip("下一条按钮")]
-    [SerializeField] private Button nextButton;
+	[Tooltip("下一条按钮（历史回看）")]
+	[SerializeField] private Button nextButton;
 
-    [Header("交互")]
-    [Tooltip("对话框点击区域")]
-    [SerializeField] private Button dialogueBoxButton;
+	[Header("对话框按钮（可选）")]
+	[Tooltip("对话框点击区域按钮。当前版本中不是必须字段，保留用于兼容旧场景结构。")]
+	[SerializeField] private Button dialogueBoxButton;
 
 	[Header("Root Interaction Lock")]
+	[Tooltip("用于整体控制该对话 UI 区域是否可交互")]
 	[SerializeField] private CanvasGroup rootCanvasGroup;
 
+	/// <summary>
+	/// 所属对话控制器
+	/// </summary>
 	private DialogueController _dialogueController;
-    private List<GameObject> _currentChoiceButtons = new List<GameObject>();
 
-    private Dictionary<string, string> _clickableTerms;
+	/// <summary>
+	/// 当前对话正文上的打字机效果组件
+	/// </summary>
+	private TypewriterEffect _typewriterEffect;
 
-    private void Awake()
-    {
-        _dialogueController = GetComponent<DialogueController>();
-        if (dialogueText != null)
-        {
-            var typewriter = dialogueText.GetComponent<TypewriterEffect>();
-        }
+	/// <summary>
+	/// 当前动态生成的选项按钮实例列表
+	/// 用于后续统一清理。
+	/// </summary>
+	private readonly List<GameObject> _currentChoiceButtons = new List<GameObject>();
 
-        if (prevButton != null)
-        {
-            // [SFX] 为对话翻页按钮添加音效组件
-            if (prevButton.GetComponent<PlaySfxOnClick>() == null)
-            {
-                prevButton.gameObject.AddComponent<PlaySfxOnClick>();
-            }
-            prevButton.onClick.AddListener(OnPrevButtonClick);
-        }
+	private void Awake()
+	{
+		// 获取同物体上的 DialogueController
+		_dialogueController = GetComponent<DialogueController>();
 
-        if (nextButton != null)
-        {
-            // [SFX] 为对话翻页按钮添加音效组件
-            if (nextButton.GetComponent<PlaySfxOnClick>() == null)
-            {
-                nextButton.gameObject.AddComponent<PlaySfxOnClick>();
-            }
-            nextButton.onClick.AddListener(OnNextButtonClick);
-        }
+		// 缓存打字机组件，避免 ShowDialogue / ClearDialogue 中反复 GetComponent
+		if (dialogueText != null)
+		{
+			_typewriterEffect = dialogueText.GetComponent<TypewriterEffect>();
+		}
 
-        // 初始化UI状态
-        ClearDialogue();
+		// 上一条按钮：绑定音效组件和点击事件
+		if (prevButton != null)
+		{
+			if (prevButton.GetComponent<PlaySfxOnClick>() == null)
+			{
+				prevButton.gameObject.AddComponent<PlaySfxOnClick>();
+			}
 
-        _clickableTerms = BuildClickableTerms();
-    }
+			prevButton.onClick.AddListener(OnPrevButtonClick);
+		}
 
-    private void OnDestroy()
-    {
-        if (prevButton != null)
-        {
-            prevButton.onClick.RemoveListener(OnPrevButtonClick);
-        }
+		// 下一条按钮：绑定音效组件和点击事件
+		if (nextButton != null)
+		{
+			if (nextButton.GetComponent<PlaySfxOnClick>() == null)
+			{
+				nextButton.gameObject.AddComponent<PlaySfxOnClick>();
+			}
 
-        if (nextButton != null)
-        {
-            nextButton.onClick.RemoveListener(OnNextButtonClick);
-        }
-    }
+			nextButton.onClick.AddListener(OnNextButtonClick);
+		}
 
-    /// <summary>
-    /// 显示人物信息（名字和头像）
-    /// </summary>
-    public void ShowPerson(string personName, Sprite portrait)
-    {
-        if (nameText != null)
-        {
-            nameText.text = personName;
-        }
+		// 初始化 UI 状态
+		ClearDialogue();
+	}
 
-        if (portraitImage != null && portrait != null)
-        {
-            portraitImage.sprite = portrait;
-            portraitImage.enabled = true;
-        }
+	private void OnDestroy()
+	{
+		// 解绑按钮事件，避免引用残留
+		if (prevButton != null)
+		{
+			prevButton.onClick.RemoveListener(OnPrevButtonClick);
+		}
 
-        Debug.Log($"[DialogueUI] 显示人物: {personName}");
-    }
+		if (nextButton != null)
+		{
+			nextButton.onClick.RemoveListener(OnNextButtonClick);
+		}
+	}
 
-    /// <summary>
-    /// 显示对话文本
-    /// </summary>
-    /// <param name="text">对话文本</param>
-    /// <param name="hasOptions">是否有选项</param>
-    /// <param name="useTypewriter">是否使用打字机效果（默认true，历史回溯时为false）</param>
-    public void ShowDialogue(string text, bool hasOptions, bool useTypewriter = true)
-    {
-        if (dialogueText != null)
-        {
-            string processedText = InjectLinks(text);
-            
-            // 检查是否有打字机效果组件
-            TypewriterEffect typewriterEffect = dialogueText.GetComponent<TypewriterEffect>();
-            if (typewriterEffect != null && useTypewriter)
-            {
-                // 使用打字机效果显示文本
-                typewriterEffect.SetText(processedText);
-            }
-            else
-            {
-                // 直接设置文本（兼容旧代码或历史回溯时）
-                // 如果禁用了打字机效果但组件存在，需要停止打字机效果并直接显示全部文本
-                if (typewriterEffect != null && !useTypewriter)
-                {
-                    // 停止任何正在进行的打字机效果
-                    dialogueText.text = processedText;
-                    dialogueText.maxVisibleCharacters = processedText.Length;  // 确保显示全部文本
-                    dialogueText.ForceMeshUpdate();
-                }
-                else
-                {
-                    // 没有打字机效果组件，直接设置文本
-                    dialogueText.text = processedText;
-                }
-            }
-        }
+	/// <summary>
+	/// 显示人物信息
+	///
+	/// 功能：
+	/// - 设置人物名字
+	/// - 设置人物头像
+	/// - 若头像存在，则启用头像显示
+	/// </summary>
+	/// <param name="personName">人物名</param>
+	/// <param name="portrait">人物头像</param>
+	public void ShowPerson(string personName, Sprite portrait)
+	{
+		if (nameText != null)
+		{
+			nameText.text = personName ?? string.Empty;
+		}
 
-        Debug.Log($"[DialogueUI] 显示对话: {text.Substring(0, Mathf.Min(20, text.Length))}... (打字机效果: {useTypewriter})");
-    }
+		if (portraitImage != null)
+		{
+			if (portrait != null)
+			{
+				portraitImage.sprite = portrait;
+				portraitImage.enabled = true;
+			}
+			else
+			{
+				portraitImage.enabled = false;
+			}
+		}
 
-    /// <summary>
-    /// 显示选项
-    /// </summary>
-    /// <param name="options">选项列表</param>
-    /// <param name="isHistoryView">是否在浏览历史（历史中的选项不可点击）</param>
-    public void ShowOptions(List<DialogueOption> options, bool isHistoryView = false)
-    {
-        // 清空现有选项
-        ClearOptions();
+		Debug.Log($"[DialogueUI] 显示人物：{personName}");
+	}
 
-        if (options == null || options.Count == 0 || choiceContainer == null || choiceButtonPrefab == null)
-        {
-            return;
-        }
+	/// <summary>
+	/// 显示对话文本
+	///
+	/// 处理流程：
+	/// 1. 接收原始对话文本（纯文本）
+	/// 2. 通过 DialogueTextPreprocessor 做文本预处理
+	///    - 自动根据 CaseKeywordDatabase 将关键词构建为 TMP <link>
+	/// 3. 根据 useTypewriter 决定：
+	///    - 使用打字机显示
+	///    - 或直接完整显示
+	///
+	/// 说明：
+	/// - hasOptions 参数当前保留，用于与现有调用接口兼容
+	/// - 若后续需要“有选项时禁用空白点击推进”等行为，可以在别处结合该参数使用
+	/// </summary>
+	/// <param name="text">原始对话文本（建议为纯文本）</param>
+	/// <param name="hasOptions">该句是否带选项（当前仅保留接口语义）</param>
+	/// <param name="useTypewriter">是否使用打字机效果。默认 true；历史浏览等场景可传 false</param>
+	public void ShowDialogue(string text, bool hasOptions, bool useTypewriter = true)
+	{
+		if (dialogueText == null)
+		{
+			Debug.LogWarning("[DialogueUI] dialogueText 未配置，无法显示对话文本。");
+			return;
+		}
 
-        // 创建选项按钮
-        for (int i = 0; i < options.Count; i++)
-        {
-            var option = options[i];
-            var buttonObj = Instantiate(choiceButtonPrefab, choiceContainer);
-            _currentChoiceButtons.Add(buttonObj);
+		string rawText = text ?? string.Empty;
 
-            // 设置按钮文本
-            var buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
-            if (buttonText != null)
-            {
-                buttonText.text = option.optionText;
-            }
+		// 统一使用预处理器构建最终富文本
+		string processedText = DialogueTextPreprocessor.Process(rawText, keywordDatabase);
 
-            // 绑定点击事件
-            var button = buttonObj.GetComponent<Button>();
-            if (button != null)
-            {
-                // 如果在浏览历史，禁用按钮
-                button.interactable = !isHistoryView;
+		// 若需要打字机，并且组件存在，则走打字机
+		if (_typewriterEffect != null && useTypewriter)
+		{
+			_typewriterEffect.SetText(processedText);
+		}
+		else
+		{
+			// 如果不使用打字机，则直接完整显示
+			// 注意：不能用 processedText.Length 作为 maxVisibleCharacters
+			// 因为富文本标签会影响字符串长度，但不会计入可见字符数
+			if (_typewriterEffect != null)
+			{
+				// 先清理打字机状态，避免残留
+				_typewriterEffect.Clear();
+			}
 
-                if (!isHistoryView)
-                {
-                    // [SFX] 为对话选项按钮添加音效组件
-                    var playSfx = buttonObj.GetComponent<PlaySfxOnClick>();
-                    if (playSfx == null)
-                    {
-                        playSfx = buttonObj.AddComponent<PlaySfxOnClick>();
-                    }
-                    
-                    int optionIndex = i;  // 捕获索引
-                    button.onClick.AddListener(() => OnOptionClick(optionIndex));
-                }
-            }
+			dialogueText.text = processedText;
+			dialogueText.ForceMeshUpdate();
 
-            buttonObj.SetActive(true);
-        }
+			// 这里使用 TMP 计算出的可见字符数，确保富文本也能完整显示
+			dialogueText.maxVisibleCharacters = dialogueText.textInfo.characterCount;
+		}
 
-        Debug.Log($"[DialogueUI] 显示 {options.Count} 个选项 (历史浏览: {isHistoryView})");
-    }
+		Debug.Log(
+			$"[DialogueUI] 显示对话：{rawText.Substring(0, Mathf.Min(20, rawText.Length))}..." +
+			$"（打字机={useTypewriter}，有选项={hasOptions}）");
+	}
 
-    /// <summary>
-    /// 清空选项
-    /// </summary>
-    public void ClearOptions()
-    {
-        foreach (var button in _currentChoiceButtons)
-        {
-            if (button != null)
-            {
-                Destroy(button);
-            }
-        }
-        _currentChoiceButtons.Clear();
-    }
+	/// <summary>
+	/// 显示选项
+	///
+	/// 功能：
+	/// - 清空旧选项
+	/// - 根据 DialogueOption 列表动态生成按钮
+	/// - 绑定按钮文本和点击事件
+	/// - 支持历史浏览模式：历史模式下选项仅展示，不可点击
+	/// </summary>
+	/// <param name="options">选项列表</param>
+	/// <param name="isHistoryView">是否为历史浏览模式。若为 true，则按钮不可点击</param>
+	public void ShowOptions(List<DialogueOption> options, bool isHistoryView = false)
+	{
+		// 先清空旧选项，避免残留
+		ClearOptions();
 
-    /// <summary>
-    /// 更新导航按钮状态
-    /// </summary>
-    public void UpdateNavigationButtons(bool canPrev, bool canNext)
-    {
-        if (prevButton != null)
-        {
-            prevButton.interactable = canPrev;
-        }
+		if (options == null || options.Count == 0)
+		{
+			return;
+		}
 
-        if (nextButton != null)
-        {
-            nextButton.interactable = canNext;
-        }
-    }
+		if (choiceContainer == null)
+		{
+			Debug.LogWarning("[DialogueUI] choiceContainer 未配置，无法显示选项。");
+			return;
+		}
 
-    /// <summary>
-    /// 清空所有对话显示
-    /// </summary>
-    public void ClearDialogue()
-    {
-        if (nameText != null)
-        {
-            nameText.text = "";
-        }
+		if (choiceButtonPrefab == null)
+		{
+			Debug.LogWarning("[DialogueUI] choiceButtonPrefab 未配置，无法显示选项。");
+			return;
+		}
 
-        if (portraitImage != null)
-        {
-            portraitImage.enabled = false;
-        }
+		for (int i = 0; i < options.Count; i++)
+		{
+			DialogueOption option = options[i];
+			GameObject buttonObj = Instantiate(choiceButtonPrefab, choiceContainer);
+			_currentChoiceButtons.Add(buttonObj);
 
-        if (dialogueText != null)
-        {
-            // 检查是否有打字机效果组件
-            TypewriterEffect typewriterEffect = dialogueText.GetComponent<TypewriterEffect>();
-            if (typewriterEffect != null)
-            {
-                typewriterEffect.Clear();
-            }
-            else
-            {
-                dialogueText.text = "";
-            }
-        }
+			// 设置按钮文本
+			TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
+			if (buttonText != null)
+			{
+				buttonText.text = option != null ? option.optionText : string.Empty;
+			}
 
-        ClearOptions();
-        UpdateNavigationButtons(false, false);
-    }
+			// 设置按钮交互
+			Button button = buttonObj.GetComponent<Button>();
+			if (button != null)
+			{
+				button.interactable = !isHistoryView;
 
-    /// <summary>
-    /// 构建“关键词 -> 线索ID”的映射
-    /// </summary>
-    private Dictionary<string, string> BuildClickableTerms()
-    {
-        var result = new Dictionary<string, string>();
+				if (!isHistoryView)
+				{
+					// 为选项按钮绑定点击音效组件
+					PlaySfxOnClick playSfx = buttonObj.GetComponent<PlaySfxOnClick>();
+					if (playSfx == null)
+					{
+						playSfx = buttonObj.AddComponent<PlaySfxOnClick>();
+					}
 
-        if (keywordDatabase == null || keywordDatabase.keywords == null)
-        {
-            return result;
-        }
+					int optionIndex = i; // 闭包捕获
+					button.onClick.AddListener(() => OnOptionClick(optionIndex));
+				}
+			}
 
-        foreach (var entry in keywordDatabase.keywords)
-        {
-            if (entry == null || string.IsNullOrEmpty(entry.term) || entry.revealsClue == null)
-            {
-                continue;
-            }
+			buttonObj.SetActive(true);
+		}
 
-            if (!result.ContainsKey(entry.term))
-            {
-                result.Add(entry.term, entry.revealsClue.id);
-            }
-        }
+		Debug.Log($"[DialogueUI] 显示 {options.Count} 个选项（历史浏览={isHistoryView}）");
+	}
 
-        return result;
-    }
+	/// <summary>
+	/// 清空当前所有选项按钮
+	///
+	/// 说明：
+	/// - 当前版本采用 Destroy 直接销毁
+	/// - 若后续选项刷新非常频繁，可进一步优化为对象池
+	/// </summary>
+	public void ClearOptions()
+	{
+		for (int i = 0; i < _currentChoiceButtons.Count; i++)
+		{
+			if (_currentChoiceButtons[i] != null)
+			{
+				Destroy(_currentChoiceButtons[i]);
+			}
+		}
 
-    /// <summary>
-    /// 仅用于对话文本：把关键词替换为 TMP <link>，用于点击收集线索
-    /// </summary>
-    private string InjectLinks(string rawText)
-    {
-        if (string.IsNullOrEmpty(rawText))
-        {
-            return rawText;
-        }
+		_currentChoiceButtons.Clear();
+	}
 
-        if (_clickableTerms == null || _clickableTerms.Count == 0)
-        {
-            return rawText;
-        }
+	/// <summary>
+	/// 更新历史导航按钮状态
+	/// </summary>
+	/// <param name="canPrev">是否允许上一条</param>
+	/// <param name="canNext">是否允许下一条</param>
+	public void UpdateNavigationButtons(bool canPrev, bool canNext)
+	{
+		if (prevButton != null)
+		{
+			prevButton.interactable = canPrev;
+		}
 
-        string result = rawText;
+		if (nextButton != null)
+		{
+			nextButton.interactable = canNext;
+		}
+	}
 
-        foreach (var pair in _clickableTerms)
-        {
-            string word = pair.Key;
-            string clueId = pair.Value;
+	/// <summary>
+	/// 清空对话区域
+	///
+	/// 功能：
+	/// - 清空人物名字
+	/// - 隐藏头像
+	/// - 清空对话文本
+	/// - 清空选项
+	/// - 重置导航按钮状态
+	/// </summary>
+	public void ClearDialogue()
+	{
+		if (nameText != null)
+		{
+			nameText.text = string.Empty;
+		}
 
-            result = result.Replace(
-                word,
-                $"<link=\"{clueId}\"><color=#4AA3FF>{word}</color></link>"
-            );
-            Debug.Log("DialogueUI : Link格式植入成功！！！");
-        }
+		if (portraitImage != null)
+		{
+			portraitImage.enabled = false;
+		}
 
-        return result;
-    }
+		if (dialogueText != null)
+		{
+			if (_typewriterEffect != null)
+			{
+				_typewriterEffect.Clear();
+			}
+			else
+			{
+				dialogueText.text = string.Empty;
+				dialogueText.maxVisibleCharacters = 0;
+			}
+		}
 
-    /// <summary>
-    /// 选项点击事件
-    /// </summary>
-    private void OnOptionClick(int optionIndex)
-    {
-        if (_dialogueController != null)
-        {
-            _dialogueController.SelectOption(optionIndex);
-        }
-    }
+		ClearOptions();
+		UpdateNavigationButtons(false, false);
+	}
 
-    /// <summary>
-    /// 上一条按钮点击事件
-    /// </summary>
-    private void OnPrevButtonClick()
-    {
-        if (_dialogueController != null)
-        {
-            _dialogueController.NavigateHistory(-1);
-        }
-    }
+	/// <summary>
+	/// 选项点击事件
+	///
+	/// 由选项按钮调用，最终交给 DialogueController 处理。
+	/// </summary>
+	/// <param name="optionIndex">选项索引</param>
+	private void OnOptionClick(int optionIndex)
+	{
+		if (_dialogueController != null)
+		{
+			_dialogueController.SelectOption(optionIndex);
+		}
+		else
+		{
+			Debug.LogWarning("[DialogueUI] DialogueController 不存在，无法处理选项点击。");
+		}
+	}
 
-    /// <summary>
-    /// 下一条按钮点击事件
-    /// </summary>
-    private void OnNextButtonClick()
-    {
-        if (_dialogueController != null)
-        {
-            _dialogueController.NavigateHistory(1);
-        }
-    }
+	/// <summary>
+	/// 上一条按钮点击事件
+	///
+	/// 用于历史对话浏览。
+	/// </summary>
+	private void OnPrevButtonClick()
+	{
+		if (_dialogueController != null)
+		{
+			_dialogueController.NavigateHistory(-1);
+		}
+		else
+		{
+			Debug.LogWarning("[DialogueUI] DialogueController 不存在，无法处理上一条导航。");
+		}
+	}
+
+	/// <summary>
+	/// 下一条按钮点击事件
+	///
+	/// 用于历史对话浏览。
+	/// </summary>
+	private void OnNextButtonClick()
+	{
+		if (_dialogueController != null)
+		{
+			_dialogueController.NavigateHistory(1);
+		}
+		else
+		{
+			Debug.LogWarning("[DialogueUI] DialogueController 不存在，无法处理下一条导航。");
+		}
+	}
+
+	/// <summary>
+	/// 设置整个对话 UI 是否可交互
+	///
+	/// 常见用途：
+	/// - 插播演出时暂时锁住对话 UI
+	/// - 特殊状态下禁用整块对话界面
+	///
+	/// 行为：
+	/// - interactable 控制按钮/Selectable 交互
+	/// - blocksRaycasts 控制是否拦截射线
+	/// </summary>
+	/// <param name="interactable">是否可交互</param>
 	public void SetInteractable(bool interactable)
 	{
-		if (rootCanvasGroup == null) return;
+		if (rootCanvasGroup == null)
+		{
+			Debug.LogWarning("[DialogueUI] rootCanvasGroup 未配置，无法设置交互锁。");
+			return;
+		}
+
 		rootCanvasGroup.interactable = interactable;
 		rootCanvasGroup.blocksRaycasts = interactable;
-		// 可选：插播时置灰
-		// rootCanvasGroup.alpha = interactable ? 1f : 1f;
+
+		// 如需视觉上半透明，可在这里扩展：
+		// rootCanvasGroup.alpha = interactable ? 1f : 0.6f;
 	}
 }
-

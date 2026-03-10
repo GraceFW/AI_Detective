@@ -2986,7 +2986,7 @@ MonoBehaviour:
   prevButton: {fileID: 2004872361}
   nextButton: {fileID: 282705724}
   dialogueBoxButton: {fileID: 0}
-  rootCanvasGroup: {fileID: 0}
+  rootCanvasGroup: {fileID: 1475180837}
 --- !u!114 &361593137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6763,7 +6763,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -6901,15 +6901,15 @@ MonoBehaviour:
   tmp: {fileID: 1085428042}
   typewriter: {fileID: 1085428045}
   hoverVisual: {fileID: 1085428048}
+  dialogueController: {fileID: 0}
   enableHover: 1
   disableHoverWhileTyping: 1
+  enableBlankClickNextDialogue: 1
   changeCursorOnHover: 1
   handCursor: {fileID: 0}
   handCursorHotspot: {x: 6, y: 0}
   handlerBehaviours:
   - {fileID: 1085428047}
-  dialogueController: {fileID: 0}
-  enableBlankClickNextDialogue: 1
 --- !u!114 &1085428047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7660,15 +7660,15 @@ MonoBehaviour:
   tmp: {fileID: 1235553415}
   typewriter: {fileID: 1235553417}
   hoverVisual: {fileID: 1235553418}
+  dialogueController: {fileID: 0}
   enableHover: 1
   disableHoverWhileTyping: 1
+  enableBlankClickNextDialogue: 1
   changeCursorOnHover: 1
   handCursor: {fileID: 2800000, guid: 6aa3f369a1d9b1d4dbb821f84dff81d8, type: 3}
   handCursorHotspot: {x: 6, y: 0}
   handlerBehaviours:
   - {fileID: 1235553419}
-  dialogueController: {fileID: 0}
-  enableBlankClickNextDialogue: 1
 --- !u!1 &1241974375
 GameObject:
   m_ObjectHideFlags: 0
@@ -9145,7 +9145,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1475180834}
   - component: {fileID: 1475180836}
-  - component: {fileID: 1475180835}
   - component: {fileID: 1475180837}
   m_Layer: 5
   m_Name: ASK
@@ -9181,36 +9180,6 @@ RectTransform:
   m_AnchoredPosition: {x: -1920, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1475180835
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1475180833}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1475180836
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10216,8 +10185,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1672572590}
   - component: {fileID: 1672572589}
-  - component: {fileID: 1672572588}
-  - component: {fileID: 1672572591}
   m_Layer: 5
   m_Name: DialogueBox
   m_TagString: Untagged
@@ -10225,36 +10192,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1672572588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1672572586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1672572589
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10283,19 +10220,6 @@ RectTransform:
   m_AnchoredPosition: {x: 16, y: -26.5186}
   m_SizeDelta: {x: -100, y: -124.0373}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1672572591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1672572586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b586ce728e10c74a8135479c381b12b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  forwardTarget: {fileID: 0}
 --- !u!1 &1688325097
 GameObject:
   m_ObjectHideFlags: 0
