@@ -17,5 +17,23 @@ MonoBehaviour:
     revealsClue: {fileID: 11400000, guid: 014c85e8cbe59a6418a341aac3e5ed6e, type: 2}
   - term: "\u6B7B\u4EA1\u65F6\u95F4"
     revealsClue: {fileID: 11400000, guid: 63ef9207359878743a60aa61fe742017, type: 2}
+  - term: "\u6700\u540E\u8FDB\u9910\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: 65d127e1e837e5948bce6fe27bef4587, type: 2}
+  - term: "\u62A5\u6848\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: 6a90a57c1a3e88b419a1c2fc4a5b83e6, type: 2}
+  - term: "\u66D9\u5149\u9986"
+    revealsClue: {fileID: 11400000, guid: b98a63ad275c9904bbfffa6d70704414, type: 2}
+  - term: "\u9E1F\u4E4B\u53D6\u516C\u5BD3703"
+    revealsClue: {fileID: 11400000, guid: d9d5003da00fa794595b6994c1b26113, type: 2}
+  - term: "\u4E8C\u91CD\u8EAB\u7814\u7A76\u4F1A"
+    revealsClue: {fileID: 11400000, guid: f7c91d8c2b66caa49b18cecf4973483c, type: 2}
+  - term: "\u8BFB\u8005\u89C1\u9762\u4F1A"
+    revealsClue: {fileID: 11400000, guid: bf2cbad49f241f549a4f01a141efbb68, type: 2}
   - term: "\u4E8C\u91CD\u8EAB\u4FA6\u63A2\u4E8B\u4EF6\u7C3F"
     revealsClue: {fileID: 11400000, guid: 4ebb1d9b4f9aa0d4787b0b5f4925077b, type: 2}
+  - term: "\u9752\u6749\u5188\u4ED3"
+    revealsClue: {fileID: 11400000, guid: d51629779b7f5b944ad5cc8c03ccb873, type: 2}
+  - term: "\u9F50\u6728\u56FD\u51AC"
+    revealsClue: {fileID: 11400000, guid: 8bf228b5358b17a408b72deb7f70b161, type: 2}
+  - term: "\u9ED1\u5D0E\u83B2"
+    revealsClue: {fileID: 11400000, guid: b3ed2393e05704c47966b5d4498f0dde, type: 2}

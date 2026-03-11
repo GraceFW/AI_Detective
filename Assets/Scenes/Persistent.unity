@@ -548,7 +548,6 @@ MonoBehaviour:
   dialogueEndEvent: {fileID: 11400000, guid: 77650a354d099f248ade20ece72c5395, type: 2}
   rewardClueIDs:
   - 0006
-  - 0007
 --- !u!114 &273083415
 MonoBehaviour:
   m_ObjectHideFlags: 0
