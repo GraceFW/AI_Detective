@@ -52,8 +52,8 @@ public class SearchPanelController : MonoBehaviour
 	private enum CommandType
 	{
 		Detect = 0,
-		Sniff = 1,
-		Attack = 2
+		Attack = 1,
+		Sniff = 2
 	}
 
 	private void Start()
