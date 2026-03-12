@@ -348,6 +348,8 @@ public class SearchPanelController : MonoBehaviour
 		UpdateResultText();
 		// 不再手动调用 ScrollToBottom，打字机效果会自己处理滚动
 
+		Debug.Log($"[Final TMP Text] {resultText.text}");
+
 		_displayCoroutine = null;
 	}
 

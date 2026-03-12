@@ -79,12 +79,33 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 	/// </summary>
 	private readonly List<Image> _active = new List<Image>(16);
 
+	private int _debugMeshIndex = -1;
+	private int _debugVertexIndex = -1;	
+
+
 	private void Awake()
 	{
 		// 如果没配置 highlightParent，就自动创建一个推荐层
 		if (highlightParent == null)
 		{
 			TryAutoCreateHighlightLayer();
+		}
+
+		// 注册 TMP 的预渲染回调：
+		// 在 TMP 即将把最终文字数据提交给渲染层之前，再做一次局部顶点改色。
+		// 这是当前问题下最关键的修复点。
+		if (TryGetComponent(out TextMeshProUGUI tmp))
+		{
+			tmp.OnPreRenderText += HandlePreRenderText;
+		}
+	}
+
+	private void OnDestroy()
+	{
+		// 注销 TMP 的预渲染回调，避免对象销毁后残留事件绑定
+		if (TryGetComponent(out TextMeshProUGUI tmp))
+		{
+			tmp.OnPreRenderText -= HandlePreRenderText;
 		}
 	}
 
@@ -96,24 +117,24 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 	/// - 重建后局部顶点色会被冲掉
 	/// - 因此这里在更靠后的时机重新把当前 hover link 的颜色补回去
 	/// </summary>
-	private void LateUpdate()
-	{
-		if (_currentTmp == null || _currentLinkIndex < 0)
-			return;
+	//private void LateUpdate()
+	//{
+	//	if (_currentTmp == null || _currentLinkIndex < 0)
+	//		return;
 
-		if (!_currentTmp.isActiveAndEnabled)
-			return;
+	//	if (!_currentTmp.isActiveAndEnabled)
+	//		return;
 
-		_currentTmp.ForceMeshUpdate();
+	//	_currentTmp.ForceMeshUpdate();
 
-		if (_currentTmp.textInfo == null || _currentTmp.textInfo.linkCount <= 0)
-			return;
+	//	if (_currentTmp.textInfo == null || _currentTmp.textInfo.linkCount <= 0)
+	//		return;
 
-		if (_currentLinkIndex >= _currentTmp.textInfo.linkCount)
-			return;
+	//	if (_currentLinkIndex >= _currentTmp.textInfo.linkCount)
+	//		return;
 
-		ApplyTextVertexColor(_currentTmp, _currentLinkIndex);
-	}
+	//	ApplyTextVertexColor(_currentTmp, _currentLinkIndex);
+	//}
 
 	/// <summary>
 	/// 应用 hover 效果。
@@ -150,8 +171,13 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 		// 缓存原始 mesh 信息，用于 Clear 时恢复
 		_cachedMeshInfo = tmp.textInfo.CopyMeshInfoVertexData();
 
-		ApplyTextVertexColor(tmp, linkIndex);
+		// 注意：
+		// 这里不再立即调用 ApplyTextVertexColor。
+		// 局部顶点改色统一交给 OnPreRenderText 回调 HandlePreRenderText()。
 		DrawMarkerRects(tmp, linkIndex);
+
+		// 触发一次 mesh 刷新，让 TMP 在下一次预渲染时走到 HandlePreRenderText
+		tmp.SetVerticesDirty();;
 	}
 
 	/// <summary>
@@ -167,6 +193,8 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 		if (tmp != null)
 		{
 			RestoreTextVertexColor(tmp);
+			// 通知 TMP 重新提交顶点数据，确保恢复后的颜色生效
+			tmp.SetVerticesDirty();
 		}
 
 		RecycleAllMarkers();
@@ -210,12 +238,21 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 
 	/// <summary>
 	/// 将指定 link 内所有字符的顶点颜色统一改为 hoverTextColor。
+	/// 方法已弃用
 	/// </summary>
 	private void ApplyTextVertexColor(TextMeshProUGUI tmp, int linkIndex)
 	{
 		TMP_LinkInfo linkInfo = tmp.textInfo.linkInfo[linkIndex];
 		int start = linkInfo.linkTextfirstCharacterIndex;
 		int end = start + linkInfo.linkTextLength;
+		Debug.Log($"linkText={linkInfo.GetLinkText()}");
+		Debug.Log($"start={linkInfo.linkTextfirstCharacterIndex}, len={linkInfo.linkTextLength}");
+		for (int i = start; i < end; i++)
+		{
+			var ch = tmp.textInfo.characterInfo[i];
+			Debug.Log($"charIndex={i}, char='{ch.character}', visible={ch.isVisible}, meshIndex={ch.materialReferenceIndex}, vertexIndex={ch.vertexIndex}");
+		}
+		bool logged = false;
 
 		for (int charIndex = start; charIndex < end; charIndex++)
 		{
@@ -223,19 +260,31 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 				continue;
 
 			TMP_CharacterInfo charInfo = tmp.textInfo.characterInfo[charIndex];
-
 			if (ignoreInvisibleCharacters && !charInfo.isVisible)
 				continue;
 
 			int meshIndex = charInfo.materialReferenceIndex;
 			int vertexIndex = charInfo.vertexIndex;
-
+			_debugMeshIndex = meshIndex;
+			_debugVertexIndex = vertexIndex;
 			Color32[] colors = tmp.textInfo.meshInfo[meshIndex].colors32;
+
+			if (!logged)
+			{
+				Debug.Log($"[Before] charIndex={charIndex}, meshIndex={meshIndex}, vertexIndex={vertexIndex}, v0={colors[vertexIndex + 0]}");
+
+			}
 
 			colors[vertexIndex + 0] = hoverTextColor;
 			colors[vertexIndex + 1] = hoverTextColor;
 			colors[vertexIndex + 2] = hoverTextColor;
 			colors[vertexIndex + 3] = hoverTextColor;
+
+			if (!logged)
+			{
+				Debug.Log($"[After ] charIndex={charIndex}, meshIndex={meshIndex}, vertexIndex={vertexIndex}, v0={colors[vertexIndex + 0]}");
+				logged = true;
+			}
 		}
 
 		PushVertexColorsToMesh(tmp);
@@ -263,9 +312,6 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 
 	private void PushVertexColorsToMesh(TextMeshProUGUI tmp)
 	{
-		if (tmp == null || tmp.textInfo == null || tmp.textInfo.meshInfo == null)
-			return;
-
 		for (int i = 0; i < tmp.textInfo.meshInfo.Length; i++)
 		{
 			TMP_MeshInfo meshInfo = tmp.textInfo.meshInfo[i];
@@ -273,8 +319,71 @@ public class InteractiveTextHoverVisual : MonoBehaviour
 			if (meshInfo.mesh == null || meshInfo.colors32 == null || meshInfo.colors32.Length == 0)
 				continue;
 
+			//if (i == _debugMeshIndex)
+			//{
+			//	Debug.Log($"[Push Before] meshInfo.colors32[{_debugVertexIndex}]={meshInfo.colors32[_debugVertexIndex]}");
+			//}
+
 			meshInfo.mesh.colors32 = meshInfo.colors32;
 			tmp.UpdateGeometry(meshInfo.mesh, i);
+
+			//if (i == _debugMeshIndex && meshInfo.mesh.colors32 != null && _debugVertexIndex < meshInfo.mesh.colors32.Length)
+			//{
+			//	Debug.Log($"[Push After ] mesh.colors32[{_debugVertexIndex}]={meshInfo.mesh.colors32[_debugVertexIndex]}");
+			//}
+		}
+	}
+
+	/// <summary>
+	/// TMP 预渲染回调。
+	///
+	/// 触发时机：
+	/// - TextMeshPro 已经完成文本解析和 mesh 准备
+	/// - 即将把最终数据提交去渲染
+	///
+	/// 这是当前最适合做“局部 hover 改色”的时机，
+	/// 因为它晚于普通的 ForceMeshUpdate / Update / LateUpdate 逻辑，
+	/// 可以避免前面已经改好的局部顶点色被后续 TMP 重建覆盖。
+	/// </summary>
+	/// <param name="textInfo">TMP 当前即将渲染的文本信息</param>
+	private void HandlePreRenderText(TMP_TextInfo textInfo)
+	{
+		if (_currentTmp == null || _currentLinkIndex < 0)
+			return;
+
+		// 防御：确保当前回调对应的对象就是正在 hover 的 TMP
+		if (_currentTmp.textInfo == null || textInfo.textComponent != _currentTmp)
+			return;
+
+		if (textInfo.linkCount <= 0)
+			return;
+
+		if (_currentLinkIndex >= textInfo.linkCount)
+			return;
+
+		TMP_LinkInfo linkInfo = textInfo.linkInfo[_currentLinkIndex];
+		int start = linkInfo.linkTextfirstCharacterIndex;
+		int end = start + linkInfo.linkTextLength;
+
+		for (int charIndex = start; charIndex < end; charIndex++)
+		{
+			if (charIndex < 0 || charIndex >= textInfo.characterCount)
+				continue;
+
+			TMP_CharacterInfo charInfo = textInfo.characterInfo[charIndex];
+
+			if (ignoreInvisibleCharacters && !charInfo.isVisible)
+				continue;
+
+			int meshIndex = charInfo.materialReferenceIndex;
+			int vertexIndex = charInfo.vertexIndex;
+
+			Color32[] colors = textInfo.meshInfo[meshIndex].colors32;
+
+			colors[vertexIndex + 0] = hoverTextColor;
+			colors[vertexIndex + 1] = hoverTextColor;
+			colors[vertexIndex + 2] = hoverTextColor;
+			colors[vertexIndex + 3] = hoverTextColor;
 		}
 	}
 
