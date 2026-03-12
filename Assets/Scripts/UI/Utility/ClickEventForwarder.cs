@@ -1,6 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
+
+// 已弃用
 /// <summary>
 /// 点击事件转发器
 /// 将自身对象的点击事件转发给父对象或指定对象上的 IPointerClickHandler 组件

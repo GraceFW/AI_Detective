@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(TextMeshProUGUI))]
+
+// 已弃用
 public class ClickableTMPText : MonoBehaviour, IPointerClickHandler
 {
     private TextMeshProUGUI tmpText;
