@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneType: 1
   sceneReference:
-    m_AssetGUID: 06b3365861bb6e340abcff8972f21203
+    m_AssetGUID: e6b9bd9b8a4826846ac07a0600ff477e
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  nextLevelScene: {fileID: 11400000, guid: 66f25b2efd3ae1d43b4d778a0655c02d, type: 2}
   useFade: 1
-  fadeDuration: 1
+  fadeDuration: 1.5
