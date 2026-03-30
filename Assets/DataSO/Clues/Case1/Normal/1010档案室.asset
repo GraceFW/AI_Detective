@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
+  m_Name: "1010\u6863\u6848\u5BA4"
+  m_EditorClassIdentifier: 
+  id: 1010
+  displayName: "\u6863\u6848\u5BA4"
+  detectable: 0
+  collectable: 1
+  collected: 0
+  attackKey: 
+  isAttackContentUnlocked: 0
+  showAttackContentDirectly: 1
+  attackUnlockContent: 
+  summary: "\u96C6\u4E2D\u4FDD\u7BA1\u516C\u53F8\u7EB8\u8D28\u53CA\u7535\u5B50\u6863\u6848\uFF0C\u5305\u62EC\u5386\u53F2\u5408\u540C\u3001\u7814\u53D1\u8BB0\u5F55\u3001\u8D22\u52A1\u51ED\u8BC1\u3002\u4F4D\u4E8E27\u5C42\u529E\u516C\u533A\u6DF1\u5904\uFF0C\u9700\u4E13\u4EBA\u966A\u540C\u8FDB\u5165\u3002"
+  detailText: 
+  Detail_Mark: 

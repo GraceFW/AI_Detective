@@ -562,6 +562,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueDataList:
   - {fileID: 11400000, guid: 58f0b744088824b4b8d10eed3cda65c2, type: 2}
+  - {fileID: 11400000, guid: 3d2d292fdcc352344bf7941879518b38, type: 2}
   dialoguePanel: {fileID: 1866115396}
   backgroundMask: {fileID: 2131331699}
   speakerImage: {fileID: 1111461126}
@@ -578,6 +579,9 @@ MonoBehaviour:
   sceneMappings:
   - sceneName: TestZeroLevel
     levelNumber: 0
+    enabled: 1
+  - sceneName: TestFirstLevel
+    levelNumber: 1
     enabled: 1
 --- !u!4 &273083416
 Transform:
