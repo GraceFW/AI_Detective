@@ -10,6 +10,7 @@ using TMPro;
 public class NameInputDialog : MonoBehaviour
 {
     public static NameInputDialog Instance { get; private set; }
+    public Image BackgroundMask => backgroundMask;
     
     [Header("UI引用")]
     [Tooltip("弹窗根对象（包含背景遮罩和对话框）")]

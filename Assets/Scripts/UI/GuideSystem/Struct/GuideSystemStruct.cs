@@ -19,6 +19,8 @@ public enum GuideStepType
 [System.Serializable]
 public class GuideStep
 {
+	public string stepDescribe;
+
 	/// <summary>
 	/// 当前步骤类型
 	/// </summary>

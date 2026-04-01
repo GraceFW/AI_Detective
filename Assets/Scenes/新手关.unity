@@ -3369,6 +3369,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd286ffb27b2cb43a8f427053130bc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holePadding: {x: 24, y: 16}
+  frameColor: {r: 1, g: 0.9, b: 0.2, a: 1}
+  frameThickness: 4
+  blockOutsideRaycasts: 1
+  guideLayerSortingOrder: 9000
 --- !u!1 &415394651
 GameObject:
   m_ObjectHideFlags: 0
@@ -4701,7 +4706,6 @@ GameObject:
   m_Component:
   - component: {fileID: 589227929}
   - component: {fileID: 589227928}
-  - component: {fileID: 589227930}
   - component: {fileID: 589227931}
   m_Layer: 0
   m_Name: GuideManager
@@ -4725,13 +4729,77 @@ MonoBehaviour:
   sequences:
   - triggerClueId: 0007
     steps:
-    - stepType: 0
+    - stepDescribe: "\u83B7\u5F97\u5377\u5B97\u7EBF\u7D22\u540E\u9AD8\u4EAE\u5377\u5B97\u7EBF\u7D22UI\uFF0C\u5F15\u5165\u5BF9\u8BDD\u4ECB\u7ECD\u8FD9\u662F\u5565"
+      stepType: 1
+      targetKeys:
+      - 0007
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+    - stepDescribe: "\u64AD\u653E\u5377\u5B97\u7EBF\u7D22\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217\u4ECB\u7ECD\u7EBF\u7D22UI\uFF0C\u5F15\u5165\u7EBF\u7D22\u8BE6\u60C5\u9875\u5982\u4F55\u67E5\u770B"
+      stepType: 0
       targetKeys: []
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 1
-    - stepType: 0
+    - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u70B9\u51FB\u5377\u5B97\u67E5\u9605\u7EBF\u7D22\u8BE6\u60C5\u9875\uFF0C\u5F15\u5165\u7EBF\u7D22\u8BE6\u60C5\u9875\u4ECB\u7ECD"
+      stepType: 2
+      targetKeys:
+      - 0007
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+    - stepDescribe: "\u5173\u95ED\u7EBF\u7D22UI\u9AD8\u4EAE\uFF08\u73A9\u5BB6\u70B9\u51FB\u7EBF\u7D22UI\u4F1A\u5F39\u51FA\u8BE6\u60C5\u9875\uFF0C\u4E8E\u662F\u7EBF\u7D22UI\u7684\u9AD8\u4EAE\u81EA\u7136\u88AB\u5173\u95ED\uFF0C\u8FD9\u91CC\u5B58\u5728\u7684\u610F\u4E49\u662F\u4F7F\u903B\u8F91\u66F4\u6E05\u6670\uFF09"
+      stepType: 4
+      targetKeys:
+      - 0007
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+    - stepDescribe: "\u64AD\u653E\u7EBF\u7D22\u8BE6\u60C5\u9875\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217\uFF0C\u5F15\u5165\u641C\u7D22\u529F\u80FD"
+      stepType: 0
+      targetKeys:
+      - 
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+    - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u6846"
+      stepType: 1
+      targetKeys:
+      - searchOneInput
+      - 0007
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+    - stepDescribe: "\u9AD8\u4EAE\u7EBF\u7D22UI"
+      stepType: 1
+      targetKeys:
+      - 0007
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+    - stepDescribe: "\u64AD\u653E\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217\uFF08\u5F53\u524D\u5BF9\u8BDD\u7A97\u53E3\u4F1A\u906E\u6321\u641C\u7D22\u6846\uFF0C\u8FD9\u4E00\u6B65\u5E94\u8BE5\u4F18\u5316\uFF09\uFF0C\u5F15\u5BFC\u73A9\u5BB6\u5982\u4F55\u4F7F\u7528\u641C\u7D22\u6846"
+      stepType: 0
       targetKeys: []
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+    - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u62D6\u62FD\u5377\u5B97\u7EBF\u7D22\u8FDB\u884C\u641C\u7D22\uFF0C\u5F15\u5165\u641C\u7D22\u7ED3\u679C\u9875\u4ECB\u7ECD"
+      stepType: 3
+      targetKeys: []
+      dragSourceKey: 0007
+      dragTargetKey: searchOneInput
+      dialogueTrigger: 1
+    - stepDescribe: "\u5173\u95ED\u641C\u7D22\u6846\u9AD8\u4EAE\uFF0C\u4E0B\u4E00\u6B65\u5E94\u8BE5\u4ECB\u7ECD\u641C\u7D22\u7ED3\u679C"
+      stepType: 4
+      targetKeys: []
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+    - stepDescribe: "\u4ECB\u7ECD\u641C\u7D22\u7ED3\u679C\uFF0C\u4EE5\u53CA\u5173\u952E\u5B57\u53EF\u4EE5\u88AB\u6536\u96C6\uFF0C\u7136\u540E\u6B64\u6B21\u5F15\u5BFC\u7ED3\u675F"
+      stepType: 0
+      targetKeys:
+      - 
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 1
@@ -4750,22 +4818,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &589227930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 589227927}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb0376020819b4e4d854bd7681aeea58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEventSO: {fileID: 11400000, guid: 77650a354d099f248ade20ece72c5395, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &589227931
 MonoBehaviour:
   m_ObjectHideFlags: 0
