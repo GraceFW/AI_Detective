@@ -9,3 +9,4 @@ public enum PresistentType
 {
 	ReadWrite, DoNotWrite
 }
+

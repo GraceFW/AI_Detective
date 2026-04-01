@@ -159,14 +159,14 @@ MonoBehaviour:
     entries:
     - speakerName: 
       speakerImage: {fileID: 0}
-      dialogueText: "\u7B2C\u4E8C\u8F6E\u5BF9\u8BDD1"
+      dialogueText: "\u9996\u5148\u600E\u4E48\u505A"
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 0
     - speakerName: 
       speakerImage: {fileID: 0}
-      dialogueText: "\u7B2C\u4E8C\u8F6E\u5BF9\u8BDD2"
+      dialogueText: "\u7136\u540E\u600E\u4E48\u505A"
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}

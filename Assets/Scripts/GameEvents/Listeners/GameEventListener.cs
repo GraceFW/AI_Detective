@@ -29,12 +29,12 @@ public abstract class GameEventListener<T> : MonoBehaviour
 public abstract class GameEventListener<T1, T2> : MonoBehaviour
 {
 	[SerializeField] protected GameEventSO<T1, T2> gameEventSO;
-
+	[SerializeField] protected UnityEvent<T1, T2> response;
 	private void OnEnable() => gameEventSO.OnEventRaised += OnEventRaised;
 
 	private void OnDisable() => gameEventSO.OnEventRaised -= OnEventRaised;
 
-	protected abstract void OnEventRaised(T1 t1, T2 t2);
+	protected void OnEventRaised(T1 t1, T2 t2) => response?.Invoke(t1, t2);
 }
 
 public abstract class GameEventListener<T1, T2, T3> : MonoBehaviour

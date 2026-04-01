@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -114,9 +114,12 @@ public class ClueListItemUI : MonoBehaviour
             var bindMethod = draggableType.GetMethod("Bind", new[] { typeof(ClueData) });
             bindMethod?.Invoke(_draggable, new object[] { clue });
         }
-    }
 
-    private void HandleButtonClicked()
+		// 注册到引导系统
+		RegisterToGuide();
+	}
+
+	private void HandleButtonClicked()
     {
         OnClicked?.Invoke(_clue);
     }
@@ -155,4 +158,13 @@ public class ClueListItemUI : MonoBehaviour
 
         return new Color32(0x20, 0x20, 0x73, 0xFF);
     }
+
+	// 引导相关
+	private void RegisterToGuide()
+	{
+		if (!string.IsNullOrEmpty(ClueId))
+		{
+			GuideTargetRegistry.Instance.Register(ClueId, transform as RectTransform);
+		}
+	}
 }

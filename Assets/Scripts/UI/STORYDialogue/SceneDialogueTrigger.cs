@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -237,22 +237,6 @@ public class SceneDialogueTrigger : MonoBehaviour
         if (verboseLogging)
         {
             Debug.Log($"[SceneDialogueTrigger] 已触发关卡 {levelNumber} 的LevelStart对话");
-        }
-    }
-    
-    /// <summary>
-    /// 手动触发指定场景的对话（用于测试）
-    /// </summary>
-    [ContextMenu("测试：触发当前场景对话")]
-    public void TestTriggerCurrentScene()
-    {
-        // 尝试从SceneManager获取当前场景
-        SceneManager sceneManager = FindObjectOfType<SceneManager>();
-        if (sceneManager != null)
-        {
-            // 通过反射或公共字段获取currentScene（如果可用）
-            // 这里使用一个简化的方法：提示用户配置
-            Debug.LogWarning("[SceneDialogueTrigger] 测试功能：请在Inspector中查看场景映射表配置");
         }
     }
     
