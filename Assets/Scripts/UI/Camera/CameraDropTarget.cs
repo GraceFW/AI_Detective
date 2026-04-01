@@ -156,12 +156,13 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
     /// <summary>
     /// 当线索被拖放到此处时调用（由 DraggableClueItem 调用）
     /// </summary>
-    public void OnClueDrop(ClueData clue)
+    public bool OnClueDrop(ClueData clue)
     {
         if (clue == null)
         {
             Debug.LogWarning("[CameraDropTarget] 拖放的线索为空");
-            return;
+            ClearHighlight();
+            return false;
         }
 
         // 检查是否为摄像头类型线索
@@ -170,15 +171,20 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
             _currentCameraClue = cameraClue;
             UpdateDisplay();
             Debug.Log($"[CameraDropTarget] 成功加载摄像头线索: {clue.displayName}");
+            ClearHighlight();
+            return true;
         }
         else
         {
-            
-            screenImage.sprite = noDataSprite;
+            if (screenImage != null)
+            {
+                screenImage.sprite = noDataSprite;
+            }
             Debug.Log($"[CameraDropTarget] 拖放的不是摄像头线索，类型: {clue.GetType().Name}");
         }
 
         ClearHighlight();
+        return false;
     }
 
     /// <summary>
@@ -662,4 +668,3 @@ public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandle
         ClearDebugBorders();
     }
 }
-

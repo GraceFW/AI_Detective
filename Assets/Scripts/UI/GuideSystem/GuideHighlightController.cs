@@ -17,7 +17,32 @@ public class GuideHighlightController : MonoBehaviour
 
 	private void Awake()
 	{
+		ClaimInstance();
+	}
+
+	public void EnsureInitialized()
+	{
+		ClaimInstance();
+	}
+
+	private void ClaimInstance()
+	{
+		if (Instance != null && Instance != this)
+		{
+			enabled = false;
+			return;
+		}
+
 		Instance = this;
+		enabled = true;
+	}
+
+	private void OnDestroy()
+	{
+		if (Instance == this)
+		{
+			Instance = null;
+		}
 	}
 
 	/// <summary>

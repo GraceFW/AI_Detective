@@ -162,9 +162,18 @@ public class ClueListItemUI : MonoBehaviour
 	// 引导相关
 	private void RegisterToGuide()
 	{
-		if (!string.IsNullOrEmpty(ClueId))
+		if (string.IsNullOrEmpty(ClueId))
 		{
-			GuideTargetRegistry.Instance.Register(ClueId, transform as RectTransform);
+			return;
 		}
+
+		var target = GetComponent<GuideTarget>();
+		if (target == null)
+		{
+			target = gameObject.AddComponent<GuideTarget>();
+		}
+
+		// ⭐ 用 Init 走 GuideTarget， 而不是直接 Register
+		target.Init(ClueId);
 	}
 }

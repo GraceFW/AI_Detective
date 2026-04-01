@@ -1,103 +1,301 @@
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 引导系统核心控制器
-/// 负责：
-/// 1. 监听触发（ClueManager）
-/// 2. 等待UI生成（Registry）
-/// 3. 执行引导流程（Coroutine）
+/// 引导系统核心控制器（稳定版）
+/// 
+/// 职责：
+/// 1. 监听数据层（ClueManager）
+/// 2. 等待UI生成（GuideTargetRegistry）
+/// 3. 执行引导流程（状态机 + 协程）
+/// 4. 防重复、防并发
 /// </summary>
 public class GuideManager : MonoBehaviour
 {
-	/// <summary>
-	/// 所有引导流程配置
-	/// </summary>
+	[Header("引导流程配置")]
 	public List<GuideSequence> sequences;
 
-	// 当前等待的触发
+	/// <summary>
+	/// 当前等待的线索ID（用于等UI）
+	/// </summary>
 	private string waitingClueId;
+
+	/// <summary>
+	/// 待执行的引导流程
+	/// </summary>
 	private GuideSequence pendingSequence;
 
-	// 当前步骤队列
+	/// <summary>
+	/// 当前步骤队列
+	/// </summary>
 	private Queue<GuideStep> stepQueue;
+
+	/// <summary>
+	/// ⭐ 是否正在执行引导（防止重复触发）
+	/// </summary>
+	private bool isGuiding;
+
+	private readonly HashSet<string> _consumedTriggerClueIds = new();
+	private Coroutine _dependencyBindCoroutine;
+	private Coroutine _guideCoroutine;
+	private bool _isClueSubscribed;
+	private bool _isRegistrySubscribed;
+	private ClueListItemUI _activeClickItem;
+	private Action<ClueData> _activeClickHandler;
+	private Action<string, string> _activeDragHandler;
+
+	private void Awake()
+	{
+		EnsureGuideServices();
+	}
 
 	private void OnEnable()
 	{
-		// 监听“线索揭露”
-		ClueManager.instance.OnClueRevealed += OnClueRevealed;
-
-		// 监听“UI注册完成”
-		GuideTargetRegistry.Instance.OnTargetRegistered += OnTargetRegistered;
+		StartDependencyBinding();
 	}
 
 	private void OnDisable()
 	{
-		ClueManager.instance.OnClueRevealed -= OnClueRevealed;
-		GuideTargetRegistry.Instance.OnTargetRegistered -= OnTargetRegistered;
+		StopDependencyBinding();
+		UnsubscribeDependencies();
+		CleanupActiveWaiters();
+		StopGuideRuntime();
 	}
 
-	/// <summary>
-	/// 当线索被揭露（数据层触发）
-	/// </summary>
+	private void EnsureGuideServices()
+	{
+		if (!GuideTargetRegistry.HasInstance)
+		{
+			var registryObject = new GameObject("GuideTargetRegistry");
+			registryObject.transform.SetParent(transform, false);
+			registryObject.AddComponent<GuideTargetRegistry>();
+		}
+
+		if (GuideHighlightController.Instance == null)
+		{
+			var existingHighlightController = FindSceneHighlightController();
+			if (existingHighlightController != null)
+			{
+				existingHighlightController.gameObject.SetActive(true);
+				existingHighlightController.EnsureInitialized();
+			}
+			else
+			{
+				var highlightObject = new GameObject("GuideHighlightController");
+				highlightObject.transform.SetParent(transform, false);
+				highlightObject.AddComponent<GuideHighlightController>();
+			}
+		}
+	}
+
+	private GuideHighlightController FindSceneHighlightController()
+	{
+		var controllers = Resources.FindObjectsOfTypeAll<GuideHighlightController>();
+		foreach (var controller in controllers)
+		{
+			if (controller == null)
+			{
+				continue;
+			}
+
+			if (!controller.gameObject.scene.IsValid())
+			{
+				continue;
+			}
+
+			return controller;
+		}
+
+		return null;
+	}
+
+	private void StartDependencyBinding()
+	{
+		if (_dependencyBindCoroutine != null)
+		{
+			StopCoroutine(_dependencyBindCoroutine);
+		}
+
+		_dependencyBindCoroutine = StartCoroutine(BindDependenciesWhenReady());
+	}
+
+	private void StopDependencyBinding()
+	{
+		if (_dependencyBindCoroutine != null)
+		{
+			StopCoroutine(_dependencyBindCoroutine);
+			_dependencyBindCoroutine = null;
+		}
+	}
+
+	private IEnumerator BindDependenciesWhenReady()
+	{
+		while (isActiveAndEnabled)
+		{
+			if (!_isClueSubscribed && ClueManager.instance != null)
+			{
+				ClueManager.instance.OnClueRevealed += OnClueRevealed;
+				_isClueSubscribed = true;
+				ReplayTriggeredGuides();
+			}
+
+			if (!_isRegistrySubscribed && GuideTargetRegistry.HasInstance)
+			{
+				GuideTargetRegistry.Instance.OnTargetRegistered += OnTargetRegistered;
+				_isRegistrySubscribed = true;
+			}
+
+			if (_isClueSubscribed && _isRegistrySubscribed)
+			{
+				_dependencyBindCoroutine = null;
+				yield break;
+			}
+
+			yield return null;
+		}
+
+		_dependencyBindCoroutine = null;
+	}
+
+	private void UnsubscribeDependencies()
+	{
+		if (_isClueSubscribed && ClueManager.instance != null)
+		{
+			ClueManager.instance.OnClueRevealed -= OnClueRevealed;
+		}
+
+		if (_isRegistrySubscribed && GuideTargetRegistry.HasInstance)
+		{
+			GuideTargetRegistry.Instance.OnTargetRegistered -= OnTargetRegistered;
+		}
+
+		_isClueSubscribed = false;
+		_isRegistrySubscribed = false;
+	}
+
+	// =========================
+	// 数据层触发（线索揭露）
+	// =========================
 	private void OnClueRevealed(ClueData clue)
 	{
-		// 查找是否有对应引导流程
-		var seq = sequences.Find(s => s.triggerClueId == clue.id);
-		if (seq == null) return;
+		if (clue == null || string.IsNullOrEmpty(clue.id))
+		{
+			return;
+		}
 
-		// 记录等待状态
+		if (isGuiding)
+		{
+			Debug.Log("[GuideManager] 当前已有引导进行中，忽略新触发");
+			return;
+		}
+
+		if (_consumedTriggerClueIds.Contains(clue.id))
+		{
+			return;
+		}
+
+		var seq = sequences?.Find(s => s != null && s.triggerClueId == clue.id);
+		if (seq == null)
+		{
+			return;
+		}
+
+		Debug.Log($"[GuideManager] 触发引导：{clue.id}");
+
+		if (SequenceCanStartWithoutTarget(seq, clue.id))
+		{
+			StartGuide(seq);
+			return;
+		}
+
 		waitingClueId = clue.id;
 		pendingSequence = seq;
 
-		// 如果UI已经存在，直接开始
-		var target = GuideTargetRegistry.Instance.Get(clue.id);
+		var target = GuideTargetRegistry.HasInstance
+			? GuideTargetRegistry.Instance.Get(clue.id)
+			: null;
+
 		if (target != null)
 		{
 			StartGuide(seq);
 		}
 	}
 
-	/// <summary>
-	/// 当UI注册完成（表现层触发）
-	/// </summary>
+	// =========================
+	// 表现层触发（UI注册）
+	// =========================
 	private void OnTargetRegistered(string key, RectTransform target)
 	{
-		// 如果正好是我们在等的UI
-		if (key == waitingClueId)
+		if (isGuiding)
 		{
+			return;
+		}
+
+		if (!string.IsNullOrEmpty(waitingClueId) && key == waitingClueId)
+		{
+			Debug.Log($"[GuideManager] UI已生成，开始引导: {key}");
 			StartGuide(pendingSequence);
 		}
 	}
 
-	/// <summary>
-	/// 开始执行引导
-	/// </summary>
+	// =========================
+	// 启动引导
+	// =========================
 	private void StartGuide(GuideSequence seq)
 	{
+		if (seq == null)
+		{
+			return;
+		}
+
+		if (isGuiding)
+		{
+			Debug.LogWarning("[GuideManager] 引导已在进行中");
+			return;
+		}
+
+		isGuiding = true;
+		pendingSequence = null;
 		waitingClueId = null;
 
-		// 转换为队列（顺序执行）
-		stepQueue = new Queue<GuideStep>(seq.steps);
+		if (!string.IsNullOrEmpty(seq.triggerClueId))
+		{
+			_consumedTriggerClueIds.Add(seq.triggerClueId);
+		}
 
-		StartCoroutine(RunGuide());
+		stepQueue = new Queue<GuideStep>(seq.steps ?? new List<GuideStep>());
+
+		if (_guideCoroutine != null)
+		{
+			StopCoroutine(_guideCoroutine);
+		}
+
+		_guideCoroutine = StartCoroutine(RunGuide());
 	}
 
-	/// <summary>
-	/// 执行引导流程（核心循环）
-	/// </summary>
+	// =========================
+	// 引导主循环
+	// =========================
 	private IEnumerator RunGuide()
 	{
-		while (stepQueue.Count > 0)
+		Debug.Log("[GuideManager] 开始执行引导流程");
+
+		while (stepQueue != null && stepQueue.Count > 0)
 		{
 			yield return ExecuteStep(stepQueue.Dequeue());
 		}
+
+		Debug.Log("[GuideManager] 引导结束");
+
+		_guideCoroutine = null;
+		isGuiding = false;
 	}
 
-	/// <summary>
-	/// 执行单个步骤
-	/// </summary>
+	// =========================
+	// 执行单步骤
+	// =========================
 	private IEnumerator ExecuteStep(GuideStep step)
 	{
 		switch (step.stepType)
@@ -119,16 +317,32 @@ public class GuideManager : MonoBehaviour
 				break;
 
 			case GuideStepType.EndHighlight:
-				GuideHighlightController.Instance.ClearHighlight();
+				if (GuideHighlightController.Instance != null)
+				{
+					GuideHighlightController.Instance.ClearHighlight();
+				}
 				break;
 		}
 	}
 
-	/// <summary>
-	/// 播放对话（复用现有系统）
-	/// </summary>
+	// =========================
+	// 对话步骤
+	// =========================
 	private IEnumerator PlayDialogue(GuideStep step)
 	{
+		if (DialogueManager.Instance == null)
+		{
+			Debug.LogError("[GuideManager] DialogueManager.Instance 为空，无法执行对话步骤");
+			yield break;
+		}
+
+		yield return new WaitUntil(() => DialogueManager.Instance == null || !DialogueManager.Instance.IsDialogueActive());
+
+		if (DialogueManager.Instance == null)
+		{
+			yield break;
+		}
+
 		bool done = false;
 
 		DialogueManager.Instance.ShowDialogue(
@@ -138,72 +352,205 @@ public class GuideManager : MonoBehaviour
 			isForced: true
 		);
 
-		yield return new WaitUntil(() => done);
+		yield return new WaitUntil(() => !isActiveAndEnabled || done);
 	}
 
-	/// <summary>
-	/// 高亮多个UI
-	/// </summary>
+	// =========================
+	// 高亮步骤
+	// =========================
 	private void Highlight(GuideStep step)
 	{
+		if (!GuideTargetRegistry.HasInstance)
+		{
+			Debug.LogError("[GuideManager] GuideTargetRegistry 未就绪，无法高亮目标");
+			return;
+		}
+
+		if (GuideHighlightController.Instance == null)
+		{
+			Debug.LogError("[GuideManager] GuideHighlightController 未就绪，无法高亮目标");
+			return;
+		}
+
 		List<RectTransform> targets = new();
 
 		foreach (var key in step.targetKeys)
 		{
 			var t = GuideTargetRegistry.Instance.Get(key);
 			if (t != null)
+			{
 				targets.Add(t);
+			}
+			else
+			{
+				Debug.LogWarning($"[GuideManager] 高亮目标未找到: {key}");
+			}
 		}
 
 		GuideHighlightController.Instance.HighlightMultiple(targets);
 	}
 
-	/// <summary>
-	/// 等待点击
-	/// </summary>
+	// =========================
+	// 等待点击
+	// =========================
 	private IEnumerator WaitClick(GuideStep step)
 	{
-		bool clicked = false;
-
-		var target = GuideTargetRegistry.Instance.Get(step.targetKeys[0]);
-		var item = target.GetComponent<ClueListItemUI>();
-
-		void OnClick(ClueData clue)
+		if (step.targetKeys == null || step.targetKeys.Count == 0)
 		{
-			if (clue.id == step.targetKeys[0])
-				clicked = true;
+			Debug.LogError("[GuideManager] WaitClick 缺少目标配置");
+			yield break;
 		}
 
-		item.OnClicked += OnClick;
+		if (!GuideTargetRegistry.HasInstance)
+		{
+			Debug.LogError("[GuideManager] WaitClick 时 GuideTargetRegistry 未就绪");
+			yield break;
+		}
 
-		yield return new WaitUntil(() => clicked);
+		string targetKey = step.targetKeys[0];
+		var target = GuideTargetRegistry.Instance.Get(targetKey);
 
-		item.OnClicked -= OnClick;
+		if (target == null)
+		{
+			Debug.LogError("[GuideManager] WaitClick目标不存在");
+			yield break;
+		}
+
+		var item = target.GetComponent<ClueListItemUI>();
+
+		if (item == null)
+		{
+			Debug.LogError("[GuideManager] 目标没有ClueListItemUI");
+			yield break;
+		}
+
+		bool clicked = false;
+
+		_activeClickItem = item;
+		_activeClickHandler = clue =>
+		{
+			if (clue != null && clue.id == targetKey)
+			{
+				clicked = true;
+			}
+		};
+
+		item.OnClicked += _activeClickHandler;
+
+		yield return new WaitUntil(() => !isActiveAndEnabled || clicked);
+
+		CleanupActiveClickWaiter();
 	}
 
-	/// <summary>
-	/// 等待拖拽成功（核心逻辑）
-	/// </summary>
+	// =========================
+	// 等待拖拽
+	// =========================
 	private IEnumerator WaitDrag(GuideStep step)
 	{
 		bool done = false;
 
-		var source = GuideTargetRegistry.Instance.Get(step.dragSourceKey);
-		var drag = source.GetComponent<DraggableClueItem>();
-
-		void OnDrag(string s, string t)
+		_activeDragHandler = (sourceKey, targetKey) =>
 		{
-			// 只有拖到“正确目标”才算完成
-			if (s == step.dragSourceKey && t == step.dragTargetKey)
+			if (sourceKey == step.dragSourceKey && targetKey == step.dragTargetKey)
 			{
 				done = true;
 			}
+		};
+
+		GuideDragEventBus.OnDragSuccess += _activeDragHandler;
+
+		yield return new WaitUntil(() => !isActiveAndEnabled || done);
+
+		CleanupActiveDragWaiter();
+	}
+
+	private void ReplayTriggeredGuides()
+	{
+		if (ClueManager.instance == null || sequences == null)
+		{
+			return;
 		}
 
-		drag.OnDragSuccess += OnDrag;
+		foreach (var clue in ClueManager.instance.GetRevealedClues())
+		{
+			if (clue != null)
+			{
+				OnClueRevealed(clue);
+			}
+		}
+	}
 
-		yield return new WaitUntil(() => done);
+	private bool SequenceCanStartWithoutTarget(GuideSequence seq, string triggerKey)
+	{
+		if (seq == null || seq.steps == null || seq.steps.Count == 0)
+		{
+			return true;
+		}
 
-		drag.OnDragSuccess -= OnDrag;
+		foreach (var step in seq.steps)
+		{
+			if (step == null)
+			{
+				continue;
+			}
+
+			if (step.targetKeys != null && step.targetKeys.Contains(triggerKey))
+			{
+				return false;
+			}
+
+			if (step.dragSourceKey == triggerKey || step.dragTargetKey == triggerKey)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void CleanupActiveWaiters()
+	{
+		CleanupActiveClickWaiter();
+		CleanupActiveDragWaiter();
+	}
+
+	private void CleanupActiveClickWaiter()
+	{
+		if (_activeClickItem != null && _activeClickHandler != null)
+		{
+			_activeClickItem.OnClicked -= _activeClickHandler;
+		}
+
+		_activeClickItem = null;
+		_activeClickHandler = null;
+	}
+
+	private void CleanupActiveDragWaiter()
+	{
+		if (_activeDragHandler != null)
+		{
+			GuideDragEventBus.OnDragSuccess -= _activeDragHandler;
+		}
+
+		_activeDragHandler = null;
+	}
+
+	private void StopGuideRuntime()
+	{
+		if (_guideCoroutine != null)
+		{
+			StopCoroutine(_guideCoroutine);
+			_guideCoroutine = null;
+		}
+
+		stepQueue = null;
+		pendingSequence = null;
+		waitingClueId = null;
+		isGuiding = false;
+
+		if (GuideHighlightController.Instance != null)
+		{
+			GuideHighlightController.Instance.ClearHighlight();
+		}
 	}
 }

@@ -75,6 +75,7 @@ public class ClueListPanelUI : MonoBehaviour
 
         _manager.OnClueRevealed += HandleClueRevealed;
         _subscribed = true;
+        ReplayExistingClues();
         Debug.Log("ClueListPanelUI: Subscribed to ClueManager.OnClueRevealed.");
     }
 
@@ -161,6 +162,19 @@ public class ClueListPanelUI : MonoBehaviour
         foreach (var key in keysToRemove)
         {
             _openPopupsById.Remove(key);
+        }
+    }
+
+    private void ReplayExistingClues()
+    {
+        if (!_subscribed || _manager == null)
+        {
+            return;
+        }
+
+        foreach (var clue in _manager.GetRevealedClues())
+        {
+            HandleClueRevealed(clue);
         }
     }
 }

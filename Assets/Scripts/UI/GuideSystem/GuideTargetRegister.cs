@@ -12,62 +12,153 @@ using UnityEngine;
 public class GuideTargetRegistry : MonoBehaviour
 {
 	public static GuideTargetRegistry Instance;
+	public static bool HasInstance => Instance != null;
 
 	/// <summary>
-	/// key -> UI RectTransform 的映射表
+	/// key → 多个UI
 	/// </summary>
-	private Dictionary<string, RectTransform> targets = new();
+	private Dictionary<string, List<RectTransform>> _targets = new();
 
 	/// <summary>
-	/// 当某个UI注册时触发（关键：GuideManager靠它等待动态UI）
+	/// ⭐ 新增：当有UI注册时触发
+	/// 参数：key, RectTransform
 	/// </summary>
 	public event Action<string, RectTransform> OnTargetRegistered;
 
+	/// <summary>
+	/// ⭐ 新增：当UI移除时触发
+	/// </summary>
+	public event Action<string, RectTransform> OnTargetUnregistered;
+
+
+	public bool IsReady { get; private set; }
+
 	private void Awake()
 	{
-		Instance = this;
-	}
-
-	/// <summary>
-	/// 注册一个UI目标
-	/// </summary>
-	public void Register(string key, RectTransform target)
-	{
-		if (string.IsNullOrEmpty(key) || target == null)
+		if (Instance != null && Instance != this)
 		{
-			Debug.LogWarning("[GuideTargetRegistry] 注册失败：key或target为空");
+			Destroy(gameObject);
 			return;
 		}
 
-		targets[key] = target;
-
-		// 通知外部：这个UI已经准备好了
-		OnTargetRegistered?.Invoke(key, target);
+		Instance = this;
+		IsReady = true;
 	}
 
-	/// <summary>
-	/// 获取UI目标（如果未创建会返回null）
-	/// </summary>
+	private void OnDestroy()
+	{
+		if (Instance == this)
+		{
+			IsReady = false;
+			Instance = null;
+		}
+	}
+
+	// =========================
+	// 注册
+	// =========================
+	public void Register(string key, RectTransform rect)
+	{
+		if (string.IsNullOrEmpty(key) || rect == null)
+		{
+			Debug.LogWarning("[GuideTargetRegistry] 注册失败：key或rect为空");
+			return;
+		}
+
+		if (!_targets.TryGetValue(key, out var list))
+		{
+			list = new List<RectTransform>();
+			_targets[key] = list;
+		}
+
+		list.RemoveAll(item => item == null);
+
+		if (!list.Contains(rect))
+		{
+			list.Add(rect);
+
+			Debug.Log($"[GuideTargetRegistry] 注册: {key} (count={list.Count})");
+
+			// ⭐ 触发事件（核心）
+			OnTargetRegistered?.Invoke(key, rect);
+		}
+	}
+
+	// =========================
+	// 注销
+	// =========================
+	public void Unregister(string key, RectTransform rect)
+	{
+		if (string.IsNullOrEmpty(key) || rect == null)
+		{
+			return;
+		}
+
+		if (_targets.TryGetValue(key, out var list))
+		{
+			if (list.Remove(rect))
+			{
+				Debug.Log($"[GuideTargetRegistry] 注销: {key} (剩余={list.Count})");
+
+				// ⭐ 触发事件
+				OnTargetUnregistered?.Invoke(key, rect);
+			}
+
+			if (list.Count == 0)
+			{
+				_targets.Remove(key);
+			}
+		}
+	}
+
+	// =========================
+	// 查询
+	// =========================
+
 	public RectTransform Get(string key)
 	{
 		if (string.IsNullOrEmpty(key))
+		{
 			return null;
+		}
 
-		targets.TryGetValue(key, out var t);
-		return t;
+		if (_targets.TryGetValue(key, out var list))
+		{
+			list.RemoveAll(item => item == null);
+			if (list.Count == 0)
+			{
+				_targets.Remove(key);
+				return null;
+			}
+
+			return list[0];
+		}
+		return null;
 	}
 
-	/// <summary>
-	/// 反注册（UI销毁时调用）
-	/// </summary>
-	public void Unregister(string key)
+	public List<RectTransform> GetAll(string key)
 	{
 		if (string.IsNullOrEmpty(key))
-			return;
-
-		if (targets.ContainsKey(key))
 		{
-			targets.Remove(key);
+			return null;
 		}
+
+		if (_targets.TryGetValue(key, out var list))
+		{
+			list.RemoveAll(item => item == null);
+			if (list.Count == 0)
+			{
+				_targets.Remove(key);
+				return null;
+			}
+
+			return new List<RectTransform>(list);
+		}
+		return null;
+	}
+
+	public bool Contains(string key)
+	{
+		return _targets.ContainsKey(key);
 	}
 }

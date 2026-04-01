@@ -51,12 +51,12 @@ public class SettlementClueDropSlot : MonoBehaviour, IDropHandler, IPointerEnter
     /// <summary>
     /// 由 DraggableClueItem 调用：当线索拖拽投放到此槽位时
     /// </summary>
-    public void OnClueDrop(ClueData clue)
+    public bool OnClueDrop(ClueData clue)
     {
         if (clue == null)
         {
             ClearHighlight();
-            return;
+            return false;
         }
 
         CurrentClue = clue;
@@ -64,6 +64,7 @@ public class SettlementClueDropSlot : MonoBehaviour, IDropHandler, IPointerEnter
         OnClueChanged?.Invoke(this, clue);
 
         ClearHighlight();
+        return true;
     }
 
     public void Clear()

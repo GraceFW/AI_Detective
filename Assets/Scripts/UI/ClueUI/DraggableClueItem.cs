@@ -1,243 +1,323 @@
+﻿using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
 /// 可拖拽的线索词条组件
-/// 拖拽松手后自动回到原位置
-/// 拖拽到搜索框时自动填入 displayName
+/// 
+/// 职责：
+/// 1. 处理拖拽逻辑（开始/移动/结束）
+/// 2. 负责与各种 DropTarget 交互
+/// 3. 对外抛出“拖拽成功事件”（供引导系统使用）
+/// 
+/// 注意：
+/// - UI层行为驱动组件（不处理业务逻辑）
+/// - Guide系统只依赖 OnDragSuccess，不关心具体DropTarget类型
 /// </summary>
 [RequireComponent(typeof(CanvasGroup))]
 public class DraggableClueItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [Header("设置")]
-    [Tooltip("拖拽时的透明度")]
-    [SerializeField] private float dragAlpha = 0.6f;
+	[Header("拖拽表现设置")]
 
-    [Tooltip("回弹动画时长")]
-    [SerializeField] private float snapBackDuration = 0.15f;
+	[Tooltip("拖拽时的透明度")]
+	[SerializeField] private float dragAlpha = 0.6f;
 
-    private RectTransform _rectTransform;
-    private CanvasGroup _canvasGroup;
-    private Canvas _canvas;
-    private Transform _originalParent;
-    private Vector2 _originalAnchoredPosition;
-    private int _originalSiblingIndex;
+	[Tooltip("回弹动画时长")]
+	[SerializeField] private float snapBackDuration = 0.15f;
 
-    private ClueData _clueData;
-    private bool _isDragging;
-    private Vector2 _dragOffset;
+	// =========================
+	// 缓存组件
+	// =========================
+	private RectTransform _rectTransform;
+	private CanvasGroup _canvasGroup;
+	private Canvas _canvas;
 
-    // 静态引用：当前被拖拽的线索数据（供 DropTarget 检测）
-    public static DraggableClueItem CurrentDragging { get; private set; }
-    public ClueData ClueData => _clueData;
+	// =========================
+	// 拖拽前状态（用于回弹）
+	// =========================
+	private Transform _originalParent;
+	private Vector2 _originalAnchoredPosition;
+	private int _originalSiblingIndex;
 
-    private void Awake()
-    {
-        _rectTransform = GetComponent<RectTransform>();
-        _canvasGroup = GetComponent<CanvasGroup>();
-        _canvas = GetComponentInParent<Canvas>();
-    }
+	// =========================
+	// 数据
+	// =========================
+	private ClueData _clueData;
 
-    /// <summary>
-    /// 绑定线索数据
-    /// </summary>
-    public void Bind(ClueData clue)
-    {
-        _clueData = clue;
-    }
+	// =========================
+	// 拖拽状态
+	// =========================
+	private bool _isDragging;
+	private Vector2 _dragOffset;
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        if (_clueData == null)
-        {
-            return;
-        }
+	/// <summary>
+	/// 当前正在被拖拽的对象（全局静态）
+	/// 供 DropTarget 使用（比如 OnDrop 时读取）
+	/// </summary>
+	public static DraggableClueItem CurrentDragging { get; private set; }
 
-        _isDragging = true;
-        CurrentDragging = this;
+	public ClueData ClueData => _clueData;
 
-        // 保存原始位置信息
-        _originalParent = transform.parent;
-        _originalAnchoredPosition = _rectTransform.anchoredPosition;
-        _originalSiblingIndex = transform.GetSiblingIndex();
+	private void Awake()
+	{
+		_rectTransform = GetComponent<RectTransform>();
+		_canvasGroup = GetComponent<CanvasGroup>();
+		_canvas = GetComponentInParent<Canvas>();
+	}
 
-        // 先移动到 Canvas 根节点，确保显示在最上层
-        // 必须在计算偏移之前移动，否则坐标系统会错乱
-        if (_canvas != null)
-        {
-            transform.SetParent(_canvas.transform, true);
-            transform.SetAsLastSibling();
-        }
+	/// <summary>
+	/// 绑定线索数据
+	/// </summary>
+	public void Bind(ClueData clue)
+	{
+		_clueData = clue;
+	}
 
-        // 计算拖拽偏移（在移动到新父级之后）
-        // 将屏幕坐标转换为 Canvas 本地坐标
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            _canvas.transform as RectTransform,
-            eventData.position,
-            eventData.pressEventCamera,
-            out var canvasLocalPoint
-        );
+	/// <summary>
+	/// 开始拖拽
+	/// </summary>
+	public void OnBeginDrag(PointerEventData eventData)
+	{
+		if (_clueData == null)
+		{
+			return;
+		}
 
-        // 计算偏移量：鼠标位置 - 对象当前位置
-        _dragOffset = canvasLocalPoint - _rectTransform.anchoredPosition;
+		if (_canvas == null)
+		{
+			_canvas = GetComponentInParent<Canvas>();
+			if (_canvas == null)
+			{
+				Debug.LogWarning("[DraggableClueItem] 未找到父级 Canvas，无法开始拖拽");
+				return;
+			}
+		}
 
-        // 设置透明度，允许射线穿透
-        _canvasGroup.alpha = dragAlpha;
-        _canvasGroup.blocksRaycasts = false;
-    }
+		_isDragging = true;
+		CurrentDragging = this;
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        if (!_isDragging || _canvas == null)
-        {
-            return;
-        }
+		// 记录原始状态（用于回弹）
+		_originalParent = transform.parent;
+		_originalAnchoredPosition = _rectTransform.anchoredPosition;
+		_originalSiblingIndex = transform.GetSiblingIndex();
 
-        // 将屏幕坐标转换为 Canvas 本地坐标
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            _canvas.transform as RectTransform,
-            eventData.position,
-            eventData.pressEventCamera,
-            out var canvasLocalPoint
-        );
+		// 提升到Canvas最上层（避免被遮挡）
+		if (_canvas != null)
+		{
+			transform.SetParent(_canvas.transform, true);
+			transform.SetAsLastSibling();
+		}
 
-        // 设置位置：鼠标位置 - 偏移量
-        _rectTransform.anchoredPosition = canvasLocalPoint - _dragOffset;
-    }
+		// 计算拖拽偏移（避免UI“跳到鼠标中心”）
+		RectTransformUtility.ScreenPointToLocalPointInRectangle(
+			_canvas.transform as RectTransform,
+			eventData.position,
+			eventData.pressEventCamera,
+			out var canvasLocalPoint
+		);
 
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        if (!_isDragging)
-        {
-            return;
-        }
+		_dragOffset = canvasLocalPoint - _rectTransform.anchoredPosition;
 
-        _isDragging = false;
-        CurrentDragging = null;
+		// 设置视觉状态（半透明 + 穿透射线）
+		_canvasGroup.alpha = dragAlpha;
+		_canvasGroup.blocksRaycasts = false;
+	}
 
-        // 恢复透明度和射线检测
-        _canvasGroup.alpha = 1f;
-        _canvasGroup.blocksRaycasts = true;
+	/// <summary>
+	/// 拖拽中
+	/// </summary>
+	public void OnDrag(PointerEventData eventData)
+	{
+		if (!_isDragging || _canvas == null)
+		{
+			return;
+		}
 
-        // 检测是否拖到了任何有效的拖放目标
-        if (_clueData != null)
-        {
-            CheckAllDropTargets(eventData);
-        }
+		RectTransformUtility.ScreenPointToLocalPointInRectangle(
+			_canvas.transform as RectTransform,
+			eventData.position,
+			eventData.pressEventCamera,
+			out var canvasLocalPoint
+		);
 
-        // 回到原位置
-        SnapBack();
-    }
+		_rectTransform.anchoredPosition = canvasLocalPoint - _dragOffset;
+	}
 
-    /// <summary>
-    /// 检查所有拖放目标类型
-    /// </summary>
-    private void CheckAllDropTargets(PointerEventData eventData)
-    {
-        var results = new System.Collections.Generic.List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, results);
+	/// <summary>
+	/// 拖拽结束
+	/// </summary>
+	public void OnEndDrag(PointerEventData eventData)
+	{
+		if (!_isDragging)
+		{
+			return;
+		}
 
-        foreach (var result in results)
-        {
-            // 检查 SettlementClueDropSlot（结算界面线索槽位）
-            var settlementSlot = result.gameObject.GetComponent<SettlementClueDropSlot>();
-            if (settlementSlot == null)
-            {
-                settlementSlot = result.gameObject.GetComponentInParent<SettlementClueDropSlot>();
-            }
-            if (settlementSlot != null)
-            {
-                settlementSlot.OnClueDrop(_clueData);
-                return; // 找到目标后立即返回
-            }
+		_isDragging = false;
+		CurrentDragging = null;
 
-            // 检查 SearchInputDropTarget
-            var searchTarget = result.gameObject.GetComponent<SearchInputDropTarget>();
-            if (searchTarget == null)
-            {
-                searchTarget = result.gameObject.GetComponentInParent<SearchInputDropTarget>();
-            }
-            if (searchTarget != null)
-            {
-                searchTarget.OnClueDrop(_clueData);
-                return; // 找到目标后立即返回
-            }
+		// 恢复视觉状态
+		_canvasGroup.alpha = 1f;
+		_canvasGroup.blocksRaycasts = true;
 
-            // 检查 CameraDropTarget
-            var cameraTarget = result.gameObject.GetComponent<CameraDropTarget>();
-            if (cameraTarget == null)
-            {
-                cameraTarget = result.gameObject.GetComponentInParent<CameraDropTarget>();
-            }
-            if (cameraTarget != null)
-            {
-                cameraTarget.OnClueDrop(_clueData);
-                return; // 找到目标后立即返回
-            }
+		// 检测拖放目标
+		if (_clueData != null)
+		{
+			CheckAllDropTargets(eventData);
+		}
 
-            // 检查 PersonSummonDropTarget (name对象)
-            var summonTarget = result.gameObject.GetComponent<PersonSummonDropTarget>();
-            if (summonTarget == null)
-            {
-                summonTarget = result.gameObject.GetComponentInParent<PersonSummonDropTarget>();
-            }
-            if (summonTarget != null)
-            {
-                summonTarget.OnClueDrop(_clueData);
-                return; // 找到目标后立即返回
-            }
+		// 回弹
+		SnapBack();
+	}
 
-            // 检查 ClueShowDropTarget (person对象)
-            var clueShowTarget = result.gameObject.GetComponent<ClueShowDropTarget>();
-            if (clueShowTarget == null)
-            {
-                clueShowTarget = result.gameObject.GetComponentInParent<ClueShowDropTarget>();
-            }
-            if (clueShowTarget != null)
-            {
-                clueShowTarget.OnClueDrop(_clueData);
-                return; // 找到目标后立即返回
-            }
-        }
-    }
+	/// <summary>
+	/// 检测所有拖放目标
+	/// 核心逻辑：
+	/// 1. 使用 EventSystem 射线检测当前鼠标下所有UI
+	/// 2. 逐个判断是否是合法 DropTarget
+	/// 3. 一旦命中 → 执行交互 + 触发引导事件
+	/// </summary>
+	private void CheckAllDropTargets(PointerEventData eventData)
+	{
+		var results = new System.Collections.Generic.List<RaycastResult>();
+		EventSystem.current.RaycastAll(eventData, results);
 
-    /// <summary>
-    /// 回弹到原位置
-    /// </summary>
-    private void SnapBack()
-    {
-        // 恢复父级
-        transform.SetParent(_originalParent, true);
-        transform.SetSiblingIndex(_originalSiblingIndex);
+		foreach (var result in results)
+		{
+			// ⭐ 获取 GuideTarget（用于引导系统）
+			var guideTarget = result.gameObject.GetComponent<GuideTarget>()
+							  ?? result.gameObject.GetComponentInParent<GuideTarget>();
 
-        // 使用协程平滑回弹（可选：直接设置位置）
-        if (snapBackDuration > 0f)
-        {
-            StartCoroutine(SnapBackCoroutine());
-        }
-        else
-        {
-            _rectTransform.anchoredPosition = _originalAnchoredPosition;
-        }
-    }
+			string targetKey = guideTarget != null ? guideTarget.key : null;
 
-    private System.Collections.IEnumerator SnapBackCoroutine()
-    {
-        var startPos = _rectTransform.anchoredPosition;
-        var endPos = _originalAnchoredPosition;
-        var elapsed = 0f;
+			// =========================
+			// 以下是业务逻辑（你原本已有）
+			// =========================
 
-        while (elapsed < snapBackDuration)
-        {
-            elapsed += Time.deltaTime;
-            var t = Mathf.Clamp01(elapsed / snapBackDuration);
-            // 使用缓动函数
-            t = 1f - Mathf.Pow(1f - t, 3f);
-            _rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
-            yield return null;
-        }
+			var settlementSlot = result.gameObject.GetComponent<SettlementClueDropSlot>()
+								?? result.gameObject.GetComponentInParent<SettlementClueDropSlot>();
 
-        _rectTransform.anchoredPosition = endPos;
-    }
+			if (settlementSlot != null)
+			{
+				if (settlementSlot.OnClueDrop(_clueData))
+				{
+					RaiseDragSuccess(targetKey);
+					return;
+				}
+
+				continue;
+			}
+
+			var searchTarget = result.gameObject.GetComponent<SearchInputDropTarget>()
+							   ?? result.gameObject.GetComponentInParent<SearchInputDropTarget>();
+
+			if (searchTarget != null)
+			{
+				if (searchTarget.OnClueDrop(_clueData))
+				{
+					RaiseDragSuccess(targetKey);
+					return;
+				}
+
+				continue;
+			}
+
+			var cameraTarget = result.gameObject.GetComponent<CameraDropTarget>()
+							   ?? result.gameObject.GetComponentInParent<CameraDropTarget>();
+
+			if (cameraTarget != null)
+			{
+				if (cameraTarget.OnClueDrop(_clueData))
+				{
+					RaiseDragSuccess(targetKey);
+					return;
+				}
+
+				continue;
+			}
+
+			var summonTarget = result.gameObject.GetComponent<PersonSummonDropTarget>()
+							   ?? result.gameObject.GetComponentInParent<PersonSummonDropTarget>();
+
+			if (summonTarget != null)
+			{
+				if (summonTarget.OnClueDrop(_clueData))
+				{
+					RaiseDragSuccess(targetKey);
+					return;
+				}
+
+				continue;
+			}
+
+			var clueShowTarget = result.gameObject.GetComponent<ClueShowDropTarget>()
+								?? result.gameObject.GetComponentInParent<ClueShowDropTarget>();
+
+			if (clueShowTarget != null)
+			{
+				if (clueShowTarget.OnClueDrop(_clueData))
+				{
+					RaiseDragSuccess(targetKey);
+					return;
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// ⭐ 封装拖拽成功事件触发
+	/// </summary>
+	private void RaiseDragSuccess(string targetKey)
+	{
+		if (string.IsNullOrEmpty(targetKey))
+		{
+			Debug.LogWarning("[DraggableClueItem] 拖拽成功但未找到 GuideTarget.key");
+			return;
+		}
+
+		// ⭐ 改成全局事件
+		GuideDragEventBus.Raise(_clueData.id, targetKey);
+	}
+
+	/// <summary>
+	/// 回弹到原位置
+	/// </summary>
+	private void SnapBack()
+	{
+		transform.SetParent(_originalParent, true);
+		transform.SetSiblingIndex(_originalSiblingIndex);
+
+		if (snapBackDuration > 0f)
+		{
+			StartCoroutine(SnapBackCoroutine());
+		}
+		else
+		{
+			_rectTransform.anchoredPosition = _originalAnchoredPosition;
+		}
+	}
+
+	/// <summary>
+	/// 平滑回弹动画
+	/// </summary>
+	private System.Collections.IEnumerator SnapBackCoroutine()
+	{
+		var startPos = _rectTransform.anchoredPosition;
+		var endPos = _originalAnchoredPosition;
+		var elapsed = 0f;
+
+		while (elapsed < snapBackDuration)
+		{
+			elapsed += Time.deltaTime;
+			var t = Mathf.Clamp01(elapsed / snapBackDuration);
+
+			// 缓动（easeOut）
+			t = 1f - Mathf.Pow(1f - t, 3f);
+
+			_rectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
+			yield return null;
+		}
+
+		_rectTransform.anchoredPosition = endPos;
+	}
 }
-

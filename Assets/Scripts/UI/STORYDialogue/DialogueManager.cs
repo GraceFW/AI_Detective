@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -88,19 +88,6 @@ public class DialogueManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            
-            // // DontDestroyOnLoad只能用于根GameObject
-            // // 如果当前GameObject不是根对象，需要处理父对象
-            // if (transform.parent != null)
-            // {
-            //     // 将父对象设为DontDestroyOnLoad（如果父对象是根对象）
-            //     DontDestroyOnLoad(transform.root.gameObject);
-            // }
-            // else
-            // {
-            //     // 当前GameObject就是根对象，直接使用
-            //     DontDestroyOnLoad(gameObject);
-            // }
         }
         else if (Instance != this)
         {
@@ -271,22 +258,11 @@ public class DialogueManager : MonoBehaviour
         {
             yield return null;
         }
-        
-        // 隐藏对话面板
-        if (dialoguePanel != null)
-        {
-            dialoguePanel.SetActive(false);
-        }
-        
-        // 触发对话结束事件
-        if (dialogueEndEvent != null)
-        {
-            dialogueEndEvent.RaiseEvent(currentLevelNumber, currentTriggerType);
-        }
-        
-        // 触发完成回调
-        onDialogueComplete?.Invoke();
-    }
+
+        // 结束对话
+        FinishDialogue();
+
+	}
     
     /// <summary>
     /// 显示当前对话条目（协程版本，支持特殊节点）
@@ -572,32 +548,17 @@ public class DialogueManager : MonoBehaviour
         currentSequence = null;
         currentEntryIndex = 0;
         isForced = false;
-        
-        // 隐藏对话面板
-        if (dialoguePanel != null)
-        {
-            dialoguePanel.SetActive(false);
-        }
-        
-        // // 播放音效
-        // if (AudioManager.Instance != null)
-        // {
-        //     AudioManager.Instance.PlaySFX("DialogueClose");
-        // }
-        
-        // 触发对话结束事件（即使未完成所有对话）
-        if (dialogueEndEvent != null)
-        {
-            dialogueEndEvent.RaiseEvent(currentLevelNumber, currentTriggerType);
-        }
-        
-        // 触发完成回调（即使未完成所有对话，也触发回调以继续游戏流程）
-        onDialogueComplete?.Invoke();
-        onDialogueComplete = null;
-    }
+ 
+		// // 播放音效
+		// if (AudioManager.Instance != null)
+		// {
+		//     AudioManager.Instance.PlaySFX("DialogueClose");
+		// }
+
+	}
     
     /// <summary>
-    /// 结束对话（内部方法，正常完成对话时调用）
+    /// 结束对话（内部方法，正常完成对话时调用，执行状态控制）
     /// </summary>
     private void EndDialogue()
     {
@@ -621,15 +582,33 @@ public class DialogueManager : MonoBehaviour
     {
         return isDialogueActive;
     }
-    
-    /// <summary>
-    /// 触发当前关卡的下一次 WaveSpawn 对话
-    /// </summary>
-    /// <param name="levelNumber">关卡编号（如果为-1，则使用当前关卡或从场景获取）</param>
-    /// <param name="onComplete">对话完成回调</param>
-    /// <param name="isForced">是否为强制弹出</param>
-    /// <returns>是否成功触发对话</returns>
-    public bool TriggerNextWaveSpawnDialogue(int levelNumber = -1, System.Action onComplete = null, bool isForced = false)
+
+    // 结束对话序列，执行表现层管理和事件发布
+	private void FinishDialogue()
+	{
+		// 隐藏对话面板
+		if (dialoguePanel != null)
+		{
+			dialoguePanel.SetActive(false);
+		}
+
+		if (dialogueEndEvent != null)
+		{
+			dialogueEndEvent.RaiseEvent(currentLevelNumber, currentTriggerType);
+		}
+
+		onDialogueComplete?.Invoke();
+		onDialogueComplete = null;
+	}
+
+	/// <summary>
+	/// 触发当前关卡的下一次 WaveSpawn 对话
+	/// </summary>
+	/// <param name="levelNumber">关卡编号（如果为-1，则使用当前关卡或从场景获取）</param>
+	/// <param name="onComplete">对话完成回调</param>
+	/// <param name="isForced">是否为强制弹出</param>
+	/// <returns>是否成功触发对话</returns>
+	public bool TriggerNextWaveSpawnDialogue(int levelNumber = -1, System.Action onComplete = null, bool isForced = false)
     {
         // 1. 确定关卡编号
         if (levelNumber < 0)

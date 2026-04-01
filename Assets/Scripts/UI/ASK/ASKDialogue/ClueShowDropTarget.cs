@@ -46,13 +46,13 @@ public class ClueShowDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHand
     /// <summary>
     /// 当线索被拖放到此处时调用（由DraggableClueItem调用）
     /// </summary>
-    public void OnClueDrop(ClueData clue)
+    public bool OnClueDrop(ClueData clue)
     {
         if (clue == null)
         {
             Debug.LogWarning("[ClueShowDropTarget] 拖放的线索为空");
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 检查对话控制器
@@ -60,7 +60,7 @@ public class ClueShowDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHand
         {
             Debug.LogError("[ClueShowDropTarget] 对话控制器未配置");
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 必须先有对话人物
@@ -68,7 +68,7 @@ public class ClueShowDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHand
         {
             Debug.Log("[ClueShowDropTarget] 请先传唤人物");
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 不允许在浏览历史时出示线索
@@ -76,7 +76,7 @@ public class ClueShowDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHand
         {
             Debug.Log("[ClueShowDropTarget] 正在浏览历史，无法出示线索。请先回到最新对话。");
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 显示线索对话
@@ -84,6 +84,7 @@ public class ClueShowDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHand
         Debug.Log($"[ClueShowDropTarget] 出示线索: {clue.displayName}");
 
         ClearHighlight();
+        return true;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

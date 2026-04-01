@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// 引导步骤类型
@@ -60,4 +61,14 @@ public class GuideSequence
 	/// 步骤列表（顺序执行）
 	/// </summary>
 	public List<GuideStep> steps;
+}
+
+public static class GuideDragEventBus
+{
+	public static event Action<string, string> OnDragSuccess;
+
+	public static void Raise(string source, string target)
+	{
+		OnDragSuccess?.Invoke(source, target);
+	}
 }

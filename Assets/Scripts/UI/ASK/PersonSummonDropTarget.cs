@@ -49,13 +49,13 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
     /// <summary>
     /// 当线索被拖放到此处时调用（由DraggableClueItem调用）
     /// </summary>
-    public void OnClueDrop(ClueData clue)
+    public bool OnClueDrop(ClueData clue)
     {
         if (clue == null)
         {
             Debug.LogWarning("[PersonSummonDropTarget] 拖放的线索为空");
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 只接受人物线索
@@ -63,7 +63,7 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
         {
             Debug.Log($"[PersonSummonDropTarget] 只能拖拽人物线索到此处，当前类型: {clue.GetType().Name}");
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 检查是否可以传唤
@@ -75,7 +75,7 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
                 cannotSummonTip.SetActive(true);
             }
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 检查对话控制器
@@ -83,7 +83,7 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
         {
             Debug.LogError("[PersonSummonDropTarget] 对话控制器未配置");
             ClearHighlight();
-            return;
+            return false;
         }
 
         // 启动基础对话
@@ -91,6 +91,7 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
         Debug.Log($"[PersonSummonDropTarget] 成功传唤 {personClue.displayName}");
 
         ClearHighlight();
+        return true;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -147,4 +148,3 @@ public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnter
         }
     }
 }
-

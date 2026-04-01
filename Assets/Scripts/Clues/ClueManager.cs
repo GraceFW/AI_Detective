@@ -30,11 +30,21 @@ public class ClueManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+
     /// <summary>
     /// 初始化线索数据库：将所有线索的 collected 状态重置为 false等等
     /// </summary>
     private void InitializeClues()
     {
+        _revealedIds.Clear();
+
         if (clueDatabase == null)
         {
             Debug.LogWarning("[ClueManager] clueDatabase 未配置，无法初始化线索状态");
@@ -112,5 +122,21 @@ public class ClueManager : MonoBehaviour
         OnClueRevealed?.Invoke(clue);
         Debug.Log($"[ClueManager] Revealed clue: {clue.id} / {clue.displayName}");
         return true;
+    }
+
+    public IEnumerable<ClueData> GetRevealedClues()
+    {
+        if (clueDatabase == null)
+        {
+            yield break;
+        }
+
+        foreach (var clueId in _revealedIds)
+        {
+            if (clueDatabase.TryGetClue(clueId, out var clue) && clue != null)
+            {
+                yield return clue;
+            }
+        }
     }
 }

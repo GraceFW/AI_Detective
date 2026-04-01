@@ -53,17 +53,17 @@ public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterH
     /// <summary>
     /// 当线索被拖放到此处时调用（由 DraggableClueItem 调用）
     /// </summary>
-    public void OnClueDrop(ClueData clue)
+    public bool OnClueDrop(ClueData clue)
     {
         if (clue == null)
         {
-            return;
+            return false;
         }
 
         if (targetInputField == null)
         {
             Debug.LogWarning("SearchInputDropTarget: targetInputField 未配置。");
-            return;
+            return false;
         }
 
         // 填入 displayName
@@ -74,6 +74,7 @@ public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterH
         Debug.Log($"[SearchInputDropTarget] 填入线索: {clue.displayName}");
 
         ClearHighlight();
+        return true;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -120,4 +121,3 @@ public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterH
         }
     }
 }
-
