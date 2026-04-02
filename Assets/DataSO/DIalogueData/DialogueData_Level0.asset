@@ -142,7 +142,7 @@ MonoBehaviour:
     entries:
     - speakerName: "\u5377\u5B97\u7EBF\u7D22\u6307\u5F151\uFF1A"
       speakerImage: {fileID: 0}
-      dialogueText: "\u73A9\u5BB6\u62FF\u5230\u4E86\u5377\u5B97\uFF0C\u770B\u5377\u5B97\uFF0C\u62FF\u5173\u952E\u4FE1\u606F\uFF0C\u6216\u76F4\u63A5\u641C\u7D22\u5377\u5B97\n\u8FD9\u91CC\u7684\u5BF9\u8BDD\u53EF\u4EE5\u662F\u4E00\u6761\u4E00\u6761\u7684\uFF0C\u603B\u4E4B\u8FD9\u4E2A\u5E8F\u5217\u662F\u62FF\u5230\u5377\u5B97\u7EBF\u7D22\u7684\u5BF9\u8BDD\u5E8F\u5217\n\u4E00\u4E2A\u5BF9\u8BDD\u5E8F\u5217\u53EF\u4EE5\u6709\u5F88\u591A\u5BF9\u8BDD\u8282\u70B9"
+      dialogueText: "\u8FD9\u91CC\u4ECB\u7ECD\u7EBF\u7D22UI\u7684\u4F5C\u7528\uFF1A\u53EF\u4EE5\u70B9\u51FBUI\u67E5\u770B\u7EBF\u7D22\u4FE1\u606F\u8BE6\u60C5\u9875"
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
@@ -157,33 +157,67 @@ MonoBehaviour:
   - triggerType: 1
     waveNumber: 1
     entries:
-    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD1"
+    - speakerName: "\u7EBF\u7D22\u8BE6\u60C5\u9875"
       speakerImage: {fileID: 0}
-      dialogueText: "\u9996\u5148\u600E\u4E48\u505A"
+      dialogueText: "\u8FD9\u91CC\u662F\u7EBF\u7D22\u8BE6\u60C5\u9875\u4ECB\u7ECD\uFF0C\u53EF\u4EE5\u63D0\u793A\u73A9\u5BB6\u6CE8\u610F\u5173\u952E\u4FE1\u606F\uFF0C\u6BD4\u5982\u65E5\u671F\u3001\u4EBA\u540D\u4E4B\u7C7B\u7684"
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 0
-    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD2"
+    - speakerName: "\u7EBF\u7D22\u8BE6\u60C5\u9875"
       speakerImage: {fileID: 0}
-      dialogueText: "\u7136\u540E\u600E\u4E48\u505A"
+      dialogueText: "\u8981\u8BB0\u5F97\u544A\u8BC9\u73A9\u5BB6\u5173\u95ED\u7EBF\u7D22\u8BE6\u60C5\u9875\uFF0C\u70B9\u51FB\u5173\u95ED\u6309\u94AE\uFF0C\u907F\u514D\u906E\u6321\u540E\u9762\u7684\u641C\u7D22\u7ED3\u679C"
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 0
   - triggerType: 1
-    waveNumber: 0
+    waveNumber: 2
+    entries:
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD1.1"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8FD9\u91CC\u4ECB\u7ECD\u641C\u7D22\u6846\u4EE5\u53CA\u641C\u7D22\u529F\u80FD\n\u6BD4\u5982\u624B\u6253\u5B57\u52A0\u56DE\u8F66\u641C\u7D22"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD1.2"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8BA9\u73A9\u5BB6\u5C1D\u8BD5\u4E00\u4E0B"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 3
+    entries:
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD2.1"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5F53\u7136\u6211\u4EEC\u6709\u4E00\u4E2A\u4FBF\u6377\u64CD\u4F5C\uFF0C\u53EF\u4EE5\u76F4\u63A5\u62D6\u62FD\u4F60\u5DF2\u638C\u63E1\u7684\u7EBF\u7D22\u8FDB\u884C\u5FEB\u901F\u641C\u7D22"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD2.2"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8BA9\u73A9\u5BB6\u8BD5\u8BD5"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 4
     entries:
     - speakerName: "\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\u5BF9\u8BDD1"
       speakerImage: {fileID: 0}
-      dialogueText: "\u8FD9\u91CC\u662F\u641C\u7D22\u7ED3\u679C"
+      dialogueText: "\u597D\u7684\u8FD9\u91CC\u4ECB\u7ECD\u641C\u7D22\u7ED3\u679C\u7684\u529F\u6548"
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 0
     - speakerName: "\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\u5BF9\u8BDD2"
       speakerImage: {fileID: 0}
-      dialogueText: "\u53EF\u4EE5\u5728\u8FD9\u91CC\u627E\u5230\u5173\u952E\u7EBF\u7D22"
+      dialogueText: "\u53EF\u4EE5\u5728\u8FD9\u91CC\u627E\u5230\u5173\u952E\u7EBF\u7D22\u5E76\u6536\u96C6"
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}

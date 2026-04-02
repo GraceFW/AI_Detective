@@ -4,20 +4,27 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// 搜索输入框的拖放目标
-/// 当线索词条被拖放到此组件时，自动填入 displayName
+/// Drop target for the single search input field.
+/// Dragging a clue here fills the input and auto-submits the current single-input command.
 /// </summary>
 public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    [Header("目标输入框")]
-    [Tooltip("如果为空，则尝试获取自身或子对象的 TMP_InputField")]
+    [Header("Target Input")]
+    [Tooltip("If empty, tries to find a TMP_InputField on self or children.")]
     [SerializeField] private TMP_InputField targetInputField;
 
-    [Header("高亮效果")]
-    [Tooltip("拖拽悬停时的高亮颜色")]
+    [Header("Search")]
+    [Tooltip("Optional explicit reference. Falls back to a parent SearchPanelController.")]
+    [SerializeField] private SearchPanelController searchPanelController;
+
+    [Tooltip("When enabled, dropping a clue auto-submits the single-input search command and keeps the text in the input field.")]
+    [SerializeField] private bool autoSubmitDroppedClue = true;
+
+    [Header("Highlight")]
+    [Tooltip("Highlight color while dragging over the target.")]
     [SerializeField] private Color highlightColor = new Color(0.3f, 0.6f, 1f, 0.3f);
 
-    [Tooltip("高亮显示的 Image（可选）")]
+    [Tooltip("Optional highlight image.")]
     [SerializeField] private Image highlightImage;
 
     private Color _originalColor;
@@ -34,25 +41,26 @@ public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterH
             }
         }
 
+        if (searchPanelController == null)
+        {
+            searchPanelController = GetComponent<SearchPanelController>();
+            if (searchPanelController == null)
+            {
+                searchPanelController = GetComponentInParent<SearchPanelController>();
+            }
+        }
+
         if (highlightImage != null)
         {
             _originalColor = highlightImage.color;
         }
     }
 
-    /// <summary>
-    /// 当有对象被拖放到此处时调用（Unity EventSystem 标准接口）
-    /// </summary>
     public void OnDrop(PointerEventData eventData)
     {
-        // 这个方法由 Unity EventSystem 在标准拖放流程中调用
-        // 但我们使用自定义的 OnClueDrop 方法，因为 DraggableClueItem 手动检测
         ClearHighlight();
     }
 
-    /// <summary>
-    /// 当线索被拖放到此处时调用（由 DraggableClueItem 调用）
-    /// </summary>
     public bool OnClueDrop(ClueData clue)
     {
         if (clue == null)
@@ -62,16 +70,37 @@ public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterH
 
         if (targetInputField == null)
         {
-            Debug.LogWarning("SearchInputDropTarget: targetInputField 未配置。");
+            Debug.LogWarning("SearchInputDropTarget: targetInputField is not assigned.");
             return false;
         }
 
-        // 填入 displayName
-        targetInputField.text = clue.displayName;
-        targetInputField.ActivateInputField();
-        targetInputField.MoveTextEnd(false);
+        string displayName = clue.displayName ?? string.Empty;
+        bool submitted = false;
 
-        Debug.Log($"[SearchInputDropTarget] 填入线索: {clue.displayName}");
+        if (autoSubmitDroppedClue && searchPanelController != null)
+        {
+            searchPanelController.SetSearchText(displayName);
+            submitted = searchPanelController.SubmitCurrentSingleInput(
+                clearInputAfterSubmit: false,
+                isManualSubmit: false,
+                overrideTargetKey: ResolveGuideTargetKey());
+        }
+
+        if (!submitted)
+        {
+            targetInputField.text = displayName;
+            targetInputField.ActivateInputField();
+            targetInputField.MoveTextEnd(false);
+        }
+
+        if (submitted)
+        {
+            Debug.Log($"[SearchInputDropTarget] Auto submitted clue: {displayName}");
+        }
+        else
+        {
+            Debug.Log($"[SearchInputDropTarget] Filled clue text without auto submit: {displayName}");
+        }
 
         ClearHighlight();
         return true;
@@ -79,7 +108,6 @@ public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterH
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // 检查是否有正在拖拽的线索
         if (DraggableClueItem.CurrentDragging != null)
         {
             ShowHighlight();
@@ -119,5 +147,25 @@ public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterH
         {
             highlightImage.color = _originalColor;
         }
+    }
+
+    private string ResolveGuideTargetKey()
+    {
+        GuideTarget guideTarget = GetComponent<GuideTarget>();
+        if (guideTarget == null)
+        {
+            guideTarget = GetComponentInParent<GuideTarget>();
+        }
+
+        if (guideTarget == null && targetInputField != null)
+        {
+            guideTarget = targetInputField.GetComponent<GuideTarget>();
+            if (guideTarget == null)
+            {
+                guideTarget = targetInputField.GetComponentInParent<GuideTarget>();
+            }
+        }
+
+        return guideTarget != null ? guideTarget.key : string.Empty;
     }
 }

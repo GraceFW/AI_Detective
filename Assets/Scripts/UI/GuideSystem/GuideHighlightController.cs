@@ -4,7 +4,14 @@ using UnityEngine.UI;
 
 /// <summary>
 /// 引导高亮控制器。
-/// 负责维护当前聚焦目标，并将同一个洞口同步到 GuideLayer 与对话遮罩。
+/// 负责把“当前应该被关注的 UI 列表”同步到多个遮罩宿主：
+/// - Guide 自己的顶层遮罩
+/// - DialogueManager 的背景遮罩
+/// - NameInputDialog 的背景遮罩
+///
+/// 这样无论当前界面上层是谁，都能看到一致的“挖洞 + 描边”效果。
+/// 同时这里也负责把高亮目标区域告诉 DialogueManager，
+/// 让对话文本区域在必要时做避让。
 /// </summary>
 public class GuideHighlightController : MonoBehaviour
 {
@@ -16,7 +23,10 @@ public class GuideHighlightController : MonoBehaviour
 	[SerializeField] private bool blockOutsideRaycasts = true;
 	[SerializeField] private int guideLayerSortingOrder = 9000;
 
-	private RectTransform _currentTarget;
+	// _currentTargets 保存逻辑目标，_currentScreenRects 保存每帧计算出来的屏幕矩形。
+	// 之所以不直接缓存 Rect，是因为目标 UI 可能会移动、缩放、重排。
+	private readonly List<RectTransform> _currentTargets = new();
+	private readonly List<Rect> _currentScreenRects = new();
 	private bool _hasActiveHighlight;
 
 	private GuideMaskOverlayHost _guideLayerHost;
@@ -48,70 +58,110 @@ public class GuideHighlightController : MonoBehaviour
 		EnsureDialogueHost();
 		EnsureNameInputHost();
 
-		if (!_hasActiveHighlight || _currentTarget == null)
+		// 选择在 LateUpdate 里刷新，是为了尽量等布局系统、动画和拖拽位置都更新完，
+		// 避免高亮框比真实 UI 慢一帧或者抖动。
+		if (!_hasActiveHighlight || _currentTargets.Count == 0)
 		{
 			HideAllHosts();
+			DialogueManager.Instance?.ClearGuideLayoutAvoidance();
 			return;
 		}
 
-		if (!_currentTarget.gameObject.activeInHierarchy)
+		_currentScreenRects.Clear();
+
+		for (int i = 0; i < _currentTargets.Count; i++)
+		{
+			var target = _currentTargets[i];
+			if (target == null || !target.gameObject.activeInHierarchy)
+			{
+				continue;
+			}
+
+			if (!TryGetTargetScreenRect(target, out var screenRect))
+			{
+				continue;
+			}
+
+			_currentScreenRects.Add(ExpandRect(screenRect, holePadding));
+		}
+
+		if (_currentScreenRects.Count == 0)
 		{
 			HideAllHosts();
+			DialogueManager.Instance?.ClearGuideLayoutAvoidance();
 			return;
 		}
 
-		if (!TryGetTargetScreenRect(_currentTarget, out var screenRect))
-		{
-			HideAllHosts();
-			return;
-		}
-
-		var paddedRect = ExpandRect(screenRect, holePadding);
-		SyncHosts(paddedRect);
+		SyncHosts(_currentScreenRects);
+		DialogueManager.Instance?.ApplyGuideLayoutAvoidance(_currentScreenRects);
 	}
 
 	public void HighlightMultiple(List<RectTransform> targets)
 	{
-		RectTransform firstValidTarget = null;
-		int validCount = 0;
+		// 引导层支持多目标高亮，例如“拖拽源 + 拖拽目标”同时聚焦。
+		_currentTargets.Clear();
 
-		if (targets != null)
-		{
-			foreach (var target in targets)
-			{
-				if (target == null)
-				{
-					continue;
-				}
-
-				validCount++;
-				if (firstValidTarget == null)
-				{
-					firstValidTarget = target;
-				}
-			}
-		}
-
-		if (validCount > 1)
-		{
-			Debug.LogWarning("[GuideHighlightController] 当前版本仅支持单个挖洞目标，将只使用第一个有效目标。");
-		}
-
-		if (firstValidTarget == null)
+		if (targets == null)
 		{
 			ClearHighlight();
 			return;
 		}
 
-		_currentTarget = firstValidTarget;
+		HashSet<RectTransform> uniqueTargets = new();
+		for (int i = 0; i < targets.Count; i++)
+		{
+			var target = targets[i];
+			if (target == null || !uniqueTargets.Add(target))
+			{
+				continue;
+			}
+
+			_currentTargets.Add(target);
+		}
+
+		if (_currentTargets.Count == 0)
+		{
+			ClearHighlight();
+			return;
+		}
+
 		_hasActiveHighlight = true;
 	}
 
 	public void ClearHighlight()
 	{
-		_currentTarget = null;
+		_currentTargets.Clear();
+		_currentScreenRects.Clear();
 		_hasActiveHighlight = false;
 		HideAllHosts();
+		DialogueManager.Instance?.ClearGuideLayoutAvoidance();
+	}
+
+	public bool IsScreenPointOverHighlightedTarget(Vector2 screenPosition)
+	{
+		// DialogueManager 会用这个方法判断：
+		// 当前鼠标点击是否命中了高亮目标。
+		// 如果命中，则这次点击不应该同时推进引导对话文本。
+		if (!_hasActiveHighlight || _currentTargets.Count == 0)
+		{
+			return false;
+		}
+
+		for (int i = 0; i < _currentTargets.Count; i++)
+		{
+			var target = _currentTargets[i];
+			if (target == null || !target.gameObject.activeInHierarchy)
+			{
+				continue;
+			}
+
+			if (RectTransformUtility.RectangleContainsScreenPoint(target, screenPosition, GetTargetEventCamera(target)))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void ClaimInstance()
@@ -128,6 +178,8 @@ public class GuideHighlightController : MonoBehaviour
 
 	private void EnsureGuideLayerHost()
 	{
+		// Guide 自己的遮罩层挂在单独的顶层 Canvas 上，
+		// 确保不会被普通 UI 排序遮住。
 		if (_guideLayerHost != null)
 		{
 			_guideLayerHost.SetStyle(GetGuideLayerMaskColor(), frameColor, frameThickness, blockOutsideRaycasts);
@@ -166,6 +218,8 @@ public class GuideHighlightController : MonoBehaviour
 
 	private void EnsureDialogueHost()
 	{
+		// Dialogue 的遮罩宿主直接复用现有 backgroundMask，
+		// 不改 Dialogue 主逻辑，只在需要时附加“多洞遮罩能力”。
 		if (DialogueManager.Instance == null || DialogueManager.Instance.backgroundMask == null)
 		{
 			return;
@@ -188,6 +242,7 @@ public class GuideHighlightController : MonoBehaviour
 
 	private void EnsureNameInputHost()
 	{
+		// NameInputDialog 与 Dialogue 一样，都是“在现有遮罩上增量扩展”。
 		if (NameInputDialog.Instance == null || NameInputDialog.Instance.BackgroundMask == null)
 		{
 			return;
@@ -208,15 +263,17 @@ public class GuideHighlightController : MonoBehaviour
 		_nameInputHost.SetStyle(backgroundMask.color, frameColor, frameThickness, blockOutsideRaycasts);
 	}
 
-	private void SyncHosts(Rect screenRect)
+	private void SyncHosts(IReadOnlyList<Rect> screenRects)
 	{
-		_guideLayerHost?.ShowHole(screenRect);
+		// Guide 顶层一定同步；
+		// Dialogue / NameInput 只有在对应界面处于激活时才显示洞，否则隐藏即可。
+		_guideLayerHost?.ShowHoles(screenRects);
 
 		if (_dialogueHost != null)
 		{
 			if (_dialogueHost.gameObject.activeInHierarchy)
 			{
-				_dialogueHost.ShowHole(screenRect);
+				_dialogueHost.ShowHoles(screenRects);
 			}
 			else
 			{
@@ -228,7 +285,7 @@ public class GuideHighlightController : MonoBehaviour
 		{
 			if (_nameInputHost.gameObject.activeInHierarchy)
 			{
-				_nameInputHost.ShowHole(screenRect);
+				_nameInputHost.ShowHoles(screenRects);
 			}
 			else
 			{
@@ -276,6 +333,8 @@ public class GuideHighlightController : MonoBehaviour
 
 	private static bool TryGetTargetScreenRect(RectTransform target, out Rect screenRect)
 	{
+		// 统一把任意 UI 目标转换为屏幕空间矩形，
+		// 后续 GuideMaskOverlayHost 只需要处理“屏幕矩形挖洞”这一件事。
 		screenRect = default;
 		if (target == null)
 		{
@@ -315,11 +374,34 @@ public class GuideHighlightController : MonoBehaviour
 		return true;
 	}
 
+	private static Camera GetTargetEventCamera(RectTransform target)
+	{
+		if (target == null)
+		{
+			return null;
+		}
+
+		var canvas = target.GetComponentInParent<Canvas>();
+		if (canvas == null)
+		{
+			return null;
+		}
+
+		var rootCanvas = canvas.rootCanvas;
+		if (rootCanvas != null && rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+		{
+			return rootCanvas.worldCamera;
+		}
+
+		return null;
+	}
+
 	private void OnDestroy()
 	{
 		if (Instance == this)
 		{
 			HideAllHosts();
+			DialogueManager.Instance?.ClearGuideLayoutAvoidance();
 			Instance = null;
 		}
 	}

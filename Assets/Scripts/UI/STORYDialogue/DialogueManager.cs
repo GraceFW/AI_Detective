@@ -82,6 +82,10 @@ public class DialogueManager : MonoBehaviour
     /// Key: 关卡编号, Value: 触发次数（从1开始）
     /// </summary>
     private Dictionary<int, int> _waveSpawnTriggerCounts = new Dictionary<int, int>();
+    private RectTransform _guideLayoutAvoidRect;
+    private Vector2 _guideLayoutAvoidDefaultAnchoredPosition;
+    private bool _guideLayoutAvoidDefaultCached;
+    private const float GuideLayoutAvoidMargin = 24f;
     
     private void Awake()
     {
@@ -130,8 +134,10 @@ public class DialogueManager : MonoBehaviour
         // 对话激活时处理输入
         if (isDialogueActive)
         {
+            bool shouldContinueByMouse = Input.GetMouseButtonDown(0) && !ShouldIgnoreMouseContinueThisFrame();
+
             // 点击或空格键继续
-            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+            if (shouldContinueByMouse || Input.GetKeyDown(KeyCode.Space))
             {
                 OnContinueDialogue();
             }
@@ -142,6 +148,16 @@ public class DialogueManager : MonoBehaviour
                 ExitDialogue();
             }
         }
+    }
+
+    private bool ShouldIgnoreMouseContinueThisFrame()
+    {
+        if (GuideHighlightController.Instance == null)
+        {
+            return false;
+        }
+
+        return GuideHighlightController.Instance.IsScreenPointOverHighlightedTarget(Input.mousePosition);
     }
     
     /// <summary>
@@ -541,6 +557,8 @@ public class DialogueManager : MonoBehaviour
             NameInputDialog.Instance.Hide();
         }
 
+        RestoreGuideLayoutAvoidance();
+
 		// 重置状态,不能重置对话序列的触发类型，否则会导致事件系统无法正确识别当前对话类型
 		isTyping = false;
         isDialogueActive = false;
@@ -562,6 +580,7 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private void EndDialogue()
     {
+        RestoreGuideLayoutAvoidance();
         isDialogueActive = false;
         isWaitingForSpecialNode = false;
         currentSequence = null;
@@ -583,9 +602,182 @@ public class DialogueManager : MonoBehaviour
         return isDialogueActive;
     }
 
+    public void ApplyGuideLayoutAvoidance(IReadOnlyList<Rect> avoidRects)
+    {
+        if (!isDialogueActive)
+        {
+            RestoreGuideLayoutAvoidance();
+            return;
+        }
+
+        if (!TryGetGuideLayoutAvoidRect(out var layoutRect))
+        {
+            return;
+        }
+
+        float shiftY = CalculateGuideLayoutAvoidShift(layoutRect, avoidRects);
+        layoutRect.anchoredPosition = _guideLayoutAvoidDefaultAnchoredPosition + new Vector2(0f, shiftY);
+    }
+
+    public void ClearGuideLayoutAvoidance()
+    {
+        RestoreGuideLayoutAvoidance();
+    }
+
+    private bool TryGetGuideLayoutAvoidRect(out RectTransform layoutRect)
+    {
+        layoutRect = dialogueTextBG != null ? dialogueTextBG.rectTransform : null;
+        if (layoutRect == null)
+        {
+            return false;
+        }
+
+        if (_guideLayoutAvoidRect != layoutRect)
+        {
+            _guideLayoutAvoidRect = layoutRect;
+            _guideLayoutAvoidDefaultAnchoredPosition = layoutRect.anchoredPosition;
+            _guideLayoutAvoidDefaultCached = true;
+        }
+        else if (!_guideLayoutAvoidDefaultCached)
+        {
+            _guideLayoutAvoidDefaultAnchoredPosition = layoutRect.anchoredPosition;
+            _guideLayoutAvoidDefaultCached = true;
+        }
+
+        return true;
+    }
+
+    private float CalculateGuideLayoutAvoidShift(RectTransform layoutRect, IReadOnlyList<Rect> avoidRects)
+    {
+        if (avoidRects == null || avoidRects.Count == 0)
+        {
+            return 0f;
+        }
+
+        var originalPosition = layoutRect.anchoredPosition;
+        if (originalPosition != _guideLayoutAvoidDefaultAnchoredPosition)
+        {
+            layoutRect.anchoredPosition = _guideLayoutAvoidDefaultAnchoredPosition;
+            Canvas.ForceUpdateCanvases();
+        }
+
+        if (!TryGetScreenRect(layoutRect, out var layoutScreenRect))
+        {
+            return 0f;
+        }
+
+        float desiredBottom = layoutScreenRect.yMin;
+        bool shouldMove = false;
+
+        for (int i = 0; i < avoidRects.Count; i++)
+        {
+            var avoidRect = avoidRects[i];
+            bool overlapX = layoutScreenRect.xMin < avoidRect.xMax && layoutScreenRect.xMax > avoidRect.xMin;
+            bool overlapY = layoutScreenRect.yMin < avoidRect.yMax + GuideLayoutAvoidMargin &&
+                            layoutScreenRect.yMax > avoidRect.yMin - GuideLayoutAvoidMargin;
+
+            if (!overlapX || !overlapY)
+            {
+                continue;
+            }
+
+            desiredBottom = Mathf.Max(desiredBottom, avoidRect.yMax + GuideLayoutAvoidMargin);
+            shouldMove = true;
+        }
+
+        if (!shouldMove)
+        {
+            return 0f;
+        }
+
+        var parentRect = layoutRect.parent as RectTransform;
+        if (parentRect == null)
+        {
+            return desiredBottom - layoutScreenRect.yMin;
+        }
+
+        var eventCamera = GetEventCamera(parentRect);
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, new Vector2(0f, layoutScreenRect.yMin), eventCamera, out var currentLocalBottom))
+        {
+            return desiredBottom - layoutScreenRect.yMin;
+        }
+
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, new Vector2(0f, desiredBottom), eventCamera, out var desiredLocalBottom))
+        {
+            return desiredBottom - layoutScreenRect.yMin;
+        }
+
+        return desiredLocalBottom.y - currentLocalBottom.y;
+    }
+
+    private void RestoreGuideLayoutAvoidance()
+    {
+        if (_guideLayoutAvoidRect == null || !_guideLayoutAvoidDefaultCached)
+        {
+            return;
+        }
+
+        _guideLayoutAvoidRect.anchoredPosition = _guideLayoutAvoidDefaultAnchoredPosition;
+    }
+
+    private static bool TryGetScreenRect(RectTransform rectTransform, out Rect screenRect)
+    {
+        screenRect = default;
+        if (rectTransform == null)
+        {
+            return false;
+        }
+
+        var corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+
+        var eventCamera = GetEventCamera(rectTransform);
+        var min = new Vector2(float.MaxValue, float.MaxValue);
+        var max = new Vector2(float.MinValue, float.MinValue);
+
+        for (int i = 0; i < corners.Length; i++)
+        {
+            var screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, corners[i]);
+            min = Vector2.Min(min, screenPoint);
+            max = Vector2.Max(max, screenPoint);
+        }
+
+        if (max.x - min.x <= 0.5f || max.y - min.y <= 0.5f)
+        {
+            return false;
+        }
+
+        screenRect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        return true;
+    }
+
+    private static Camera GetEventCamera(Component component)
+    {
+        if (component == null)
+        {
+            return null;
+        }
+
+        var canvas = component.GetComponentInParent<Canvas>();
+        if (canvas == null)
+        {
+            return null;
+        }
+
+        var rootCanvas = canvas.rootCanvas;
+        if (rootCanvas != null && rootCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            return rootCanvas.worldCamera;
+        }
+
+        return null;
+    }
+
     // 结束对话序列，执行表现层管理和事件发布
 	private void FinishDialogue()
 	{
+		RestoreGuideLayoutAvoidance();
+
 		// 隐藏对话面板
 		if (dialoguePanel != null)
 		{
@@ -775,5 +967,3 @@ public class DialogueManager : MonoBehaviour
 		StartCoroutine(ShowDialogueSequence(sequence, onComplete));
 	}
 }
-
-

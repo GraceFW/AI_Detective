@@ -205,29 +205,7 @@ public class SearchPanelController : MonoBehaviour
 	/// </summary>
 	private void OnSubmit(string inputText)
 	{
-		if (commandDropdown == null || clueDatabase == null)
-		{
-			Debug.LogError("SearchPanelController: commandDropdown 或 clueDatabase 未配置。");
-			return;
-		}
-
-		var command = (CommandType)commandDropdown.value;
-
-		// 只处理Detect和Sniff命令
-		if (command == CommandType.Attack)
-		{
-			return;
-		}
-
-		var searchText = inputText?.Trim() ?? string.Empty;
-
-		ExecuteCommand(command, searchText);
-
-		// 清空输入框
-		if (detectInput != null)
-		{
-			detectInput.text = string.Empty;
-		}
+		SubmitSingleInput(inputText, clearInputAfterSubmit: true, isManualSubmit: true);
 	}
 
 	/// <summary>
@@ -264,6 +242,41 @@ public class SearchPanelController : MonoBehaviour
 		}
 
 		_displayCoroutine = StartCoroutine(ExecuteCommandCoroutine(command, searchText));
+	}
+
+	/// <summary>
+	/// 外部调用：提交当前单输入框命令。
+	/// </summary>
+	public bool SubmitCurrentSingleInput(bool clearInputAfterSubmit, bool isManualSubmit, string overrideTargetKey = null)
+	{
+		string currentText = detectInput != null ? detectInput.text : string.Empty;
+		return SubmitSingleInput(currentText, clearInputAfterSubmit, isManualSubmit, overrideTargetKey);
+	}
+
+	private bool SubmitSingleInput(string inputText, bool clearInputAfterSubmit, bool isManualSubmit, string overrideTargetKey = null)
+	{
+		if (commandDropdown == null || clueDatabase == null)
+		{
+			Debug.LogError("SearchPanelController: commandDropdown 或 clueDatabase 未配置。");
+			return false;
+		}
+
+		var command = (CommandType)commandDropdown.value;
+		if (command == CommandType.Attack)
+		{
+			return false;
+		}
+
+		var searchText = inputText?.Trim() ?? string.Empty;
+		ExecuteCommand(command, searchText);
+		GuideInputSubmitEventBus.Raise(ResolveSingleInputTargetKey(overrideTargetKey), searchText, isManualSubmit);
+
+		if (clearInputAfterSubmit && detectInput != null)
+		{
+			detectInput.text = string.Empty;
+		}
+
+		return true;
 	}
 
 	private IEnumerator ExecuteCommandCoroutine(CommandType command, string searchText)
@@ -685,6 +698,27 @@ public class SearchPanelController : MonoBehaviour
 				attackInputA.ActivateInputField();
 			}
 		}
+	}
+
+	private string ResolveSingleInputTargetKey(string overrideTargetKey)
+	{
+		if (!string.IsNullOrWhiteSpace(overrideTargetKey))
+		{
+			return overrideTargetKey;
+		}
+
+		if (detectInput == null)
+		{
+			return string.Empty;
+		}
+
+		GuideTarget guideTarget = detectInput.GetComponent<GuideTarget>();
+		if (guideTarget == null)
+		{
+			guideTarget = detectInput.GetComponentInParent<GuideTarget>();
+		}
+
+		return guideTarget != null ? guideTarget.key : string.Empty;
 	}
 
 	/// <summary>
