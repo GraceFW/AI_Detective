@@ -15,6 +15,15 @@ using UnityEngine.UI;
 /// </summary>
 public class GuideHighlightController : MonoBehaviour
 {
+	private struct CanvasGroupLockState
+	{
+		public CanvasGroup canvasGroup;
+		public bool hadComponent;
+		public bool interactable;
+		public bool blocksRaycasts;
+		public bool ignoreParentGroups;
+	}
+
 	public static GuideHighlightController Instance;
 
 	[SerializeField] private Vector2 holePadding = new Vector2(24f, 16f);
@@ -27,7 +36,9 @@ public class GuideHighlightController : MonoBehaviour
 	// 之所以不直接缓存 Rect，是因为目标 UI 可能会移动、缩放、重排。
 	private readonly List<RectTransform> _currentTargets = new();
 	private readonly List<Rect> _currentScreenRects = new();
+	private readonly Dictionary<CanvasGroup, CanvasGroupLockState> _lockedTargetInputStates = new();
 	private bool _hasActiveHighlight;
+	private bool _lockHighlightedTargetInput;
 
 	private GuideMaskOverlayHost _guideLayerHost;
 	private GuideMaskOverlayHost _dialogueHost;
@@ -126,15 +137,28 @@ public class GuideHighlightController : MonoBehaviour
 		}
 
 		_hasActiveHighlight = true;
+		RefreshTargetInputLockState();
 	}
 
 	public void ClearHighlight()
 	{
+		RestoreTargetInputLockState();
 		_currentTargets.Clear();
 		_currentScreenRects.Clear();
 		_hasActiveHighlight = false;
 		HideAllHosts();
 		DialogueManager.Instance?.ClearGuideLayoutAvoidance();
+	}
+
+	public void SetHighlightedTargetsInputLocked(bool locked)
+	{
+		if (_lockHighlightedTargetInput == locked)
+		{
+			return;
+		}
+
+		_lockHighlightedTargetInput = locked;
+		RefreshTargetInputLockState();
 	}
 
 	public bool IsScreenPointOverHighlightedTarget(Vector2 screenPosition)
@@ -174,6 +198,74 @@ public class GuideHighlightController : MonoBehaviour
 
 		Instance = this;
 		enabled = true;
+	}
+
+	private void RefreshTargetInputLockState()
+	{
+		RestoreTargetInputLockState();
+
+		if (!_lockHighlightedTargetInput || !_hasActiveHighlight || _currentTargets.Count == 0)
+		{
+			return;
+		}
+
+		HashSet<CanvasGroup> processedGroups = new();
+		for (int i = 0; i < _currentTargets.Count; i++)
+		{
+			var target = _currentTargets[i];
+			if (target == null)
+			{
+				continue;
+			}
+
+			var canvasGroup = target.GetComponent<CanvasGroup>();
+			bool hadComponent = canvasGroup != null;
+			if (canvasGroup == null)
+			{
+				canvasGroup = target.gameObject.AddComponent<CanvasGroup>();
+			}
+
+			if (!processedGroups.Add(canvasGroup))
+			{
+				continue;
+			}
+
+			_lockedTargetInputStates[canvasGroup] = new CanvasGroupLockState
+			{
+				canvasGroup = canvasGroup,
+				hadComponent = hadComponent,
+				interactable = canvasGroup.interactable,
+				blocksRaycasts = canvasGroup.blocksRaycasts,
+				ignoreParentGroups = canvasGroup.ignoreParentGroups
+			};
+
+			canvasGroup.interactable = false;
+			canvasGroup.blocksRaycasts = false;
+		}
+	}
+
+	private void RestoreTargetInputLockState()
+	{
+		foreach (var state in _lockedTargetInputStates.Values)
+		{
+			if (state.canvasGroup == null)
+			{
+				continue;
+			}
+
+			if (state.hadComponent)
+			{
+				state.canvasGroup.interactable = state.interactable;
+				state.canvasGroup.blocksRaycasts = state.blocksRaycasts;
+				state.canvasGroup.ignoreParentGroups = state.ignoreParentGroups;
+			}
+			else
+			{
+				Destroy(state.canvasGroup);
+			}
+		}
+
+		_lockedTargetInputStates.Clear();
 	}
 
 	private void EnsureGuideLayerHost()
@@ -400,6 +492,7 @@ public class GuideHighlightController : MonoBehaviour
 	{
 		if (Instance == this)
 		{
+			RestoreTargetInputLockState();
 			HideAllHosts();
 			DialogueManager.Instance?.ClearGuideLayoutAvoidance();
 			Instance = null;

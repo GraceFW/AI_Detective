@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 引导步骤类型。
@@ -15,7 +16,8 @@ public enum GuideStepType
 	WaitDrag,      // 等待拖拽成功
 	EndHighlight,  // 清除高亮
 	Delay,         // 延迟一段时间
-	WaitInputSubmit // 等待输入框手动回车
+	WaitInputSubmit, // 等待输入框手动回车
+	WaitCluesCollected // 等待若干线索被收集
 }
 
 /// <summary>
@@ -31,78 +33,62 @@ public enum GuideStepType
 [System.Serializable]
 public class GuideStep
 {
+	[Header("步骤简介")]
 	public string stepDescribe;
 
-	/// <summary>
-	/// 当前步骤类型，决定 GuideManager 如何解释本 step 的其余字段。
-	/// </summary>
+	[Header("步骤类型")]
+	[Tooltip("当前步骤节点的类型，选好类型后只需要配置对应类型的配置")]
 	public GuideStepType stepType;
 
-	/// <summary>
-	/// 目标UI（支持多个）
-	/// 例如：["clue_knife", "AnalysisPanel"]
-	/// 约定：这里存的是 GuideTarget.key，而不是对象名。
-	/// </summary>
+	[Header("高亮UI节点配置，支持多个")]
+	[Tooltip("目标UI（支持多个），例如：['clue_knife', 'AnalysisPanel']，约定：这里存的是 GuideTarget.key，而不是对象名。")]
 	public List<string> targetKeys;
 
-	/// <summary>
-	/// 拖拽源（被拖的UI）
-	/// </summary>
+	[Header("拖拽UI节点配置，支持多个")]
+	[Tooltip("拖拽源（被拖的UI）")]
 	public string dragSourceKey;
 
-	/// <summary>
-	/// 拖拽目标（接收拖拽的UI）
-	/// </summary>
+	[Tooltip("拖拽目标（接收拖拽的UI）")]
 	public string dragTargetKey;
 
-	/// <summary>
-	/// 对话触发类型（复用 DialogueManager 的触发枚举）
-	/// </summary>
+	[Header("对话节点配置")]
+	[Tooltip("对话触发类型（复用 DialogueManager 的触发枚举）")]
 	public DialogueTriggerType dialogueTrigger;
 
-	/// <summary>
-	/// 对话所属关卡编号。
-	/// 小于0时使用当前对话关卡，若当前关卡无效则回退到0。
-	/// </summary>
+	[Tooltip("对话所属关卡编号，小于0时使用当前对话关卡，若当前关卡无效则回退到0。")]
 	public int dialogueLevelNumber = -1;
 
-	/// <summary>
-	/// 对话波次编号（仅 WaveSpawn 类型有效）
-	/// </summary>
+	[Tooltip("对话波次编号，仅 WaveSpawn 类型有效。")]
 	public int dialogueWaveNumber;
 
-	/// <summary>
-	/// 延迟节点的等待时长（秒）
-	/// </summary>
+	[Header("延迟节点配置")]
+	[Tooltip("延迟节点的等待时长（秒）")]
 	public float delaySeconds = 0.2f;
 
-	/// <summary>
-	/// 等待输入提交时要监听的输入框目标 key。
-	/// 留空时默认使用 targetKeys[0]。
-	/// </summary>
+	[Header("输入提交节点配置")]
+	[Tooltip("等待输入提交时要监听的输入框目标 key，留空时默认使用 targetKeys[0]。")]
 	public string submitTargetKey;
 
-	/// <summary>
-	/// 等待输入提交时是否要求输入内容非空。
-	/// </summary>
+	[Tooltip("等待输入提交时是否要求输入内容非空。")]
 	public bool requireNonEmptySubmit = true;
+
+	[Header("线索收集节点配置")]
+	[Tooltip("等待线索收集步骤使用的线索 id 列表，所有配置的线索都已被收集后，步骤才会继续。")]
+	public List<string> requiredClueIds;
 }
 
 /// <summary>
 /// 一条完整的引导流程。
-/// 当前设计是一条 triggerClueId 对应一条顺序执行的 steps 列表。
+/// 当前设计是：triggerClueIds 中列出的所有线索都被揭露后，顺序执行 steps。
+/// 即使只需要单线索触发，也统一写成只包含 1 个元素的列表。
 /// </summary>
 [System.Serializable]
 public class GuideSequence
 {
-	/// <summary>
-	/// 触发条件：某个线索被揭露
-	/// </summary>
-	public string triggerClueId;
+	[Tooltip("触发条件：列表中的所有线索都被揭露后才触发。")]
+	public List<string> triggerClueIds;
 
-	/// <summary>
-	/// 步骤列表（顺序执行）
-	/// </summary>
+	[Tooltip("步骤列表（顺序执行）")]
 	public List<GuideStep> steps;
 }
 

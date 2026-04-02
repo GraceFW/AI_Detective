@@ -4731,7 +4731,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sequences:
-  - triggerClueId: 0007
+  - triggerClueIds:
+    - 0007
     steps:
     - stepDescribe: "\u83B7\u5F97\u5377\u5B97\u7EBF\u7D22\u540E\u9AD8\u4EAE\u5377\u5B97\u7EBF\u7D22UI"
       stepType: 1
@@ -4745,6 +4746,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4757,6 +4759,7 @@ MonoBehaviour:
       delaySeconds: 1
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u64AD\u653E\u7EBF\u7D22UI\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217"
       stepType: 0
       targetKeys:
@@ -4769,6 +4772,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u70B9\u51FB\u5377\u5B97\u67E5\u9605\u7EBF\u7D22\u8BE6\u60C5\u9875\uFF0C\u5F15\u5165\u7EBF\u7D22\u8BE6\u60C5\u9875\u4ECB\u7ECD"
       stepType: 2
       targetKeys:
@@ -4781,6 +4785,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u9AD8\u4EAE\u6FC0\u6D3B\u7684\u7EBF\u7D22\u8BE6\u60C5\u9875"
       stepType: 1
       targetKeys:
@@ -4793,6 +4798,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4805,6 +4811,7 @@ MonoBehaviour:
       delaySeconds: 0.5
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u64AD\u653E\u7EBF\u7D22\u8BE6\u60C5\u9875\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217"
       stepType: 0
       targetKeys: []
@@ -4816,6 +4823,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4828,6 +4836,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5173\u95ED\u7EBF\u7D22UI\u548C\u8BE6\u60C5\u9875UI\u9AD8\u4EAE"
       stepType: 4
       targetKeys:
@@ -4841,6 +4850,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u9AD8\u4EAE\u7EBF\u7D22\u8BE6\u60C5\u9875\u5173\u95ED\u6309\u94AE"
       stepType: 1
       targetKeys:
@@ -4853,6 +4863,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u5173\u95ED\u7EBF\u7D22\u8BE6\u60C5\u9875"
       stepType: 2
       targetKeys:
@@ -4865,6 +4876,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u6846\u548C\u7EBF\u7D22"
       stepType: 1
       targetKeys:
@@ -4878,6 +4890,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4890,6 +4903,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u64AD\u653E\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u52171"
       stepType: 0
       targetKeys: []
@@ -4901,10 +4915,12 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u63D0\u4EA4\u641C\u7D22\u4FE1\u606F"
       stepType: 6
       targetKeys:
       - searchOneInput
+      - 0007
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 1
@@ -4913,6 +4929,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4925,6 +4942,7 @@ MonoBehaviour:
       delaySeconds: 1
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u7ED3\u679C\u9875"
       stepType: 1
       targetKeys:
@@ -4937,6 +4955,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4949,6 +4968,7 @@ MonoBehaviour:
       delaySeconds: 1
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u6846\u548C\u7EBF\u7D22"
       stepType: 1
       targetKeys:
@@ -4962,6 +4982,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u64AD\u653E\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u52172"
       stepType: 0
       targetKeys:
@@ -4974,6 +4995,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u62D6\u62FD\u5377\u5B97\u7EBF\u7D22\u8FDB\u884C\u641C\u7D22\uFF0C\u5F15\u5165\u641C\u7D22\u7ED3\u679C\u9875\u4ECB\u7ECD"
       stepType: 3
       targetKeys: []
@@ -4985,6 +5007,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u7ED3\u679C\u9875"
       stepType: 1
       targetKeys:
@@ -4997,6 +5020,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5009,7 +5033,8 @@ MonoBehaviour:
       delaySeconds: 1
       submitTargetKey: 
       requireNonEmptySubmit: 1
-    - stepDescribe: "\u64AD\u653E\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\uFF0C\u4EE5\u53CA\u5173\u952E\u5B57\u53EF\u4EE5\u88AB\u6536\u96C6\uFF0C\u7136\u540E\u6B64\u6B21\u5F15\u5BFC\u7ED3\u675F"
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\uFF0C\u4EE5\u53CA\u5173\u952E\u5B57\u53EF\u4EE5\u88AB\u6536\u96C6"
       stepType: 0
       targetKeys:
       - 
@@ -5021,6 +5046,20 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u6536\u96C6\u5230\u4EBA\u7269\u7EBF\u7D22"
+      stepType: 7
+      targetKeys: []
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 0
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds:
+      - 0102
     - stepDescribe: "\u5173\u95EDUI\u9AD8\u4EAE"
       stepType: 4
       targetKeys: []
@@ -5032,6 +5071,7 @@ MonoBehaviour:
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
+      requiredClueIds: []
   guideEnabled: 1
   targetResolveTimeout: 1
 --- !u!4 &589227929

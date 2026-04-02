@@ -30,15 +30,15 @@ public class GuideManager : MonoBehaviour
 
 	// 当触发线索已经揭露、但对应的 GuideTarget 还没注册时，
 	// 会先把信息暂存在这两个字段里，等 OnTargetRegistered 回调再真正启动 guide。
-	private string waitingClueId;
 	private GuideSequence pendingSequence;
+	private readonly HashSet<string> _pendingTargetKeys = new();
 
 	// 当前序列会被转成队列逐步消费，保证 guide 始终是严格串行执行。
 	private Queue<GuideStep> stepQueue;
 	private bool isGuiding;
 
-	// 同一条 triggerClueId 只消费一次，避免同线索重复触发整条引导。
-	private readonly HashSet<string> _consumedTriggerClueIds = new();
+	// 同一条 GuideSequence 只消费一次，避免同一组触发线索重复拉起整条引导。
+	private readonly HashSet<GuideSequence> _consumedSequences = new();
 	private Coroutine _dependencyBindCoroutine;
 	private Coroutine _guideCoroutine;
 	private bool _isClueSubscribed;
@@ -200,47 +200,64 @@ public class GuideManager : MonoBehaviour
 	private void OnClueRevealed(ClueData clue)
 	{
 		// 这是整套 guide 的外部入口：当某个线索被 Reveal 后，
-		// 去 sequences 里寻找 triggerClueId 相同的那条序列。
+		// 去 sequences 里寻找“触发线索集合已全部满足”的那条序列。
 		if (!guideEnabled || clue == null || string.IsNullOrEmpty(clue.id))
 		{
 			return;
 		}
 
-		if (isGuiding)
+		if (isGuiding || pendingSequence != null)
 		{
 			Debug.Log("[GuideManager] A guide is already running, ignore new trigger.");
 			return;
 		}
 
-		if (_consumedTriggerClueIds.Contains(clue.id))
+		if (sequences == null)
 		{
 			return;
 		}
 
-		var sequence = sequences?.Find(item => item != null && item.triggerClueId == clue.id);
-		if (sequence == null)
+		for (int i = 0; i < sequences.Count; i++)
 		{
+			var sequence = sequences[i];
+			if (sequence == null || _consumedSequences.Contains(sequence))
+			{
+				continue;
+			}
+
+			var triggerIds = ResolveSequenceTriggerClueIds(sequence);
+			if (triggerIds.Count == 0 || !triggerIds.Contains(clue.id))
+			{
+				continue;
+			}
+
+			if (!AreAllCluesRevealed(triggerIds))
+			{
+				continue;
+			}
+
+			Debug.Log($"[GuideManager] Trigger guide by clues: {string.Join(", ", triggerIds)}");
+
+			if (SequenceCanStartWithoutTargets(sequence, triggerIds))
+			{
+				StartGuide(sequence);
+				return;
+			}
+
+			pendingSequence = sequence;
+			_pendingTargetKeys.Clear();
+
+			foreach (var targetKey in CollectTriggerDependentKeys(sequence, triggerIds))
+			{
+				_pendingTargetKeys.Add(targetKey);
+			}
+
+			if (_pendingTargetKeys.Count == 0 || AreTargetsRegistered(_pendingTargetKeys))
+			{
+				StartGuide(sequence);
+			}
+
 			return;
-		}
-
-		Debug.Log($"[GuideManager] Trigger guide by clue: {clue.id}");
-
-		if (SequenceCanStartWithoutTarget(sequence, clue.id))
-		{
-			StartGuide(sequence);
-			return;
-		}
-
-		waitingClueId = clue.id;
-		pendingSequence = sequence;
-
-		var target = GuideTargetRegistry.HasInstance
-			? GuideTargetRegistry.Instance.Get(clue.id)
-			: null;
-
-		if (target != null)
-		{
-			StartGuide(sequence);
 		}
 	}
 
@@ -251,7 +268,7 @@ public class GuideManager : MonoBehaviour
 			return;
 		}
 
-		if (!string.IsNullOrEmpty(waitingClueId) && key == waitingClueId)
+		if (pendingSequence != null && _pendingTargetKeys.Contains(key) && AreTargetsRegistered(_pendingTargetKeys))
 		{
 			Debug.Log($"[GuideManager] Waiting target registered, start guide: {key}");
 			StartGuide(pendingSequence);
@@ -273,12 +290,9 @@ public class GuideManager : MonoBehaviour
 
 		isGuiding = true;
 		pendingSequence = null;
-		waitingClueId = null;
+		_pendingTargetKeys.Clear();
 
-		if (!string.IsNullOrEmpty(sequence.triggerClueId))
-		{
-			_consumedTriggerClueIds.Add(sequence.triggerClueId);
-		}
+		_consumedSequences.Add(sequence);
 
 		// Queue 的好处是能清晰表达“消费完当前 step 再进下一个 step”的串行语义。
 		stepQueue = new Queue<GuideStep>(sequence.steps ?? new List<GuideStep>());
@@ -345,6 +359,10 @@ public class GuideManager : MonoBehaviour
 			case GuideStepType.WaitInputSubmit:
 				yield return WaitInputSubmit(step);
 				break;
+
+			case GuideStepType.WaitCluesCollected:
+				yield return WaitCluesCollected(step);
+				break;
 		}
 	}
 
@@ -371,10 +389,13 @@ public class GuideManager : MonoBehaviour
 		}
 
 		bool done = false;
+		var highlightController = GuideHighlightController.Instance;
 		int dialogueLevelNumber = ResolveDialogueLevelNumber(step);
 		int dialogueWaveNumber = step.dialogueTrigger == DialogueTriggerType.WaveSpawn
 			? Mathf.Max(0, step.dialogueWaveNumber)
 			: 0;
+
+		highlightController?.SetHighlightedTargetsInputLocked(true);
 
 		DialogueManager.Instance.ShowDialogue(
 			dialogueLevelNumber,
@@ -385,6 +406,7 @@ public class GuideManager : MonoBehaviour
 		);
 
 		yield return new WaitUntil(() => !isActiveAndEnabled || done);
+		highlightController?.SetHighlightedTargetsInputLocked(false);
 	}
 
 	private IEnumerator Highlight(GuideStep step)
@@ -550,6 +572,29 @@ public class GuideManager : MonoBehaviour
 		CleanupActiveInputSubmitWaiter();
 	}
 
+	private IEnumerator WaitCluesCollected(GuideStep step)
+	{
+		if (step == null)
+		{
+			yield break;
+		}
+
+		var requiredClueIds = ResolveRequiredClueIds(step);
+		if (requiredClueIds.Count == 0)
+		{
+			Debug.LogError("[GuideManager] WaitCluesCollected is missing requiredClueIds.");
+			yield break;
+		}
+
+		if (step.targetKeys != null && step.targetKeys.Count > 0)
+		{
+			yield return WaitForTargets(step.targetKeys, "WaitCluesCollected");
+			HighlightKeys(step.targetKeys, "WaitCluesCollected");
+		}
+
+		yield return new WaitUntil(() => !isActiveAndEnabled || AreAllCluesRevealed(requiredClueIds));
+	}
+
 	private void ReplayTriggeredGuides()
 	{
 		if (!guideEnabled || ClueManager.instance == null || sequences == null)
@@ -629,6 +674,146 @@ public class GuideManager : MonoBehaviour
 		}
 
 		return string.Empty;
+	}
+
+	private List<string> ResolveRequiredClueIds(GuideStep step)
+	{
+		HashSet<string> ids = new(StringComparer.Ordinal);
+		if (step?.requiredClueIds != null)
+		{
+			for (int i = 0; i < step.requiredClueIds.Count; i++)
+			{
+				var clueId = step.requiredClueIds[i];
+				if (!string.IsNullOrWhiteSpace(clueId))
+				{
+					ids.Add(clueId);
+				}
+			}
+		}
+
+		return new List<string>(ids);
+	}
+
+	private List<string> ResolveSequenceTriggerClueIds(GuideSequence sequence)
+	{
+		HashSet<string> ids = new(StringComparer.Ordinal);
+		if (sequence?.triggerClueIds != null)
+		{
+			for (int i = 0; i < sequence.triggerClueIds.Count; i++)
+			{
+				var clueId = sequence.triggerClueIds[i];
+				if (!string.IsNullOrWhiteSpace(clueId))
+				{
+					ids.Add(clueId);
+				}
+			}
+		}
+
+		return new List<string>(ids);
+	}
+
+	private bool AreAllCluesRevealed(IReadOnlyCollection<string> clueIds)
+	{
+		if (clueIds == null || clueIds.Count == 0 || ClueManager.instance == null)
+		{
+			return false;
+		}
+
+		foreach (var clueId in clueIds)
+		{
+			if (string.IsNullOrWhiteSpace(clueId) || !ClueManager.instance.IsRevealed(clueId))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private bool SequenceCanStartWithoutTargets(GuideSequence sequence, IReadOnlyCollection<string> triggerKeys)
+	{
+		if (sequence == null || sequence.steps == null || sequence.steps.Count == 0 || triggerKeys == null || triggerKeys.Count == 0)
+		{
+			return true;
+		}
+
+		foreach (var triggerKey in triggerKeys)
+		{
+			foreach (var step in sequence.steps)
+			{
+				if (step == null)
+				{
+					continue;
+				}
+
+				if (step.targetKeys != null && step.targetKeys.Contains(triggerKey))
+				{
+					return false;
+				}
+
+				if (step.dragSourceKey == triggerKey || step.dragTargetKey == triggerKey)
+				{
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private List<string> CollectTriggerDependentKeys(GuideSequence sequence, IReadOnlyCollection<string> triggerKeys)
+	{
+		HashSet<string> dependentKeys = new(StringComparer.Ordinal);
+		if (sequence?.steps == null || triggerKeys == null || triggerKeys.Count == 0)
+		{
+			return new List<string>();
+		}
+
+		foreach (var triggerKey in triggerKeys)
+		{
+			foreach (var step in sequence.steps)
+			{
+				if (step == null)
+				{
+					continue;
+				}
+
+				if (step.targetKeys != null && step.targetKeys.Contains(triggerKey))
+				{
+					dependentKeys.Add(triggerKey);
+				}
+
+				if (step.dragSourceKey == triggerKey || step.dragTargetKey == triggerKey)
+				{
+					dependentKeys.Add(triggerKey);
+				}
+			}
+		}
+
+		return new List<string>(dependentKeys);
+	}
+
+	private bool AreTargetsRegistered(IEnumerable<string> keys)
+	{
+		if (!GuideTargetRegistry.HasInstance || keys == null)
+		{
+			return false;
+		}
+
+		foreach (var key in keys)
+		{
+			if (string.IsNullOrWhiteSpace(key))
+			{
+				continue;
+			}
+
+			if (GuideTargetRegistry.Instance.Get(key) == null)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private IEnumerator WaitForTargets(IEnumerable<string> keys, string context)
@@ -790,7 +975,7 @@ public class GuideManager : MonoBehaviour
 
 		stepQueue = null;
 		pendingSequence = null;
-		waitingClueId = null;
+		_pendingTargetKeys.Clear();
 		isGuiding = false;
 
 		if (GuideHighlightController.Instance != null)
