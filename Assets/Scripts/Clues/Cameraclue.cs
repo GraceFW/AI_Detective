@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(menuName = "Clue/Camera Clue")]
 public class CameraClueData : ClueData
@@ -17,7 +18,7 @@ public class CameraClueData : ClueData
     public List<CameraFrame> frames = new List<CameraFrame>();
 
     /// <summary>
-    /// Returns true if there is an explicitly configured frame matching the given time exactly.
+    /// Returns true if there is an explicitly configured frame matching the given time.
     /// </summary>
     public bool TryGetFrameExact(CameraTime time, out CameraFrame frame)
     {
@@ -26,7 +27,7 @@ public class CameraClueData : ClueData
             for (int i = 0; i < frames.Count; i++)
             {
                 var f = frames[i];
-                if (f != null && f.time.Equals(time))
+                if (f != null && f.Contains(time))
                 {
                     frame = f;
                     return true;
@@ -71,10 +72,11 @@ public class CameraClueData : ClueData
             if (f == null) continue;
 
             // You can relax this matching rule later if needed.
-            if (f.time.minute != time.minute || f.time.day != time.day)
+            var start = f.GetStartTimeOrFallback();
+            if (start.minute != time.minute || start.day != time.day)
                 continue;
 
-            int diff = Mathf.Abs(f.time.hour - time.hour);
+            int diff = Mathf.Abs(start.hour - time.hour);
             if (diff < bestDiff)
             {
                 bestDiff = diff;
@@ -96,13 +98,50 @@ public class CameraClueData : ClueData
 public class CameraFrame
 {
     [Header("Time")]
-    public CameraTime time;
+    [FormerlySerializedAs("time")]
+    public CameraTime startTime;
+
+    public CameraTime endTime;
 
     [Header("Visual")]
     public Sprite image;
 
     [Header("Clickable Areas")]
     public List<ClickableArea> areas = new List<ClickableArea>();
+
+    public CameraTime GetStartTimeOrFallback()
+    {
+        return startTime;
+    }
+
+    public CameraTime GetEndTimeOrFallback()
+    {
+        // Backward compatible: if endTime is not set in existing assets, treat it as an exact timestamp.
+        if (endTime.day == 0)
+        {
+            return startTime;
+        }
+
+        return endTime;
+    }
+
+    public bool Contains(CameraTime time)
+    {
+        var start = GetStartTimeOrFallback();
+        var end = GetEndTimeOrFallback();
+
+        int startKey = CameraTime.ToSortableKey(start);
+        int endKey = CameraTime.ToSortableKey(end);
+        int timeKey = CameraTime.ToSortableKey(time);
+
+        if (endKey < startKey)
+        {
+            // Treat invalid ranges as a single timestamp to avoid silently never matching.
+            return time.Equals(start);
+        }
+
+        return timeKey >= startKey && timeKey <= endKey;
+    }
 }
 
 /// <summary>
@@ -178,6 +217,13 @@ public struct CameraTime : IEquatable<CameraTime> // 实现强类型 Equals，�
     public static bool operator !=(CameraTime left, CameraTime right)
     {
         return !left.Equals(right);
+    }
+
+    public static int ToSortableKey(CameraTime time)
+    {
+        // Use a monotonic key for comparisons: day -> hour -> minute.
+        // day is expected to start at 1. If it's 0 (unset), it will naturally sort before valid days.
+        return (time.day * 24 * 60) + (time.hour * 60) + time.minute;
     }
 }
 
