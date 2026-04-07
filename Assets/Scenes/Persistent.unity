@@ -546,11 +546,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueEndEvent: {fileID: 11400000, guid: 77650a354d099f248ade20ece72c5395, type: 2}
-  rewardConfigs:
-  - levelNumber: 0
-    triggerType: 0
-    clueIDs:
-    - 
   configSO: {fileID: 11400000, guid: 382c539575734384aa7c02381b268eec, type: 2}
 --- !u!114 &273083415
 MonoBehaviour:

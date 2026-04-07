@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "\u7B14\u8BB0\u672C\u7535\u8111"
   detectable: 1
   collectable: 1
-  collected: 0
+  collected: 1
   attackKey: 15900205
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
@@ -34,11 +34,11 @@ MonoBehaviour:
   defaultAreas: []
   frames:
   - startTime:
-      day: 3
+      day: 11
       hour: 20
       minute: 0
     endTime:
-      day: 3
+      day: 11
       hour: 20
       minute: 0
     image: {fileID: 21300000, guid: be588154d29146641b77c1f5409fc2a7, type: 3}
@@ -58,11 +58,11 @@ MonoBehaviour:
         height: 0.1
       reveals: {fileID: 11400000, guid: 3065beccc0f35ca49870a1a78947b303, type: 2}
   - startTime:
-      day: 3
+      day: 11
       hour: 19
       minute: 0
     endTime:
-      day: 3
+      day: 11
       hour: 19
       minute: 0
     image: {fileID: 21300000, guid: 81c322f7a95a2e04c8a6d3cd8f905634, type: 3}
