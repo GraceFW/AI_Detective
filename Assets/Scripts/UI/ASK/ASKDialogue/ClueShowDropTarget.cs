@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// 线索出示拖放目标
 /// 挂载在person对象上，接受任意线索（包括人物线索），显示对应对话
 /// </summary>
-public class ClueShowDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class ClueShowDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IClueDropTarget
 {
     [Header("组件引用")]
     [Tooltip("对话控制器")]

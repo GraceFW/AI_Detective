@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// 摄像头线索拖放目标
 /// 当摄像头线索被拖放到此组件时，显示displayName并更新screen显示对应时间的监控画面
 /// </summary>
-public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class CameraDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IClueDropTarget
 {
     [Header("显示组件")]
     [Tooltip("camera对象上显示displayName的文本组件")]

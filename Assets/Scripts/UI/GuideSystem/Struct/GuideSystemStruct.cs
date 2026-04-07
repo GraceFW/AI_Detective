@@ -116,3 +116,19 @@ public static class GuideInputSubmitEventBus
 		OnInputSubmitted?.Invoke(targetKey, inputText, isManualSubmit);
 	}
 }
+
+/// <summary>
+/// 可接收线索拖拽的统一接口。
+/// 
+/// 目的：
+/// - 让 DraggableClueItem 不再硬编码识别具体 DropTarget 类型
+/// - 让 WaitDrag 能复用到任意业务 UI，只要该 UI 能消费线索拖拽并返回成功
+/// 
+/// 约定：
+/// - 返回 true：表示本次拖拽已被当前目标成功处理，GuideDragEventBus 应该推进
+/// - 返回 false：表示当前目标不接受这条线索，或业务条件未满足，不应推进 guide
+/// </summary>
+public interface IClueDropTarget
+{
+	bool OnClueDrop(ClueData clue);
+}

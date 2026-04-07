@@ -321,6 +321,11 @@ public class GuideManager : MonoBehaviour
 
 		_guideCoroutine = null;
 		isGuiding = false;
+
+		// 某些后续序列的 triggerClueIds 可能会在当前 guide 播放期间就已经满足，
+		// 只是因为 isGuiding=true 被暂时压住了。这里在收尾时主动重放一次触发检查，
+		// 让“前一条序列末尾等待收集的线索”可以自然衔接到“下一条以同组线索触发的序列”。
+		ReplayTriggeredGuides();
 	}
 
 	private IEnumerator ExecuteStep(GuideStep step)
@@ -489,6 +494,7 @@ public class GuideManager : MonoBehaviour
 		}
 
 		// 拖拽步骤默认会把源和目标一起高亮，避免还依赖前一个 Highlight step 的状态。
+		yield return WaitForTargets(new[] { step.dragSourceKey, step.dragTargetKey }, "WaitDrag");
 		HighlightKeys(new[] { step.dragSourceKey, step.dragTargetKey }, "WaitDrag");
 
 		bool done = false;
@@ -586,13 +592,27 @@ public class GuideManager : MonoBehaviour
 			yield break;
 		}
 
+		// 这里不能先等 target 注册，因为很多 clue item 的 GuideTarget 是在 RevealClue ->
+		// UI 实例化之后才动态创建的。正确时序应该是：
+		// 1. 先等 requiredClueIds 全部被收集
+		// 2. 再等这些线索对应的运行时 UI 完成注册
+		// 3. 最后根据配置决定是否高亮它们
+		yield return new WaitUntil(() => !isActiveAndEnabled || AreAllCluesRevealed(requiredClueIds));
+		if (!isActiveAndEnabled)
+		{
+			yield break;
+		}
+
 		if (step.targetKeys != null && step.targetKeys.Count > 0)
 		{
 			yield return WaitForTargets(step.targetKeys, "WaitCluesCollected");
+			if (!isActiveAndEnabled)
+			{
+				yield break;
+			}
+
 			HighlightKeys(step.targetKeys, "WaitCluesCollected");
 		}
-
-		yield return new WaitUntil(() => !isActiveAndEnabled || AreAllCluesRevealed(requiredClueIds));
 	}
 
 	private void ReplayTriggeredGuides()

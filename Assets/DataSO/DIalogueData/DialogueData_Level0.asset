@@ -137,91 +137,6 @@ MonoBehaviour:
       typewriterSpeed: 120
       textBoxBackground: {fileID: 0}
       nodeType: 0
-  - triggerType: 1
-    waveNumber: 0
-    entries:
-    - speakerName: "\u5377\u5B97\u7EBF\u7D22\u6307\u5F151\uFF1A"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u8FD9\u91CC\u4ECB\u7ECD\u7EBF\u7D22UI\u7684\u4F5C\u7528\uFF1A\u53EF\u4EE5\u70B9\u51FBUI\u67E5\u770B\u7EBF\u7D22\u4FE1\u606F\u8BE6\u60C5\u9875"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-    - speakerName: "\u5377\u5B97\u7EBF\u7D22\u6307\u5F152\uFF1A"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u5F53\u7136\u53EF\u4EE5\u53EA\u6709\u4E00\u4E2A\u8282\u70B9\u5BF9\u8BDD\u6307\u5F15\uFF0C\u4E5F\u5C31\u662F\u8FD9\u4E2A2\u8282\u70B9\u53EF\u4EE5\u76F4\u63A5\u5220\u6389"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-  - triggerType: 1
-    waveNumber: 1
-    entries:
-    - speakerName: "\u7EBF\u7D22\u8BE6\u60C5\u9875"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u8FD9\u91CC\u662F\u7EBF\u7D22\u8BE6\u60C5\u9875\u4ECB\u7ECD\uFF0C\u53EF\u4EE5\u63D0\u793A\u73A9\u5BB6\u6CE8\u610F\u5173\u952E\u4FE1\u606F\uFF0C\u6BD4\u5982\u65E5\u671F\u3001\u4EBA\u540D\u4E4B\u7C7B\u7684"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-    - speakerName: "\u7EBF\u7D22\u8BE6\u60C5\u9875"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u8981\u8BB0\u5F97\u544A\u8BC9\u73A9\u5BB6\u5173\u95ED\u7EBF\u7D22\u8BE6\u60C5\u9875\uFF0C\u70B9\u51FB\u5173\u95ED\u6309\u94AE\uFF0C\u907F\u514D\u906E\u6321\u540E\u9762\u7684\u641C\u7D22\u7ED3\u679C"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-  - triggerType: 1
-    waveNumber: 2
-    entries:
-    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD1.1"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u8FD9\u91CC\u4ECB\u7ECD\u641C\u7D22\u6846\u4EE5\u53CA\u641C\u7D22\u529F\u80FD\n\u6BD4\u5982\u624B\u6253\u5B57\u52A0\u56DE\u8F66\u641C\u7D22"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD1.2"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u8BA9\u73A9\u5BB6\u5C1D\u8BD5\u4E00\u4E0B"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-  - triggerType: 1
-    waveNumber: 3
-    entries:
-    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD2.1"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u5F53\u7136\u6211\u4EEC\u6709\u4E00\u4E2A\u4FBF\u6377\u64CD\u4F5C\uFF0C\u53EF\u4EE5\u76F4\u63A5\u62D6\u62FD\u4F60\u5DF2\u638C\u63E1\u7684\u7EBF\u7D22\u8FDB\u884C\u5FEB\u901F\u641C\u7D22"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD2.2"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u8BA9\u73A9\u5BB6\u8BD5\u8BD5"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-  - triggerType: 1
-    waveNumber: 4
-    entries:
-    - speakerName: "\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\u5BF9\u8BDD1"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u597D\u7684\u8FD9\u91CC\u4ECB\u7ECD\u641C\u7D22\u7ED3\u679C\u7684\u529F\u6548"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-    - speakerName: "\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\u5BF9\u8BDD2"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u53EF\u4EE5\u5728\u8FD9\u91CC\u627E\u5230\u5173\u952E\u7EBF\u7D22\u5E76\u6536\u96C6"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
   - triggerType: 2
     waveNumber: 0
     entries:
@@ -357,5 +272,185 @@ MonoBehaviour:
       dialogueText: "\u5F88\u5FEB\uFF0C\u4F60\u5C31\u8981\u63A5\u624B\u7B2C\u4E00\u8D77\u771F\u6B63\u7684\u6848\u4EF6\u4E86\u3002"
       useTypewriterEffect: 1
       typewriterSpeed: 120
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 0
+    entries:
+    - speakerName: "\u5377\u5B97\u7EBF\u7D22\u6307\u5F151\uFF1A"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8FD9\u91CC\u4ECB\u7ECD\u7EBF\u7D22UI\u7684\u4F5C\u7528\uFF1A\u53EF\u4EE5\u70B9\u51FBUI\u67E5\u770B\u7EBF\u7D22\u4FE1\u606F\u8BE6\u60C5\u9875"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u5377\u5B97\u7EBF\u7D22\u6307\u5F152\uFF1A"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5F53\u7136\u53EF\u4EE5\u53EA\u6709\u4E00\u4E2A\u8282\u70B9\u5BF9\u8BDD\u6307\u5F15\uFF0C\u4E5F\u5C31\u662F\u8FD9\u4E2A2\u8282\u70B9\u53EF\u4EE5\u76F4\u63A5\u5220\u6389"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 1
+    entries:
+    - speakerName: "\u7EBF\u7D22\u8BE6\u60C5\u9875"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8FD9\u91CC\u662F\u7EBF\u7D22\u8BE6\u60C5\u9875\u4ECB\u7ECD\uFF0C\u53EF\u4EE5\u63D0\u793A\u73A9\u5BB6\u6CE8\u610F\u5173\u952E\u4FE1\u606F\uFF0C\u6BD4\u5982\u65E5\u671F\u3001\u4EBA\u540D\u4E4B\u7C7B\u7684"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u7EBF\u7D22\u8BE6\u60C5\u9875"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8981\u8BB0\u5F97\u544A\u8BC9\u73A9\u5BB6\u5173\u95ED\u7EBF\u7D22\u8BE6\u60C5\u9875\uFF0C\u70B9\u51FB\u5173\u95ED\u6309\u94AE\uFF0C\u907F\u514D\u906E\u6321\u540E\u9762\u7684\u641C\u7D22\u7ED3\u679C"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 2
+    entries:
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD1.1"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8FD9\u91CC\u4ECB\u7ECD\u641C\u7D22\u6846\u4EE5\u53CA\u641C\u7D22\u529F\u80FD\n\u6BD4\u5982\u624B\u6253\u5B57\u52A0\u56DE\u8F66\u641C\u7D22"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD1.2"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8BA9\u73A9\u5BB6\u5C1D\u8BD5\u4E00\u4E0B"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 3
+    entries:
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD2.1"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5F53\u7136\u6211\u4EEC\u6709\u4E00\u4E2A\u4FBF\u6377\u64CD\u4F5C\uFF0C\u53EF\u4EE5\u76F4\u63A5\u62D6\u62FD\u4F60\u5DF2\u638C\u63E1\u7684\u7EBF\u7D22\u8FDB\u884C\u5FEB\u901F\u641C\u7D22"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD2.2"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8BA9\u73A9\u5BB6\u8BD5\u8BD5"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 4
+    entries:
+    - speakerName: "\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\u5BF9\u8BDD1"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u597D\u7684\u8FD9\u91CC\u4ECB\u7ECD\u641C\u7D22\u7ED3\u679C\u7684\u529F\u6548"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\u5BF9\u8BDD2"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u53EF\u4EE5\u5728\u8FD9\u91CC\u627E\u5230\u5173\u952E\u7EBF\u7D22\u5E76\u6536\u96C6"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 5
+    entries:
+    - speakerName: "\u529F\u80FD\u9875\u5207\u6362UI\u5F15\u5BFC"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u70B9\u51FB\u8FD9\u4E2A\u5DE6\u7BAD\u5934\u53EF\u4EE5\u53BB\u5230\u6211\u4EEC\u7684\u95EE\u8BAF\u529F\u80FD\u9875"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u529F\u80FD\u9875\u5207\u6362UI\u5F15\u5BFC"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8FD9\u91CC\u81EA\u7531\u53D1\u6325\uFF0C\u6211\u7684\u60F3\u6CD5\u662F\u73A9\u5BB6\u5207\u6362\u5230\u95EE\u8BAF\u9875\u9762\u4E4B\u540E\u518D\u4ECB\u7ECD\u76F8\u5173\u529F\u80FD"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 6
+    entries:
+    - speakerName: "\u5ACC\u7591\u4EBA\u63D0\u5BA1\u76F8\u5173UI\u4ECB\u7ECD1"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8FD9\u91CC\u7684personname\u7528\u6765\u505A\u5565"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u5ACC\u7591\u4EBA\u63D0\u5BA1\u76F8\u5173UI\u4ECB\u7ECD1"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8BA9\u73A9\u5BB6\u81EA\u5DF1\u8BD5\u4E00\u8BD5"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 7
+    entries:
+    - speakerName: "\u5ACC\u7591\u4EBA\u63D0\u5BA1\u76F8\u5173UI\u4ECB\u7ECD2"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u53EF\u4EE5\u770B\u5230\u63D0\u5BA1\u4EA4\u4E92\u6210\u529F\u540E\u663E\u793A\u4E86\u5ACC\u7591\u72AF\u7684\u753B\u50CF"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 8
+    entries:
+    - speakerName: "\u5BA1\u95EE\u529F\u80FD"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5BA1\u95EE\u529F\u80FD\u5982\u4F55\u4F7F\u7528\u7684\u4ECB\u7ECD"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u5BA1\u95EE\u529F\u80FD"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u8BA9\u73A9\u5BB6\u81EA\u5DF1\u8BD5\u8BD5"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 9
+    entries:
+    - speakerName: "\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\u4ECB\u7ECD"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\u4ECB\u7ECD"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u5BA1\u95EE\u7684\u9009\u9879UI\u4ECB\u7ECD"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5BA1\u95EE\u7684\u9009\u9879UI\u4ECB\u7ECD\uFF0C\u8BA9\u73A9\u5BB6\u81EA\u5DF1\u8BD5\u8BD5"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 10
+    entries:
+    - speakerName: "\u7B14\u5F55\u529F\u80FD"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u7B14\u5F55\u529F\u80FD\u4ECB\u7ECD"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+    - speakerName: "\u5BA1\u95EE\u7684\u9009\u9879UI\u4ECB\u7ECD"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u5BA1\u95EE\u7684\u9009\u9879UI\u4ECB\u7ECD\uFF0C\u8BA9\u73A9\u5BB6\u81EA\u5DF1\u8BD5\u8BD5"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 0

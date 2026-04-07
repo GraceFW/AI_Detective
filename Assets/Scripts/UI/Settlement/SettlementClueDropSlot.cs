@@ -9,7 +9,7 @@ using UnityEngine.UI;
 /// - 接收 DraggableClueItem 拖拽投放
 /// - 投放后显示线索名称
 /// </summary>
-public class SettlementClueDropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class SettlementClueDropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IClueDropTarget
 {
     [Header("显示")]
     [Tooltip("显示当前填入的线索名称")]

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// Drop target for the single search input field.
 /// Dragging a clue here fills the input and auto-submits the current single-input command.
 /// </summary>
-public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class SearchInputDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IClueDropTarget
 {
     [Header("Target Input")]
     [Tooltip("If empty, tries to find a TMP_InputField on self or children.")]

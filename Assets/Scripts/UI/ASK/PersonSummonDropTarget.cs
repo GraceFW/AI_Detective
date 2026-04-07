@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// 人物传唤拖放目标
 /// 挂载在name对象上，只接受人物线索，检查是否可传唤
 /// </summary>
-public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class PersonSummonDropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IClueDropTarget
 {
     [Header("组件引用")]
     [Tooltip("对话控制器")]

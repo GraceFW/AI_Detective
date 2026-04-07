@@ -185,98 +185,89 @@ public class DraggableClueItem : MonoBehaviour, IBeginDragHandler, IDragHandler,
 		foreach (var result in results)
 		{
 			// ⭐ 获取 GuideTarget（用于引导系统）
-			var guideTarget = result.gameObject.GetComponent<GuideTarget>()
-							  ?? result.gameObject.GetComponentInParent<GuideTarget>();
+			string targetKey = ResolveGuideTargetKey(result.gameObject);
 
-			string targetKey = guideTarget != null ? guideTarget.key : null;
-
-			// =========================
-			// 以下是业务逻辑（你原本已有）
-			// =========================
-
-			var settlementSlot = result.gameObject.GetComponent<SettlementClueDropSlot>()
-								?? result.gameObject.GetComponentInParent<SettlementClueDropSlot>();
-
-			if (settlementSlot != null)
+			var dropTarget = ResolveClueDropTarget(result.gameObject);
+			if (dropTarget != null)
 			{
-				if (settlementSlot.OnClueDrop(_clueData))
+				if (dropTarget.OnClueDrop(_clueData))
 				{
-					RaiseDragSuccess(targetKey);
-					return;
-				}
-
-				continue;
-			}
-
-			var searchTarget = result.gameObject.GetComponent<SearchInputDropTarget>()
-							   ?? result.gameObject.GetComponentInParent<SearchInputDropTarget>();
-
-			if (searchTarget != null)
-			{
-				if (searchTarget.OnClueDrop(_clueData))
-				{
-					RaiseDragSuccess(targetKey);
-					return;
-				}
-
-				continue;
-			}
-
-			var cameraTarget = result.gameObject.GetComponent<CameraDropTarget>()
-							   ?? result.gameObject.GetComponentInParent<CameraDropTarget>();
-
-			if (cameraTarget != null)
-			{
-				if (cameraTarget.OnClueDrop(_clueData))
-				{
-					RaiseDragSuccess(targetKey);
-					return;
-				}
-
-				continue;
-			}
-
-			var summonTarget = result.gameObject.GetComponent<PersonSummonDropTarget>()
-							   ?? result.gameObject.GetComponentInParent<PersonSummonDropTarget>();
-
-			if (summonTarget != null)
-			{
-				if (summonTarget.OnClueDrop(_clueData))
-				{
-					RaiseDragSuccess(targetKey);
-					return;
-				}
-
-				continue;
-			}
-
-			var clueShowTarget = result.gameObject.GetComponent<ClueShowDropTarget>()
-								?? result.gameObject.GetComponentInParent<ClueShowDropTarget>();
-
-			if (clueShowTarget != null)
-			{
-				if (clueShowTarget.OnClueDrop(_clueData))
-				{
-					RaiseDragSuccess(targetKey);
+					RaiseDragSuccess(ResolveSourceKey(), targetKey);
 					return;
 				}
 			}
 		}
 	}
 
+	private static IClueDropTarget ResolveClueDropTarget(GameObject hitObject)
+	{
+		Transform current = hitObject != null ? hitObject.transform : null;
+		while (current != null)
+		{
+			var behaviours = current.GetComponents<MonoBehaviour>();
+			for (int i = 0; i < behaviours.Length; i++)
+			{
+				if (behaviours[i] is IClueDropTarget dropTarget)
+				{
+					return dropTarget;
+				}
+			}
+
+			current = current.parent;
+		}
+
+		return null;
+	}
+
+	private static string ResolveGuideTargetKey(GameObject hitObject)
+	{
+		Transform current = hitObject != null ? hitObject.transform : null;
+		while (current != null)
+		{
+			var guideTargets = current.GetComponents<GuideTarget>();
+			for (int i = guideTargets.Length - 1; i >= 0; i--)
+			{
+				if (guideTargets[i] != null && !string.IsNullOrWhiteSpace(guideTargets[i].key))
+				{
+					return guideTargets[i].key;
+				}
+			}
+
+			current = current.parent;
+		}
+
+		return string.Empty;
+	}
+
+	private string ResolveSourceKey()
+	{
+		string sourceKey = ResolveGuideTargetKey(gameObject);
+		if (!string.IsNullOrWhiteSpace(sourceKey))
+		{
+			return sourceKey;
+		}
+
+		return _clueData != null ? _clueData.id : string.Empty;
+	}
+
 	/// <summary>
 	/// ⭐ 封装拖拽成功事件触发
 	/// </summary>
-	private void RaiseDragSuccess(string targetKey)
+	private void RaiseDragSuccess(string sourceKey, string targetKey)
 	{
+		if (string.IsNullOrEmpty(sourceKey))
+		{
+			Debug.LogWarning("[DraggableClueItem] 拖拽成功但未找到拖拽源 GuideTarget.key");
+			return;
+		}
+
 		if (string.IsNullOrEmpty(targetKey))
 		{
 			Debug.LogWarning("[DraggableClueItem] 拖拽成功但未找到 GuideTarget.key");
 			return;
 		}
 
-		// ⭐ 改成全局事件
-		GuideDragEventBus.Raise(_clueData.id, targetKey);
+		GuideDragEventBus.Raise(sourceKey, targetKey);
 	}
 
 	/// <summary>
