@@ -2642,6 +2642,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetInputField: {fileID: 338594763}
+  searchPanelController: {fileID: 0}
+  autoSubmitDroppedClue: 1
   highlightColor: {r: 0.3, g: 0.6, b: 1, a: 0.3}
   highlightImage: {fileID: 2008999607}
 --- !u!114 &338594763
@@ -3505,6 +3507,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetInputField: {fileID: 424550589}
+  searchPanelController: {fileID: 0}
+  autoSubmitDroppedClue: 1
   highlightColor: {r: 0.3, g: 0.6, b: 1, a: 0.3}
   highlightImage: {fileID: 145531295}
 --- !u!114 &424550589
@@ -9780,6 +9784,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetInputField: {fileID: 1588827764}
+  searchPanelController: {fileID: 0}
+  autoSubmitDroppedClue: 1
   highlightColor: {r: 0.3, g: 0.6, b: 1, a: 0.3}
   highlightImage: {fileID: 1287549744}
 --- !u!114 &1588827764
@@ -10172,7 +10178,7 @@ MonoBehaviour:
   loadingBackgroundSprite: {fileID: 21300000, guid: 5fabb452093ee41449e0a926d3c5b6fb, type: 3}
   highlightColor: {r: 0.3, g: 0.6, b: 1, a: 0.3}
   highlightImage: {fileID: 1709585833}
-  showClickableAreas: 0
+  showClickableAreas: 1
   borderColor: {r: 0, g: 1, b: 0, a: 0.8}
   borderWidth: 2
 --- !u!1 &1672572586

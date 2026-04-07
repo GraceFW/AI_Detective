@@ -1,0 +1,199 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0cbeb00849e6e844a21966c127b1526, type: 3}
+  m_Name: "1201\u91C7\u8D2D\u90E8\u6444\u50CF\u5934"
+  m_EditorClassIdentifier: 
+  id: 1201
+  displayName: "\u91C7\u8D2D\u90E8\u6444\u50CF\u5934"
+  detectable: 1
+  collectable: 1
+  collected: 1
+  attackKey: 
+  isAttackContentUnlocked: 0
+  showAttackContentDirectly: 1
+  attackUnlockContent: 
+  summary: "\u5728\u793E\u957F\u529E\u516C\u5BA4\u9644\u8FD1\u5929\u82B1\u677F\u4E0A\u4F38\u51FA\u7684\u4E00\u4E2A\u6444\u50CF\u5934\uFF0C\u53EF\u4EE5\u770B\u5230\u4E09\u95F4\u529E\u516C\u5BA4\u4EE5\u53CA\u8336\u6C34\u95F4\u95E8\u53E3\u7684\u4EBA\u5458\u8FDB\u51FA\u60C5\u51B5\u3002"
+  detailText: 
+  Detail_Mark: 
+  defaultImage: {fileID: 21300000, guid: e605a3b8b20d6aa4584a038575943ec5, type: 3}
+  defaultAreas:
+  - rect:
+      serializedVersion: 2
+      x: 0.6
+      y: 0.8
+      width: 0.2
+      height: 0.2
+    reveals: {fileID: 11400000, guid: fef484cd4e1b98b4495360f7c8e43713, type: 2}
+  frames:
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 45
+    endTime:
+      day: 4
+      hour: 17
+      minute: 45
+    image: {fileID: 21300000, guid: f1c7090e57b9de448abbb435b932672f, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 1ba043e0f4e338149bfbfc9dc1e4fc62, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 46
+    endTime:
+      day: 4
+      hour: 17
+      minute: 46
+    image: {fileID: 21300000, guid: 6b85d0016d248104dacd7c37be1ff0a0, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 17471dea3a1946143990adbf0f05c1bc, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 47
+    endTime:
+      day: 4
+      hour: 17
+      minute: 49
+    image: {fileID: 21300000, guid: ae50aebbb4d0c18438296cfd536bef93, type: 3}
+    areas: []
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 55
+    endTime:
+      day: 4
+      hour: 17
+      minute: 55
+    image: {fileID: 21300000, guid: f1c7090e57b9de448abbb435b932672f, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 38bb9b94cb2d7eb42ab97805eb0c9f15, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 56
+    endTime:
+      day: 4
+      hour: 17
+      minute: 56
+    image: {fileID: 21300000, guid: 6b85d0016d248104dacd7c37be1ff0a0, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 79037380ceba7be4ab34fdfe5ff15181, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 25
+    endTime:
+      day: 4
+      hour: 17
+      minute: 25
+    image: {fileID: 21300000, guid: c41c53b1fac9b3843ac4d5d986bcd040, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 13acdd70c61a0524a8aaaaa7e8e0fba7, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 35
+    endTime:
+      day: 4
+      hour: 17
+      minute: 35
+    image: {fileID: 21300000, guid: 1c1c2ba014f55c04d9e828f89c153d45, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 8bae064d5c4804945a71a8b2e083f832, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 40
+    endTime:
+      day: 4
+      hour: 17
+      minute: 40
+    image: {fileID: 21300000, guid: 68b1fc9ceda293f49a76812cef47de0e, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 3970b631e118c9546905b571f2327771, type: 2}
+    - rect:
+        serializedVersion: 2
+        x: 0.6
+        y: 0.8
+        width: 0.2
+        height: 0.2
+      reveals: {fileID: 11400000, guid: fef484cd4e1b98b4495360f7c8e43713, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 50
+    endTime:
+      day: 4
+      hour: 17
+      minute: 50
+    image: {fileID: 21300000, guid: 7639b43e1ced47c429af5e8dc0d36c21, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 2b39c0cb353976640926a9d49b37dd99, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 51
+    endTime:
+      day: 4
+      hour: 17
+      minute: 54
+    image: {fileID: 21300000, guid: ae50aebbb4d0c18438296cfd536bef93, type: 3}
+    areas: []
