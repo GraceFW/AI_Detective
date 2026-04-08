@@ -5208,10 +5208,11 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
-    - stepDescribe: "\u9AD8\u4EAE\u5ACC\u7591\u4EBA\u753B\u50CFUI"
+    - stepDescribe: "\u9AD8\u4EAE\u753B\u50CFUI\u4E0E\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672CUI"
       stepType: 1
       targetKeys:
       - personAvatar
+      - dialogueAsk
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 3
@@ -5233,75 +5234,24 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
-    - stepDescribe: "\u64AD\u653E\u95EE\u8BAF\u529F\u80FD\u7B80\u4ECB\u4E4B\u753B\u50CFUI\u7684\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217"
+    - stepDescribe: "\u64AD\u653E\u63D0\u5BA1\u5ACC\u7591\u4EBA\u6210\u529F\u540E\u7684\u5F15\u5BFC\u5E8F\u5217\uFF08\u4ECB\u7ECD\u5934\u50CF\u548C\u6587\u672C\u6846\uFF09"
       stepType: 0
       targetKeys: []
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 1
-      dialogueLevelNumber: 0
-      dialogueWaveNumber: 7
-      delaySeconds: 0.2
-      submitTargetKey: 
-      requireNonEmptySubmit: 1
-      requiredClueIds: []
-    - stepDescribe: "\u9AD8\u4EAE\u753B\u50CFUI\u4E0E\u9752\u6749\u5188\u4ED3\u7EBF\u7D22UI"
-      stepType: 1
-      targetKeys:
-      - personAvatar
-      - 0101
-      dragSourceKey: 
-      dragTargetKey: 
-      dialogueTrigger: 1
       dialogueLevelNumber: -1
-      dialogueWaveNumber: 3
+      dialogueWaveNumber: 11
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
-    - stepDescribe: "\u5EF6\u65F6"
-      stepType: 5
-      targetKeys:
-      - 
-      dragSourceKey: 
-      dragTargetKey: 
-      dialogueTrigger: 1
-      dialogueLevelNumber: -1
-      dialogueWaveNumber: 3
-      delaySeconds: 0.2
-      submitTargetKey: 
-      requireNonEmptySubmit: 1
-      requiredClueIds: []
-    - stepDescribe: "\u64AD\u653E\u5BA1\u95EE\u529F\u80FD\u5F15\u5BFC\u5E8F\u5217"
-      stepType: 0
-      targetKeys:
-      - 
-      dragSourceKey: 
-      dragTargetKey: 
-      dialogueTrigger: 1
-      dialogueLevelNumber: 0
-      dialogueWaveNumber: 8
-      delaySeconds: 0.2
-      submitTargetKey: 
-      requireNonEmptySubmit: 1
-      requiredClueIds: []
-    - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u901A\u8FC7\u7EBF\u7D22\u5BA1\u95EE\u72AF\u4EBA"
-      stepType: 3
-      targetKeys: []
-      dragSourceKey: 0101
-      dragTargetKey: personAvatar
-      dialogueTrigger: 3
-      dialogueLevelNumber: -1
-      dialogueWaveNumber: 0
-      delaySeconds: 0.2
-      submitTargetKey: 
-      requireNonEmptySubmit: 1
-      requiredClueIds: []
-    - stepDescribe: "\u9AD8\u4EAE\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\u548C\u9009\u9879"
+    - stepDescribe: "\u9AD8\u4EAE\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\u548C\u9009\u9879\u3001\u5934\u50CF"
       stepType: 1
       targetKeys:
       - dialogueAsk
       - option
+      - personAvatar
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 1
@@ -5324,7 +5274,7 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
-    - stepDescribe: "\u64AD\u653E\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\u548C\u9009\u9879\u7684UI\u5F15\u5BFC\u5E8F\u5217"
+    - stepDescribe: "\u64AD\u653E\u5BA1\u95EE\u5F15\u5BFC\u5E8F\u5217\uFF08\u5BA1\u95EE\u5F62\u5F0F1\uFF1A\u9009\u9879\u5BA1\u95EE\uFF09"
       stepType: 0
       targetKeys:
       - 
@@ -5350,6 +5300,46 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+    - stepDescribe: "\u8865\u9AD8\u4EAE"
+      stepType: 1
+      targetKeys:
+      - dialogueAsk
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 0
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6\uFF0C\u8BA9\u73A9\u5BB6\u6709\u65F6\u95F4\u770B\u5B8C\u5ACC\u7591\u4EBA\u7B54\u590D\uFF0C\u4ECE\u4F18\u5316\u4F53\u9A8C\u89D2\u5EA6\u5E94\u4FEE\u6539\u4E3A\u8BA2\u9605\u6253\u5B57\u673A\u7ED3\u675F\u4E8B\u4EF6"
+      stepType: 5
+      targetKeys: []
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 0
+      delaySeconds: 7
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u753B\u50CFUI\u4E0E\u9752\u6749\u5188\u4ED3\u7EBF\u7D22UI\u3001\u6587\u672C\u6846"
+      stepType: 1
+      targetKeys:
+      - dialogueAsk
+      - personAvatar
+      - 0101
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 3
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys: []
@@ -5362,11 +5352,36 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
-    - stepDescribe: "\u9AD8\u4EAE\u7B14\u5F55\u524D\u540E\u6309\u94AE"
+    - stepDescribe: "\u64AD\u653E\u5BA1\u95EE\u5F15\u5BFC\u5E8F\u5217\uFF08\u5BA1\u95EE\u5F62\u5F0F2\uFF1A\u7EBF\u7D22\u5BA1\u95EE\uFF09"
+      stepType: 0
+      targetKeys:
+      - 
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 8
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u901A\u8FC7\u7EBF\u7D22\u5BA1\u95EE\u72AF\u4EBA"
+      stepType: 3
+      targetKeys: []
+      dragSourceKey: 0101
+      dragTargetKey: personAvatar
+      dialogueTrigger: 3
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 0
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u8865\u9AD8\u4EAE"
       stepType: 1
       targetKeys:
-      - prevBtn
-      - nextBtn
+      - dialogueAsk
+      - personAvatar
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 3
@@ -5388,7 +5403,7 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
-    - stepDescribe: "\u64AD\u653E\u7B14\u5F55\u529F\u80FD\u4ECB\u7ECD"
+    - stepDescribe: "\u7ED3\u675F\u5BA1\u95EE\u5F15\u5BFC\uFF0C\u64AD\u653E\u7B14\u5F55\u529F\u80FD\u4ECB\u7ECD\uFF08\u53EA\u505A\u5F15\u5165\uFF09\uFF08UI\u9AD8\u4EAE\u540E\u518D\u5177\u4F53\u89E3\u91CA\uFF09"
       stepType: 0
       targetKeys: []
       dragSourceKey: 
@@ -5396,6 +5411,58 @@ MonoBehaviour:
       dialogueTrigger: 1
       dialogueLevelNumber: -1
       dialogueWaveNumber: 10
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672CUI\u548C\u7B14\u5F55\u524D\u540E\u6309\u94AE"
+      stepType: 1
+      targetKeys:
+      - prevBtn
+      - nextBtn
+      - dialogueAsk
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 0
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys: []
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 0
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u7B14\u5F55\u529F\u80FD\u8BE6\u7EC6\u89E3\u91CA"
+      stepType: 0
+      targetKeys: []
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 12
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 1
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u67E5\u9605\u7B14\u5F55"
+      stepType: 2
+      targetKeys:
+      - prevBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 3
+      dialogueLevelNumber: -1
+      dialogueWaveNumber: 0
       delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
@@ -11225,6 +11292,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1672572590}
   - component: {fileID: 1672572589}
+  - component: {fileID: 1672572591}
   m_Layer: 5
   m_Name: DialogueBox
   m_TagString: Untagged
@@ -11257,9 +11325,22 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 16, y: -26.5186}
-  m_SizeDelta: {x: -100, y: -124.0373}
+  m_AnchoredPosition: {x: 16, y: -1.421814}
+  m_SizeDelta: {x: -100, y: -174.2309}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1672572591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1672572586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: dialogueAsk
 --- !u!1 &1688325097
 GameObject:
   m_ObjectHideFlags: 0
@@ -12207,7 +12288,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1850121191}
   - component: {fileID: 1850121192}
-  - component: {fileID: 1850121193}
   m_Layer: 5
   m_Name: DialogueTextContent
   m_TagString: Untagged
@@ -12250,19 +12330,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetText: {fileID: 1085428042}
   contentRect: {fileID: 1850121191}
---- !u!114 &1850121193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1850121190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  key: dialogueAsk
 --- !u!1 &1862045281
 GameObject:
   m_ObjectHideFlags: 0
