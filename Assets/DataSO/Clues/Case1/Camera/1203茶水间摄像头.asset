@@ -25,74 +25,22 @@ MonoBehaviour:
   detailText: 
   Detail_Mark: 
   defaultImage: {fileID: 21300000, guid: 23ad09bd8c5f45e4da8c28f402ec5723, type: 3}
-  defaultAreas:
-  - rect:
-      serializedVersion: 2
-      x: 0.52
-      y: 0.8
-      width: 0.15
-      height: 0.2
-    reveals: {fileID: 11400000, guid: fca487be7e70ead48bae792c7a24be4c, type: 2}
+  defaultAreas: []
   frames:
   - startTime:
-      day: 4
+      day: 3
       hour: 17
-      minute: 25
+      minute: 0
     endTime:
-      day: 4
+      day: 3
       hour: 17
-      minute: 25
-    image: {fileID: 21300000, guid: afa21d0f40696a741bc4a164c6c29a98, type: 3}
+      minute: 0
+    image: {fileID: 21300000, guid: 662d45a335a085340bc6dc5c4a87b255, type: 3}
     areas:
     - rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 1
-        height: 0.8
-      reveals: {fileID: 11400000, guid: ae4782eb8a2649d45a2a69bf4a516cbd, type: 2}
-    - rect:
-        serializedVersion: 2
-        x: 0.52
-        y: 0.8
-        width: 0.15
-        height: 0.2
-      reveals: {fileID: 11400000, guid: fca487be7e70ead48bae792c7a24be4c, type: 2}
-  - startTime:
-      day: 4
-      hour: 17
-      minute: 42
-    endTime:
-      day: 4
-      hour: 17
-      minute: 42
-    image: {fileID: 21300000, guid: 5da437e08ebf9dd44b216506910bee90, type: 3}
-    areas:
-    - rect:
-        serializedVersion: 2
-        x: 0
-        y: 0.3
-        width: 1
-        height: 0.7
-      reveals: {fileID: 11400000, guid: a78353470b7c1a84d9f7c109fea30633, type: 2}
-    - rect:
-        serializedVersion: 2
-        x: 0.72
-        y: 0.15
-        width: 0.1
-        height: 0.15
-      reveals: {fileID: 11400000, guid: b6fd833f078c79344b8eb7882cc1b623, type: 2}
-    - rect:
-        serializedVersion: 2
-        x: 0
-        y: 0.1
-        width: 0.6
-        height: 0.2
-      reveals: {fileID: 11400000, guid: a78353470b7c1a84d9f7c109fea30633, type: 2}
-    - rect:
-        serializedVersion: 2
-        x: 0.52
-        y: 0.8
-        width: 0.15
-        height: 0.2
-      reveals: {fileID: 11400000, guid: fca487be7e70ead48bae792c7a24be4c, type: 2}
+        height: 1
+      reveals: {fileID: 11400000, guid: 023cf5fd96f59a647bb97935aaf6c8a1, type: 2}
