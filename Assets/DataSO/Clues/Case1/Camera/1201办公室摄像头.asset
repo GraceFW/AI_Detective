@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0cbeb00849e6e844a21966c127b1526, type: 3}
-  m_Name: "1201\u91C7\u8D2D\u90E8\u6444\u50CF\u5934"
+  m_Name: "1201\u529E\u516C\u5BA4\u6444\u50CF\u5934"
   m_EditorClassIdentifier: 
   id: 1201
-  displayName: "\u91C7\u8D2D\u90E8\u6444\u50CF\u5934"
+  displayName: "\u529E\u516C\u5BA4\u6444\u50CF\u5934"
   detectable: 1
   collectable: 1
   collected: 1
@@ -161,7 +161,7 @@ MonoBehaviour:
         x: 0
         y: 0
         width: 1
-        height: 1
+        height: 0.8
       reveals: {fileID: 11400000, guid: 3970b631e118c9546905b571f2327771, type: 2}
     - rect:
         serializedVersion: 2

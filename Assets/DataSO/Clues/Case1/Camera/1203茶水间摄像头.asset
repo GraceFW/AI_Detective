@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0cbeb00849e6e844a21966c127b1526, type: 3}
-  m_Name: "1202\u6863\u6848\u5BA4\u6444\u50CF\u5934"
+  m_Name: "1203\u8336\u6C34\u95F4\u6444\u50CF\u5934"
   m_EditorClassIdentifier: 
-  id: 1202
-  displayName: "\u6863\u6848\u5BA4\u6444\u50CF\u5934"
+  id: 1203
+  displayName: "\u8336\u6C34\u95F4\u6444\u50CF\u5934"
   detectable: 1
   collectable: 1
   collected: 1
@@ -21,10 +21,10 @@ MonoBehaviour:
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
   attackUnlockContent: 
-  summary: "\u5728\u91C7\u8D2D\u90E8\u529E\u516C\u5BA4\u9644\u8FD1\u5929\u82B1\u677F\u4E0A\u4F38\u51FA\u7684\u4E00\u4E2A\u6444\u50CF\u5934\uFF0C\u53EF\u4EE5\u770B\u5230\u793E\u957F\u5BA4\u3001\u6863\u6848\u5BA4\u4EE5\u53CA\u5395\u6240\u65B9\u5411\u7684\u4EBA\u5458\u8FDB\u51FA\u60C5\u51B5\u3002"
+  summary: "\u9762\u5411\u8336\u6C34\u95F4\u5185\u90E8\u7684\u4E00\u4E2A\u6444\u50CF\u5934\uFF0C\u53EF\u4EE5\u770B\u5230\u8336\u6C34\u95F4\u5185\u90E8\u4EBA\u5458\u884C\u52A8\u60C5\u51B5\u3002"
   detailText: 
   Detail_Mark: 
-  defaultImage: {fileID: 21300000, guid: b0c0750354fad6746bdf9360c57a4dfd, type: 3}
+  defaultImage: {fileID: 21300000, guid: 23ad09bd8c5f45e4da8c28f402ec5723, type: 3}
   defaultAreas:
   - rect:
       serializedVersion: 2
