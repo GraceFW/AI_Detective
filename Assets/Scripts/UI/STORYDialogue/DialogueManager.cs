@@ -76,6 +76,8 @@ public class DialogueManager : MonoBehaviour
     private System.Action onDialogueComplete;
     private int currentLevelNumber = 0;
     private DialogueTriggerType currentTriggerType = DialogueTriggerType.LevelStart;
+    private System.Action _cancelSpecialNode;
+    private bool _shouldAbortSpecialNodeFlow;
     
     /// <summary>
     /// 按关卡记录 WaveSpawn 对话的触发次数
@@ -306,8 +308,8 @@ public class DialogueManager : MonoBehaviour
                 break;
                 
             case DialogueNodeType.CustomAction:
-                // 自定义动作节点（预留）
-                Debug.LogWarning("[DialogueManager] CustomAction节点类型尚未实现");
+                // 自定义动作节点
+                yield return StartCoroutine(ShowCustomActionNode(entry));
                 break;
         }
     }
@@ -399,6 +401,16 @@ public class DialogueManager : MonoBehaviour
         
         if (NameInputDialog.Instance != null)
         {
+            _cancelSpecialNode = () =>
+            {
+                if (NameInputDialog.Instance != null)
+                {
+                    NameInputDialog.Instance.Hide();
+                }
+
+                nameInputCompleted = true;
+            };
+
             NameInputDialog.Instance.Show((name) =>
             {
                 playerName = name;
@@ -415,6 +427,14 @@ public class DialogueManager : MonoBehaviour
         while (!nameInputCompleted)
         {
             yield return null;
+        }
+
+        _cancelSpecialNode = null;
+        if (_shouldAbortSpecialNodeFlow || !isDialogueActive || currentSequence == null)
+        {
+            _shouldAbortSpecialNodeFlow = false;
+            isWaitingForSpecialNode = false;
+            yield break;
         }
         
         // 恢复对话面板
@@ -439,6 +459,64 @@ public class DialogueManager : MonoBehaviour
         else
         {
             // 对话结束
+            EndDialogue();
+        }
+    }
+
+    private IEnumerator ShowCustomActionNode(DialogueEntry entry)
+    {
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(false);
+        }
+
+        isWaitingForSpecialNode = true;
+        bool actionCompleted = false;
+
+        _cancelSpecialNode = () =>
+        {
+            BoboBattleService.CloseCurrentAsCancelled();
+            actionCompleted = true;
+        };
+
+        bool handled = DialogueCustomActionRouter.TryExecute(entry, (_) =>
+        {
+            actionCompleted = true;
+        });
+
+        if (!handled)
+        {
+            Debug.LogWarning($"[DialogueManager] 未识别的 CustomAction 节点：{entry.customActionId}");
+            actionCompleted = true;
+        }
+
+        while (!actionCompleted)
+        {
+            yield return null;
+        }
+
+        _cancelSpecialNode = null;
+        if (_shouldAbortSpecialNodeFlow || !isDialogueActive || currentSequence == null)
+        {
+            _shouldAbortSpecialNodeFlow = false;
+            isWaitingForSpecialNode = false;
+            yield break;
+        }
+
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+        }
+
+        isWaitingForSpecialNode = false;
+        currentEntryIndex++;
+
+        if (currentEntryIndex < currentSequence.entries.Length)
+        {
+            yield return StartCoroutine(ShowCurrentEntryCoroutine());
+        }
+        else
+        {
             EndDialogue();
         }
     }
@@ -552,9 +630,10 @@ public class DialogueManager : MonoBehaviour
         }
         
         // 如果正在显示起名弹窗，先关闭它
-        if (isWaitingForSpecialNode && NameInputDialog.Instance != null)
+        if (isWaitingForSpecialNode && _cancelSpecialNode != null)
         {
-            NameInputDialog.Instance.Hide();
+            _shouldAbortSpecialNodeFlow = true;
+            _cancelSpecialNode.Invoke();
         }
 
         RestoreGuideLayoutAvoidance();
@@ -566,6 +645,8 @@ public class DialogueManager : MonoBehaviour
         currentSequence = null;
         currentEntryIndex = 0;
         isForced = false;
+        _cancelSpecialNode = null;
+        _shouldAbortSpecialNodeFlow = false;
  
 		// // 播放音效
 		// if (AudioManager.Instance != null)
@@ -586,6 +667,8 @@ public class DialogueManager : MonoBehaviour
         currentSequence = null;
         currentEntryIndex = 0;
         isForced = false;
+        _cancelSpecialNode = null;
+        _shouldAbortSpecialNodeFlow = false;
         
         // // 播放音效
         // if (AudioManager.Instance != null)

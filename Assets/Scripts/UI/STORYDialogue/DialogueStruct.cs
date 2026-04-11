@@ -57,6 +57,13 @@ public class DialogueEntry
     [Header("节点类型")]
     [Tooltip("节点类型（Normal=普通对话，NameInput=起名弹窗，CustomAction=自定义动作）")]
     public DialogueNodeType nodeType = DialogueNodeType.Normal;
+
+    [Header("自定义动作")]
+    [Tooltip("当节点类型为 CustomAction 时使用的动作标识，例如 BoboBattle")]
+    public string customActionId;
+
+    [Tooltip("自定义动作的可选扩展参数")]
+    public string customActionArgument;
 }
 
 /// <summary>
