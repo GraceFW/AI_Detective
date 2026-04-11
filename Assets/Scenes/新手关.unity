@@ -841,6 +841,7 @@ GameObject:
   - component: {fileID: 104427881}
   - component: {fileID: 104427880}
   - component: {fileID: 104427883}
+  - component: {fileID: 104427884}
   m_Layer: 5
   m_Name: Date
   m_TagString: Untagged
@@ -1052,6 +1053,19 @@ MonoBehaviour:
   _customMinValue: 1
   _customMaxValue: 31
   _displayFormat: '{0}'
+--- !u!114 &104427884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104427878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: day
 --- !u!1 &120119450
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,6 +1079,7 @@ GameObject:
   - component: {fileID: 120119453}
   - component: {fileID: 120119452}
   - component: {fileID: 120119455}
+  - component: {fileID: 120119456}
   m_Layer: 5
   m_Name: Hour
   m_TagString: Untagged
@@ -1262,6 +1277,19 @@ MonoBehaviour:
   _customMinValue: 0
   _customMaxValue: 23
   _displayFormat: '{0:D2}'
+--- !u!114 &120119456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120119450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: hour
 --- !u!1 &128650432
 GameObject:
   m_ObjectHideFlags: 0
@@ -4575,7 +4603,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1644651292}
   m_Father: {fileID: 1655469653}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -5481,7 +5510,254 @@ MonoBehaviour:
       requiredClueIds: []
   - triggerClueIds:
     - 0201
-    steps: []
+    steps:
+    - stepDescribe: "\u62FF\u5230\u7B14\u8BB0\u672C\u7EBF\u7D22\u540E\u9AD8\u4EAE\u5207\u6362UI"
+      stepType: 1
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 0
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 0
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u62FF\u5230\u6444\u50CF\u5934\u7EBF\u7D22\u548C\u5207\u6362\u5230\u6444\u50CF\u5934\u9875\u9762\u7684\u5F15\u5BFC\u5E8F\u5217"
+      stepType: 0
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 13
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u70B9\u51FB\u5207\u6362\u9875\u9762\u6309\u94AE"
+      stepType: 2
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 13
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7EE7\u7EED\u9AD8\u4EAE\u5207\u6362UI"
+      stepType: 1
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 13
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7EE7\u7EED\u7B49\u5F85\u70B9\u51FB\u5207\u6362\u9875\u9762\u6309\u94AE"
+      stepType: 2
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 13
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7ED3\u675F\u6309\u94AEUI\u9AD8\u4EAE"
+      stepType: 4
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 0.2
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u6444\u50CF\u5934\u7EBF\u7D22UI\u548C\u4FE1\u53F7\u6E90UI"
+      stepType: 1
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 13
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 0.1
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u5207\u5165\u4FE1\u53F7\u6E90\u7684\u5F15\u5BFC"
+      stepType: 0
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 14
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u62D6\u5165\u4FE1\u53F7\u6E90"
+      stepType: 3
+      targetKeys: []
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 14
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u76D1\u63A7\u5C4F\u5E55UI"
+      stepType: 1
+      targetKeys:
+      - screenRed
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 14
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 0.1
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u76D1\u63A7\u5C4F\u5E55UI\u5F15\u5BFC"
+      stepType: 0
+      targetKeys:
+      - screenRed
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 15
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u8C03\u53D6\u65E5\u671F\u7684UI"
+      stepType: 1
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 15
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u8C03\u53D6\u76D1\u63A7\u6307\u5F15"
+      stepType: 0
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6\u589E\u5F3A\u6C89\u6D78\u611F"
+      stepType: 5
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 0.3
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5F15\u5BFC\u7ED3\u675F\uFF0C\u5173\u95EDUI\u9AD8\u4EAE"
+      stepType: 4
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
   guideEnabled: 1
   targetResolveTimeout: 1
 --- !u!4 &589227929
@@ -9594,6 +9870,7 @@ GameObject:
   - component: {fileID: 1345778117}
   - component: {fileID: 1345778116}
   - component: {fileID: 1345778119}
+  - component: {fileID: 1345778120}
   m_Layer: 5
   m_Name: Minute
   m_TagString: Untagged
@@ -9795,6 +10072,19 @@ MonoBehaviour:
   _customMinValue: 0
   _customMaxValue: 59
   _displayFormat: '{0:D2}'
+--- !u!114 &1345778120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345778114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: minute
 --- !u!1 &1353976847
 GameObject:
   m_ObjectHideFlags: 0
@@ -11169,6 +11459,95 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1637999946}
   m_CullTransparentMesh: 1
+--- !u!1 &1644651291
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1644651292}
+  - component: {fileID: 1644651295}
+  - component: {fileID: 1644651294}
+  - component: {fileID: 1644651293}
+  m_Layer: 5
+  m_Name: target_Guider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1644651292
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644651291}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 574409978}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.387, y: 67.131226}
+  m_SizeDelta: {x: 1175.1445, y: 706.823}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1644651293
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644651291}
+  m_CullTransparentMesh: 1
+--- !u!114 &1644651294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644651291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: screenRed
+--- !u!114 &1644651295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644651291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1655469652
 GameObject:
   m_ObjectHideFlags: 0

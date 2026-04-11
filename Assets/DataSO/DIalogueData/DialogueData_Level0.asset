@@ -467,3 +467,43 @@ MonoBehaviour:
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 0
+  - triggerType: 1
+    waveNumber: 13
+    entries:
+    - speakerName: "\u7B14\u8BB0\u672C\u7EBF\u7D22"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u62FF\u5230\u4E86\u6444\u50CF\u5934\u7EBF\u7D22\uFF0C\u4E00\u8D77\u53BB\u67E5\u76D1\u63A7\u5427"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 14
+    entries:
+    - speakerName: "\u5207\u6362\u4FE1\u53F7\u6E90"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u628A\u7B14\u8BB0\u672C\u7535\u8111\u7EBF\u7D22\u62D6\u62FD\u5230\u4FE1\u53F7\u6E90UI\u5904"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 15
+    entries:
+    - speakerName: "\u76D1\u63A7\u5668"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u663E\u7136\u8FD9\u91CC\u662F\u4E00\u4E2A\u663E\u793A\u5668\n\u663E\u7136\u6211\u4EEC\u6CA1\u6709\u4FE1\u53F7\n\u4E0B\u4E00\u6B65"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
+  - triggerType: 1
+    waveNumber: 16
+    entries:
+    - speakerName: "\u76D1\u63A7\u5668"
+      speakerImage: {fileID: 0}
+      dialogueText: "\u901A\u8FC7\u5207\u6362\u76D1\u63A7\u65E5\u671F\u201C\u8C03\u53D6\u201D\u53EF\u80FD\u5B58\u5728\u7684\u76D1\u63A7\u753B\u9762\uFF0C\u7136\u540E\u5728\u76D1\u63A7\u753B\u9762\u4E2D\u6536\u96C6\u5173\u952E\u7EBF\u7D22"
+      useTypewriterEffect: 0
+      typewriterSpeed: 0
+      textBoxBackground: {fileID: 0}
+      nodeType: 0
