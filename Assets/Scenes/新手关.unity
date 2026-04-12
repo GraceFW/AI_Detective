@@ -5758,7 +5758,7 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
-  guideEnabled: 0
+  guideEnabled: 1
   targetResolveTimeout: 1
 --- !u!4 &589227929
 Transform:
