@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -51,6 +52,10 @@ public class GuideManager : MonoBehaviour
 	private UnityAction _activeButtonClickHandler;
 	private Action<string, string> _activeDragHandler;
 	private Action<string, string, bool> _activeInputSubmitHandler;
+	private TMP_Dropdown _activeTmpDropdown;
+	private UnityAction<int> _activeTmpDropdownHandler;
+	private Dropdown _activeDropdown;
+	private UnityAction<int> _activeDropdownHandler;
 
 	public bool GuideEnabled => guideEnabled;
 
@@ -368,6 +373,10 @@ public class GuideManager : MonoBehaviour
 			case GuideStepType.WaitCluesCollected:
 				yield return WaitCluesCollected(step);
 				break;
+
+			case GuideStepType.WaitDropdownValue:
+				yield return WaitDropdownValue(step);
+				break;
 		}
 	}
 
@@ -560,7 +569,7 @@ public class GuideManager : MonoBehaviour
 				return;
 			}
 
-			if (targetKey != submitTargetKey)
+			if (!string.Equals(targetKey, submitTargetKey, StringComparison.OrdinalIgnoreCase))
 			{
 				return;
 			}
@@ -613,6 +622,98 @@ public class GuideManager : MonoBehaviour
 
 			HighlightKeys(step.targetKeys, "WaitCluesCollected");
 		}
+	}
+
+	private IEnumerator WaitDropdownValue(GuideStep step)
+	{
+		if (step == null)
+		{
+			yield break;
+		}
+
+		string dropdownTargetKey = ResolveDropdownTargetKey(step);
+		if (string.IsNullOrWhiteSpace(dropdownTargetKey))
+		{
+			Debug.LogError("[GuideManager] WaitDropdownValue is missing dropdownTargetKey or targetKeys[0].");
+			yield break;
+		}
+
+		yield return WaitForTargets(new[] { dropdownTargetKey }, "WaitDropdownValue");
+		if (!isActiveAndEnabled || !GuideTargetRegistry.HasInstance)
+		{
+			yield break;
+		}
+
+		if (step.targetKeys != null && step.targetKeys.Count > 0)
+		{
+			HighlightKeys(step.targetKeys, "WaitDropdownValue");
+		}
+		else
+		{
+			HighlightKeys(new[] { dropdownTargetKey }, "WaitDropdownValue");
+		}
+
+		var target = GuideTargetRegistry.Instance.Get(dropdownTargetKey);
+		if (target == null)
+		{
+			Debug.LogError($"[GuideManager] WaitDropdownValue target not found: {dropdownTargetKey}");
+			yield break;
+		}
+
+		int expectedIndex = Mathf.Max(0, step.dropdownTargetIndex);
+		var tmpDropdown = target.GetComponent<TMP_Dropdown>()
+			?? target.GetComponentInParent<TMP_Dropdown>()
+			?? target.GetComponentInChildren<TMP_Dropdown>(true);
+		if (tmpDropdown != null)
+		{
+			if (tmpDropdown.value == expectedIndex)
+			{
+				yield break;
+			}
+
+			bool done = false;
+			_activeTmpDropdown = tmpDropdown;
+			_activeTmpDropdownHandler = index =>
+			{
+				if (index == expectedIndex)
+				{
+					done = true;
+				}
+			};
+
+			tmpDropdown.onValueChanged.AddListener(_activeTmpDropdownHandler);
+			yield return new WaitUntil(() => !isActiveAndEnabled || done);
+			CleanupActiveDropdownWaiter();
+			yield break;
+		}
+
+		var dropdown = target.GetComponent<Dropdown>()
+			?? target.GetComponentInParent<Dropdown>()
+			?? target.GetComponentInChildren<Dropdown>(true);
+		if (dropdown != null)
+		{
+			if (dropdown.value == expectedIndex)
+			{
+				yield break;
+			}
+
+			bool done = false;
+			_activeDropdown = dropdown;
+			_activeDropdownHandler = index =>
+			{
+				if (index == expectedIndex)
+				{
+					done = true;
+				}
+			};
+
+			dropdown.onValueChanged.AddListener(_activeDropdownHandler);
+			yield return new WaitUntil(() => !isActiveAndEnabled || done);
+			CleanupActiveDropdownWaiter();
+			yield break;
+		}
+
+		Debug.LogError($"[GuideManager] WaitDropdownValue target '{dropdownTargetKey}' is not a TMP_Dropdown or Dropdown.");
 	}
 
 	private void ReplayTriggeredGuides()
@@ -686,6 +787,26 @@ public class GuideManager : MonoBehaviour
 		if (!string.IsNullOrWhiteSpace(step.submitTargetKey))
 		{
 			return step.submitTargetKey;
+		}
+
+		if (step.targetKeys != null && step.targetKeys.Count > 0)
+		{
+			return step.targetKeys[0];
+		}
+
+		return string.Empty;
+	}
+
+	private string ResolveDropdownTargetKey(GuideStep step)
+	{
+		if (step == null)
+		{
+			return string.Empty;
+		}
+
+		if (!string.IsNullOrWhiteSpace(step.dropdownTargetKey))
+		{
+			return step.dropdownTargetKey;
 		}
 
 		if (step.targetKeys != null && step.targetKeys.Count > 0)
@@ -945,6 +1066,7 @@ public class GuideManager : MonoBehaviour
 		CleanupActiveClickWaiter();
 		CleanupActiveDragWaiter();
 		CleanupActiveInputSubmitWaiter();
+		CleanupActiveDropdownWaiter();
 	}
 
 	private void CleanupActiveClickWaiter()
@@ -983,6 +1105,24 @@ public class GuideManager : MonoBehaviour
 		}
 
 		_activeInputSubmitHandler = null;
+	}
+
+	private void CleanupActiveDropdownWaiter()
+	{
+		if (_activeTmpDropdown != null && _activeTmpDropdownHandler != null)
+		{
+			_activeTmpDropdown.onValueChanged.RemoveListener(_activeTmpDropdownHandler);
+		}
+
+		if (_activeDropdown != null && _activeDropdownHandler != null)
+		{
+			_activeDropdown.onValueChanged.RemoveListener(_activeDropdownHandler);
+		}
+
+		_activeTmpDropdown = null;
+		_activeTmpDropdownHandler = null;
+		_activeDropdown = null;
+		_activeDropdownHandler = null;
 	}
 
 	private void StopGuideRuntime()

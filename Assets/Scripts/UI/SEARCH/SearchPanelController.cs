@@ -69,11 +69,11 @@ public class SearchPanelController : MonoBehaviour
 		// 绑定双框提交事件
 		if (attackInputA != null)
 		{
-			attackInputA.onSubmit.AddListener(OnAttackSubmit);
+			attackInputA.onSubmit.AddListener(OnAttackSubmitA);
 		}
 		if (attackInputB != null)
 		{
-			attackInputB.onSubmit.AddListener(OnAttackSubmit);
+			attackInputB.onSubmit.AddListener(OnAttackSubmitB);
 		}
 
 		// 绑定下拉栏变化事件
@@ -121,11 +121,11 @@ public class SearchPanelController : MonoBehaviour
 		// 移除双框事件
 		if (attackInputA != null)
 		{
-			attackInputA.onSubmit.RemoveListener(OnAttackSubmit);
+			attackInputA.onSubmit.RemoveListener(OnAttackSubmitA);
 		}
 		if (attackInputB != null)
 		{
-			attackInputB.onSubmit.RemoveListener(OnAttackSubmit);
+			attackInputB.onSubmit.RemoveListener(OnAttackSubmitB);
 		}
 
 		// 移除下拉栏事件
@@ -209,9 +209,23 @@ public class SearchPanelController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// 当按下回车时调用（双框Attack模式）
+	/// 当在 Attack 的 A 输入框按下回车时调用。
 	/// </summary>
-	private void OnAttackSubmit(string inputText)
+	private void OnAttackSubmitA(string inputText)
+	{
+		SubmitAttackInput(raiseGuideSubmitForInputB: false);
+	}
+
+	/// <summary>
+	/// 当在 Attack 的 B 输入框按下回车时调用。
+	/// 不管秘钥是否正确，只要这是一次手动提交，都应该通知 guide 系统。
+	/// </summary>
+	private void OnAttackSubmitB(string inputText)
+	{
+		SubmitAttackInput(raiseGuideSubmitForInputB: true);
+	}
+
+	private void SubmitAttackInput(bool raiseGuideSubmitForInputB)
 	{
 		if (commandDropdown == null || clueDatabase == null)
 		{
@@ -220,15 +234,18 @@ public class SearchPanelController : MonoBehaviour
 		}
 
 		var command = (CommandType)commandDropdown.value;
-
-		// 只处理Attack命令
 		if (command != CommandType.Attack)
 		{
 			return;
 		}
 
-		// 执行Attack命令（searchText传空，内部从双框获取输入）
 		ExecuteCommand(command, string.Empty);
+
+		if (raiseGuideSubmitForInputB)
+		{
+			string inputKey = attackInputB != null ? attackInputB.text : string.Empty;
+			GuideInputSubmitEventBus.Raise(ResolveInputTargetKey(attackInputB), inputKey?.Trim() ?? string.Empty, true);
+		}
 	}
 
 	/// <summary>
@@ -712,10 +729,20 @@ public class SearchPanelController : MonoBehaviour
 			return string.Empty;
 		}
 
-		GuideTarget guideTarget = detectInput.GetComponent<GuideTarget>();
+		return ResolveInputTargetKey(detectInput);
+	}
+
+	private string ResolveInputTargetKey(TMP_InputField inputField)
+	{
+		if (inputField == null)
+		{
+			return string.Empty;
+		}
+
+		GuideTarget guideTarget = inputField.GetComponent<GuideTarget>();
 		if (guideTarget == null)
 		{
-			guideTarget = detectInput.GetComponentInParent<GuideTarget>();
+			guideTarget = inputField.GetComponentInParent<GuideTarget>();
 		}
 
 		return guideTarget != null ? guideTarget.key : string.Empty;
