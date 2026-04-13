@@ -9,6 +9,11 @@ using UnityEngine.UI;
 /// </summary>
 public static class BoboBattleUIFactory
 {
+    private const string PreferredFontResourcePath = "Fonts & Materials/msyhFin";
+
+    private static TMP_FontAsset cachedPreferredFont;
+    private static bool preferredFontResolved;
+
     /// <summary>
     /// 创建最基础的 RectTransform 节点。
     /// </summary>
@@ -39,10 +44,7 @@ public static class BoboBattleUIFactory
     {
         RectTransform rectTransform = CreateRect(name, parent);
         TextMeshProUGUI label = rectTransform.gameObject.AddComponent<TextMeshProUGUI>();
-        if (TMP_Settings.defaultFontAsset != null)
-        {
-            label.font = TMP_Settings.defaultFontAsset;
-        }
+        label.font = ResolvePreferredFont();
 
         label.text = text;
         label.fontSize = fontSize;
@@ -51,6 +53,26 @@ public static class BoboBattleUIFactory
         label.color = color;
         label.enableWordWrapping = true;
         return label;
+    }
+
+    /// <summary>
+    /// 小游戏运行时统一优先使用指定的微软雅黑 TMP 字体资源。
+    /// 如果资源丢失，再回退到 TMP 的默认字体，避免 UI 因字体缺失而完全不可见。
+    /// </summary>
+    private static TMP_FontAsset ResolvePreferredFont()
+    {
+        if (!preferredFontResolved)
+        {
+            cachedPreferredFont = Resources.Load<TMP_FontAsset>(PreferredFontResourcePath);
+            preferredFontResolved = true;
+
+            if (cachedPreferredFont == null)
+            {
+                Debug.LogWarning("[BoboBattleUIFactory] 未找到 Msyh Fin (TMP_Font Asset)，已回退到 TMP 默认字体。");
+            }
+        }
+
+        return cachedPreferredFont != null ? cachedPreferredFont : TMP_Settings.defaultFontAsset;
     }
 
     /// <summary>

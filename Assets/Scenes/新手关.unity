@@ -2656,6 +2656,7 @@ GameObject:
   - component: {fileID: 338594764}
   - component: {fileID: 338594763}
   - component: {fileID: 338594762}
+  - component: {fileID: 338594766}
   m_Layer: 5
   m_Name: InputA
   m_TagString: Untagged
@@ -2838,6 +2839,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 338594760}
   m_CullTransparentMesh: 1
+--- !u!114 &338594766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338594760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: inputA
 --- !u!1 &352949192
 GameObject:
   m_ObjectHideFlags: 0
@@ -3590,6 +3604,7 @@ GameObject:
   - component: {fileID: 424550590}
   - component: {fileID: 424550589}
   - component: {fileID: 424550588}
+  - component: {fileID: 424550592}
   m_Layer: 5
   m_Name: InputB
   m_TagString: Untagged
@@ -3772,6 +3787,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 424550586}
   m_CullTransparentMesh: 1
+--- !u!114 &424550592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424550586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: inputB
 --- !u!1 &448287282
 GameObject:
   m_ObjectHideFlags: 0
@@ -4224,6 +4252,7 @@ GameObject:
   - component: {fileID: 527099818}
   - component: {fileID: 527099817}
   - component: {fileID: 527099816}
+  - component: {fileID: 527099819}
   m_Layer: 5
   m_Name: command
   m_TagString: Untagged
@@ -4345,6 +4374,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 527099814}
   m_CullTransparentMesh: 1
+--- !u!114 &527099819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 527099814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: cmd
 --- !u!1 &548981799
 GameObject:
   m_ObjectHideFlags: 0
@@ -5754,6 +5796,264 @@ MonoBehaviour:
       dialogueTrigger: 1
       dialogueLevelNumber: 0
       dialogueWaveNumber: 16
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6\uFF0C\u6A21\u62DF\u968F\u673A\u89E6\u53D1"
+      stepType: 5
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653EAttack\u5F15\u5165\u5BF9\u8BDD"
+      stepType: 0
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 17
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAEUI\u5207\u6362\u6309\u94AE"
+      stepType: 1
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 17
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 0
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u5207\u6362\u754C\u9762\u5F15\u5BFC"
+      stepType: 0
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 18
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u70B9\u51FB\u5207\u6362\u6309\u94AEUI"
+      stepType: 2
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 18
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u6307\u4EE4\u548C\u8F93\u5165\u6846"
+      stepType: 1
+      targetKeys:
+      - cmd
+      - inputA
+      - inputB
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 18
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 0
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u5207\u6362\u6307\u4EE4\u548C\u8F93\u5165\u9ED1\u5165\u76EE\u6807\u5F15\u5BFC"
+      stepType: 0
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u6307\u4EE4\u5207\u6362"
+      stepType: 2
+      targetKeys:
+      - cmd
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u9A87\u5165\u76EE\u6807"
+      stepType: 3
+      targetKeys:
+      - cmd
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u7B49\u5F85\u8F93\u5165\u79D8\u94A5\u5E76\u63D0\u4EA4"
+      stepType: 6
+      targetKeys:
+      - cmd
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u7ED3\u679C\u9762\u677F"
+      stepType: 1
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 0
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u5F15\u5BFC\u5BF9\u8BDD"
+      stepType: 0
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 0
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+  - triggerClueIds:
+    - 0103
+    - 0010
+    - 0004
+    steps:
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
+      delaySeconds: 0.5
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u64AD\u653E\u51C6\u5907\u63D0\u4EA4\u7B54\u6848\u7684\u5F15\u5BFC\u5BF9\u8BDD"
+      stepType: 0
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+    - stepDescribe: "\u9AD8\u4EAE\u5207\u6362\u754C\u9762UI"
+      stepType: 0
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
       delaySeconds: 0
       submitTargetKey: 
       requireNonEmptySubmit: 0
