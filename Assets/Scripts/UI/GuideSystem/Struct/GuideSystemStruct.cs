@@ -17,7 +17,8 @@ public enum GuideStepType
 	EndHighlight,  // 清除高亮
 	Delay,         // 延迟一段时间
 	WaitInputSubmit, // 等待输入框手动回车
-	WaitCluesCollected // 等待若干线索被收集
+	WaitCluesCollected, // 等待若干线索被收集
+	WaitDropdownValue // 等待下拉栏切换到指定索引
 }
 
 /// <summary>
@@ -75,6 +76,13 @@ public class GuideStep
 	[Header("线索收集节点配置")]
 	[Tooltip("等待线索收集步骤使用的线索 id 列表，所有配置的线索都已被收集后，步骤才会继续。")]
 	public List<string> requiredClueIds;
+
+	[Header("下拉栏节点配置")]
+	[Tooltip("等待下拉栏时要监听的目标 key，留空时默认使用 targetKeys[0]。")]
+	public string dropdownTargetKey;
+
+	[Tooltip("等待下拉栏切换到的目标索引值。")]
+	public int dropdownTargetIndex;
 }
 
 /// <summary>

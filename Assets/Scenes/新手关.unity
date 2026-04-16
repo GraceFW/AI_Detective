@@ -2656,6 +2656,7 @@ GameObject:
   - component: {fileID: 338594764}
   - component: {fileID: 338594763}
   - component: {fileID: 338594762}
+  - component: {fileID: 338594766}
   m_Layer: 5
   m_Name: InputA
   m_TagString: Untagged
@@ -2838,6 +2839,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 338594760}
   m_CullTransparentMesh: 1
+--- !u!114 &338594766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338594760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: inputA
 --- !u!1 &352949192
 GameObject:
   m_ObjectHideFlags: 0
@@ -3590,6 +3604,7 @@ GameObject:
   - component: {fileID: 424550590}
   - component: {fileID: 424550589}
   - component: {fileID: 424550588}
+  - component: {fileID: 424550592}
   m_Layer: 5
   m_Name: InputB
   m_TagString: Untagged
@@ -3772,6 +3787,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 424550586}
   m_CullTransparentMesh: 1
+--- !u!114 &424550592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424550586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: inputB
 --- !u!1 &448287282
 GameObject:
   m_ObjectHideFlags: 0
@@ -4246,6 +4274,7 @@ RectTransform:
   - {fileID: 2132660601}
   - {fileID: 2019694194}
   - {fileID: 1630954078}
+  - {fileID: 867870516}
   m_Father: {fileID: 312683340}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -4804,6 +4833,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4817,6 +4848,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u7EBF\u7D22UI\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217"
       stepType: 0
       targetKeys:
@@ -4830,6 +4863,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u70B9\u51FB\u5377\u5B97\u67E5\u9605\u7EBF\u7D22\u8BE6\u60C5\u9875\uFF0C\u5F15\u5165\u7EBF\u7D22\u8BE6\u60C5\u9875\u4ECB\u7ECD"
       stepType: 2
       targetKeys:
@@ -4843,6 +4878,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u6FC0\u6D3B\u7684\u7EBF\u7D22\u8BE6\u60C5\u9875"
       stepType: 1
       targetKeys:
@@ -4856,6 +4893,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4869,6 +4908,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u7EBF\u7D22\u8BE6\u60C5\u9875\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217"
       stepType: 0
       targetKeys: []
@@ -4881,6 +4922,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4894,6 +4937,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5173\u95ED\u7EBF\u7D22UI\u548C\u8BE6\u60C5\u9875UI\u9AD8\u4EAE"
       stepType: 4
       targetKeys:
@@ -4908,6 +4953,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u7EBF\u7D22\u8BE6\u60C5\u9875\u5173\u95ED\u6309\u94AE"
       stepType: 1
       targetKeys:
@@ -4921,6 +4968,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u5173\u95ED\u7EBF\u7D22\u8BE6\u60C5\u9875"
       stepType: 2
       targetKeys:
@@ -4934,11 +4983,14 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u6846\u548C\u7EBF\u7D22"
       stepType: 1
       targetKeys:
       - searchOneInput
       - 0007
+      - cmd
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 1
@@ -4948,6 +5000,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -4961,6 +5015,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u52171"
       stepType: 0
       targetKeys: []
@@ -4973,6 +5029,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u63D0\u4EA4\u641C\u7D22\u4FE1\u606F"
       stepType: 6
       targetKeys:
@@ -4987,6 +5045,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5000,6 +5060,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u7ED3\u679C\u9875"
       stepType: 1
       targetKeys:
@@ -5013,6 +5075,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5026,6 +5090,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u6846\u548C\u7EBF\u7D22"
       stepType: 1
       targetKeys:
@@ -5040,6 +5106,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u641C\u7D22\u6846\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u52172"
       stepType: 0
       targetKeys:
@@ -5053,6 +5121,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u62D6\u62FD\u5377\u5B97\u7EBF\u7D22\u8FDB\u884C\u641C\u7D22\uFF0C\u5F15\u5165\u641C\u7D22\u7ED3\u679C\u9875\u4ECB\u7ECD"
       stepType: 3
       targetKeys: []
@@ -5065,6 +5135,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u641C\u7D22\u7ED3\u679C\u9875"
       stepType: 1
       targetKeys:
@@ -5078,6 +5150,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5091,6 +5165,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u641C\u7D22\u7ED3\u679C\u5F15\u5BFC\uFF0C\u4EE5\u53CA\u5173\u952E\u5B57\u53EF\u4EE5\u88AB\u6536\u96C6"
       stepType: 0
       targetKeys:
@@ -5104,6 +5180,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u6536\u96C6\u5230\u4EBA\u7269\u7EBF\u7D22"
       stepType: 7
       targetKeys:
@@ -5119,6 +5197,8 @@ MonoBehaviour:
       requireNonEmptySubmit: 1
       requiredClueIds:
       - 0102
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5173\u95EDUI\u9AD8\u4EAE"
       stepType: 4
       targetKeys: []
@@ -5131,6 +5211,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
   - triggerClueIds:
     - 0101
     - 0102
@@ -5148,6 +5230,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5161,6 +5245,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u5207\u6362\u529F\u80FD\u9875\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217\uFF08\u95EE\u8BAF\u529F\u80FD\u4ECB\u7ECD\uFF09"
       stepType: 0
       targetKeys:
@@ -5174,6 +5260,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u70B9\u51FB\u5DE6\u7BAD\u5934\u5207\u6362\u529F\u80FD\u9875\uFF0C\u5F15\u5165\u7EBF\u7D22\u8BE6\u60C5\u9875\u4ECB\u7ECD"
       stepType: 2
       targetKeys:
@@ -5187,6 +5275,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u5ACC\u7591\u4EBA\u540D\u5B57UI"
       stepType: 1
       targetKeys:
@@ -5200,6 +5290,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5213,6 +5305,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u95EE\u8BAF\u529F\u80FD\u7B80\u4ECB\u4E4B\u540D\u5B57UI\u7684\u5F15\u5BFC\u5BF9\u8BDD\u5E8F\u5217"
       stepType: 0
       targetKeys: []
@@ -5225,6 +5319,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u63D0\u5BA1\u9F50\u6728\u56FD\u51AC"
       stepType: 3
       targetKeys: []
@@ -5237,6 +5333,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u753B\u50CFUI\u4E0E\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672CUI"
       stepType: 1
       targetKeys:
@@ -5251,6 +5349,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys: []
@@ -5263,6 +5363,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u63D0\u5BA1\u5ACC\u7591\u4EBA\u6210\u529F\u540E\u7684\u5F15\u5BFC\u5E8F\u5217\uFF08\u4ECB\u7ECD\u5934\u50CF\u548C\u6587\u672C\u6846\uFF09"
       stepType: 0
       targetKeys: []
@@ -5275,6 +5377,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\u548C\u9009\u9879\u3001\u5934\u50CF"
       stepType: 1
       targetKeys:
@@ -5290,6 +5394,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5303,6 +5409,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u5BA1\u95EE\u5F15\u5BFC\u5E8F\u5217\uFF08\u5BA1\u95EE\u5F62\u5F0F1\uFF1A\u9009\u9879\u5BA1\u95EE\uFF09"
       stepType: 0
       targetKeys:
@@ -5316,6 +5424,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u70B9\u51FB\u9009\u9879"
       stepType: 2
       targetKeys:
@@ -5329,6 +5439,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u8865\u9AD8\u4EAE"
       stepType: 1
       targetKeys:
@@ -5342,6 +5454,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6\uFF0C\u8BA9\u73A9\u5BB6\u6709\u65F6\u95F4\u770B\u5B8C\u5ACC\u7591\u4EBA\u7B54\u590D\uFF0C\u4ECE\u4F18\u5316\u4F53\u9A8C\u89D2\u5EA6\u5E94\u4FEE\u6539\u4E3A\u8BA2\u9605\u6253\u5B57\u673A\u7ED3\u675F\u4E8B\u4EF6"
       stepType: 5
       targetKeys: []
@@ -5354,6 +5468,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u753B\u50CFUI\u4E0E\u9752\u6749\u5188\u4ED3\u7EBF\u7D22UI\u3001\u6587\u672C\u6846"
       stepType: 1
       targetKeys:
@@ -5369,6 +5485,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys: []
@@ -5381,6 +5499,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u5BA1\u95EE\u5F15\u5BFC\u5E8F\u5217\uFF08\u5BA1\u95EE\u5F62\u5F0F2\uFF1A\u7EBF\u7D22\u5BA1\u95EE\uFF09"
       stepType: 0
       targetKeys:
@@ -5394,6 +5514,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u901A\u8FC7\u7EBF\u7D22\u5BA1\u95EE\u72AF\u4EBA"
       stepType: 3
       targetKeys: []
@@ -5406,6 +5528,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u8865\u9AD8\u4EAE"
       stepType: 1
       targetKeys:
@@ -5420,6 +5544,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys: []
@@ -5432,6 +5558,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7ED3\u675F\u5BA1\u95EE\u5F15\u5BFC\uFF0C\u64AD\u653E\u7B14\u5F55\u529F\u80FD\u4ECB\u7ECD\uFF08\u53EA\u505A\u5F15\u5165\uFF09\uFF08UI\u9AD8\u4EAE\u540E\u518D\u5177\u4F53\u89E3\u91CA\uFF09"
       stepType: 0
       targetKeys: []
@@ -5444,6 +5572,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672CUI\u548C\u7B14\u5F55\u524D\u540E\u6309\u94AE"
       stepType: 1
       targetKeys:
@@ -5459,6 +5589,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys: []
@@ -5471,6 +5603,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u7B14\u5F55\u529F\u80FD\u8BE6\u7EC6\u89E3\u91CA"
       stepType: 0
       targetKeys: []
@@ -5483,6 +5617,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u67E5\u9605\u7B14\u5F55"
       stepType: 2
       targetKeys:
@@ -5496,6 +5632,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5173\u95EDUI\u9AD8\u4EAE"
       stepType: 4
       targetKeys: []
@@ -5508,6 +5646,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
   - triggerClueIds:
     - 0201
     steps:
@@ -5524,6 +5664,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u62FF\u5230\u6444\u50CF\u5934\u7EBF\u7D22\u548C\u5207\u6362\u5230\u6444\u50CF\u5934\u9875\u9762\u7684\u5F15\u5BFC\u5E8F\u5217"
       stepType: 0
       targetKeys:
@@ -5537,6 +5679,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u70B9\u51FB\u5207\u6362\u9875\u9762\u6309\u94AE"
       stepType: 2
       targetKeys:
@@ -5550,6 +5694,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7EE7\u7EED\u9AD8\u4EAE\u5207\u6362UI"
       stepType: 1
       targetKeys:
@@ -5563,6 +5709,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7EE7\u7EED\u7B49\u5F85\u70B9\u51FB\u5207\u6362\u9875\u9762\u6309\u94AE"
       stepType: 2
       targetKeys:
@@ -5576,6 +5724,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7ED3\u675F\u6309\u94AEUI\u9AD8\u4EAE"
       stepType: 4
       targetKeys:
@@ -5589,6 +5739,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5604,6 +5756,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u6444\u50CF\u5934\u7EBF\u7D22UI\u548C\u4FE1\u53F7\u6E90UI"
       stepType: 1
       targetKeys:
@@ -5617,6 +5771,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5632,6 +5788,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u5207\u5165\u4FE1\u53F7\u6E90\u7684\u5F15\u5BFC"
       stepType: 0
       targetKeys:
@@ -5645,6 +5803,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u7B49\u5F85\u62D6\u5165\u4FE1\u53F7\u6E90"
       stepType: 3
       targetKeys: []
@@ -5657,6 +5817,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u76D1\u63A7\u5C4F\u5E55UI"
       stepType: 1
       targetKeys:
@@ -5670,6 +5832,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6"
       stepType: 5
       targetKeys:
@@ -5685,6 +5849,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u76D1\u63A7\u5C4F\u5E55UI\u5F15\u5BFC"
       stepType: 0
       targetKeys:
@@ -5698,6 +5864,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u9AD8\u4EAE\u8C03\u53D6\u65E5\u671F\u7684UI"
       stepType: 1
       targetKeys:
@@ -5713,6 +5881,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u64AD\u653E\u8C03\u53D6\u76D1\u63A7\u6307\u5F15"
       stepType: 0
       targetKeys:
@@ -5728,6 +5898,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5EF6\u65F6\u589E\u5F3A\u6C89\u6D78\u611F"
       stepType: 5
       targetKeys:
@@ -5743,6 +5915,8 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
     - stepDescribe: "\u5F15\u5BFC\u7ED3\u675F\uFF0C\u5173\u95EDUI\u9AD8\u4EAE"
       stepType: 4
       targetKeys:
@@ -5758,6 +5932,353 @@ MonoBehaviour:
       submitTargetKey: 
       requireNonEmptySubmit: 0
       requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u5EF6\u65F6\uFF0C\u6A21\u62DF\u968F\u673A\u89E6\u53D1"
+      stepType: 5
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 16
+      delaySeconds: 4
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u64AD\u653EAttack\u5F15\u5165\u5BF9\u8BDD"
+      stepType: 0
+      targetKeys:
+      - day
+      - hour
+      - minute
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 17
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u9AD8\u4EAEUI\u5207\u6362\u6309\u94AE"
+      stepType: 1
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 17
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u64AD\u653E\u5207\u6362\u754C\u9762\u5F15\u5BFC"
+      stepType: 0
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 18
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u7B49\u5F85\u73A9\u5BB6\u70B9\u51FB\u5207\u6362\u6309\u94AEUI"
+      stepType: 2
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 18
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u9AD8\u4EAE\u6307\u4EE4"
+      stepType: 1
+      targetKeys:
+      - cmd
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 18
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u64AD\u653E\u5207\u6362\u6307\u4EE4\u5F15\u5BFC"
+      stepType: 0
+      targetKeys:
+      - leftBtn
+      dragSourceKey: 0201
+      dragTargetKey: signalSource
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u7B49\u5F85\u6307\u4EE4\u5207\u6362"
+      stepType: 8
+      targetKeys:
+      - cmd
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: cmd
+      dropdownTargetIndex: 1
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
+      delaySeconds: 0.2
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u9AD8\u4EAEUI"
+      stepType: 1
+      targetKeys:
+      - inputB
+      - inputA
+      - cmd
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.2
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u64AD\u653E\u9ED1\u5165\u76EE\u6807\u5BF9\u8BDD"
+      stepType: 0
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.1
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u7B49\u5F85\u9A87\u5165\u76EE\u6807"
+      stepType: 3
+      targetKeys:
+      - cmd
+      - inputA
+      - inputB
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u7B49\u5F85\u8F93\u5165\u79D8\u94A5\u5E76\u63D0\u4EA4"
+      stepType: 6
+      targetKeys:
+      - cmd
+      - inputA
+      - inputB
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u9AD8\u4EAE\u7ED3\u679C\u9762\u677F"
+      stepType: 1
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 19
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 20
+      delaySeconds: 0.5
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u64AD\u653E\u7ED3\u679C\u9762\u677F\u5F15\u5BFC\u5BF9\u8BDD\u548C\u5F15\u5BFC\u7ED3\u675F\u8BF4\u660E"
+      stepType: 0
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u7ED3\u675F\u9AD8\u4EAE"
+      stepType: 4
+      targetKeys:
+      - searchScreen
+      dragSourceKey: 0201
+      dragTargetKey: inputA
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
+      delaySeconds: 6.666
+      submitTargetKey: InputB
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+  - triggerClueIds:
+    - 0103
+    - 0010
+    - 0004
+    steps:
+    - stepDescribe: "\u5EF6\u65F6"
+      stepType: 5
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 21
+      delaySeconds: 0.5
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
+    - stepDescribe: "\u64AD\u653E\u51C6\u5907\u63D0\u4EA4\u7B54\u6848\u7684\u5F15\u5BFC\u5BF9\u8BDD"
+      stepType: 0
+      targetKeys:
+      - rightBtn
+      dragSourceKey: 
+      dragTargetKey: 
+      dialogueTrigger: 1
+      dialogueLevelNumber: 0
+      dialogueWaveNumber: 22
+      delaySeconds: 0
+      submitTargetKey: 
+      requireNonEmptySubmit: 0
+      requiredClueIds: []
+      dropdownTargetKey: 
+      dropdownTargetIndex: 0
   guideEnabled: 1
   targetResolveTimeout: 1
 --- !u!4 &589227929
@@ -7236,6 +7757,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 859457210}
   m_CullTransparentMesh: 1
+--- !u!1 &867870515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 867870516}
+  - component: {fileID: 867870517}
+  m_Layer: 5
+  m_Name: target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &867870516
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867870515}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 527099815}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.00015834, y: 71.7583}
+  m_SizeDelta: {x: 199.15, y: 348.3633}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &867870517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867870515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92456760b1a6df844af19650f8757992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: cmd
 --- !u!1 &872459820
 GameObject:
   m_ObjectHideFlags: 0
