@@ -76,6 +76,21 @@ public static class BoboBattleUIFactory
     }
 
     /// <summary>
+    /// 把小游戏偏好的字体资源应用到指定文本上。
+    /// 预制件模式下，大部分字体建议直接在 Inspector 中配好；
+    /// 这里保留一层兜底，防止遗漏某些动态文本引用。
+    /// </summary>
+    public static void ApplyPreferredFont(TextMeshProUGUI label)
+    {
+        if (label == null)
+        {
+            return;
+        }
+
+        label.font = ResolvePreferredFont();
+    }
+
+    /// <summary>
     /// 创建一个按钮节点，并自动把文本铺满按钮区域。
     /// </summary>
     public static Button CreateButton(string name, Transform parent, string label, Color backgroundColor, Color labelColor, out TextMeshProUGUI labelText)

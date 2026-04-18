@@ -1,137 +1,207 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// 小游戏的运行时弹窗界面。
-/// 这个类负责：
-/// 1. 创建和组织 UI
-/// 2. 收集玩家三槽输入
-/// 3. 把输入交给 BattleController
-/// 4. 播放逐槽结算结果
-/// 5. 在结束时把结果回调给外层
-/// 它不负责规则定义，也不直接修改真实战斗状态。
-/// </summary>
+[DisallowMultipleComponent]
 public class BoboBattlePanel : MonoBehaviour
 {
-    /// <summary>
-    /// 一个动作按钮的 UI 引用集合。
-    /// 把按钮、背景和文字绑在一起，便于统一刷新选中态和可点击态。
-    /// </summary>
-    private class ActionButtonRef
+    [Serializable]
+    private class ActionButtonBinding
     {
-        public ActionType ActionType;
-        public Button Button;
-        public Image Background;
-        public TextMeshProUGUI Label;
+        [SerializeField] private ActionType actionType = ActionType.None;
+        [SerializeField] private Button button;
+        [SerializeField] private Image background;
+        [SerializeField] private Image iconImage;
+        [SerializeField] private TextMeshProUGUI label;
+        [SerializeField] private Graphic selectedFrame;
+
+        public ActionType ActionType => actionType;
+        public Button Button => button;
+        public Image Background => background;
+        public Image IconImage => iconImage;
+        public TextMeshProUGUI Label => label;
+        public Graphic SelectedFrame => selectedFrame;
     }
 
-    /// <summary>
-    /// 一个槽位行的 UI 引用集合。
-    /// 每个槽位都有自己的背景、玩家动作文本、AI 动作文本和四个动作按钮。
-    /// </summary>
-    private class SlotRowRef
+    [Serializable]
+    private class CardSlotBinding
     {
-        public Image Background;
-        public TextMeshProUGUI PlayerActionText;
-        public TextMeshProUGUI AiActionText;
-        public List<ActionButtonRef> ActionButtons = new List<ActionButtonRef>();
+        [SerializeField] private Button button;
+        [SerializeField] private Image background;
+        [SerializeField] private Graphic highlightFrame;
+        [SerializeField] private Image actionIcon;
+        [SerializeField] private TextMeshProUGUI slotIndexText;
+        [SerializeField] private TextMeshProUGUI actionText;
+        [SerializeField] private GameObject hiddenRoot;
+        [SerializeField] private TextMeshProUGUI hiddenText;
+
+        public Button Button => button;
+        public Image Background => background;
+        public Graphic HighlightFrame => highlightFrame;
+        public Image ActionIcon => actionIcon;
+        public TextMeshProUGUI SlotIndexText => slotIndexText;
+        public TextMeshProUGUI ActionText => actionText;
+        public GameObject HiddenRoot => hiddenRoot;
+        public TextMeshProUGUI HiddenText => hiddenText;
     }
 
-    /// <summary>
-    /// 当前版本允许玩家选择的全部动作。
-    /// 如果后续要加新动作，这里和 ActionType / RuleSystem 一起联动修改。
-    /// </summary>
-    private static readonly ActionType[] SelectableActions =
+    [Serializable]
+    private class ActionVisualBinding
     {
-        ActionType.Charge,
-        ActionType.Guard,
-        ActionType.Attack,
-        ActionType.Ultimate
-    };
+        [SerializeField] private ActionType actionType = ActionType.None;
+        [SerializeField] private Sprite sprite;
 
-    private readonly SlotRowRef[] slotRows = new SlotRowRef[BattlePlan.SlotCount];
+        public ActionType ActionType => actionType;
+        public Sprite Sprite => sprite;
+    }
+
+    [Header("Root")]
+    [SerializeField] private CanvasGroup canvasGroup;
+
+    [Header("Header")]
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI roundText;
+    [SerializeField] private TextMeshProUGUI playerNameText;
+    [SerializeField] private TextMeshProUGUI aiNameText;
+
+    [Header("Status Pips")]
+    [SerializeField] private Image[] playerHpPips = new Image[0];
+    [SerializeField] private Image[] playerEnergyPips = new Image[0];
+    [SerializeField] private Image[] aiHpPips = new Image[0];
+    [SerializeField] private Image[] aiEnergyPips = new Image[0];
+
+    [Header("Action Palette")]
+    [SerializeField] private ActionButtonBinding[] actionButtons = new ActionButtonBinding[0];
+
+    [Header("Battle Slots")]
+    [SerializeField] private CardSlotBinding[] playerCardSlots = new CardSlotBinding[BattlePlan.SlotCount];
+    [SerializeField] private CardSlotBinding[] aiCardSlots = new CardSlotBinding[BattlePlan.SlotCount];
+
+    [Header("Action Visuals")]
+    [SerializeField] private ActionVisualBinding[] actionVisuals = new ActionVisualBinding[0];
+
+    [Header("Footer")]
+    [SerializeField] private TextMeshProUGUI statusText;
+    [SerializeField] private TextMeshProUGUI resultText;
+    [SerializeField] private Button submitButton;
+    [SerializeField] private TextMeshProUGUI submitButtonText;
+    [SerializeField] private Button restartButton;
+    [SerializeField] private Button closeButton;
+
+    [Header("Theme")]
+    [SerializeField] private Color playerCardNormalColor = new Color(0.11f, 0.16f, 0.22f, 0.92f);
+    [SerializeField] private Color playerCardFocusColor = new Color(0.19f, 0.27f, 0.38f, 0.98f);
+    [SerializeField] private Color resolvingCardColor = new Color(0.28f, 0.41f, 0.56f, 0.98f);
+    [SerializeField] private Color aiCardNormalColor = new Color(0.21f, 0.21f, 0.24f, 0.92f);
+    [SerializeField] private Color aiCardRevealColor = new Color(0.30f, 0.24f, 0.18f, 0.98f);
+    [SerializeField] private Color pipEnabledColor = Color.white;
+    [SerializeField] private Color pipDisabledColor = new Color(1f, 1f, 1f, 0.22f);
+
+    [Header("Options")]
+    [SerializeField] private bool autoApplyPreferredFont = true;
+    [SerializeField] private bool logBindingWarnings = true;
+    [SerializeField] private string aiHiddenSlotText = "?";
+
     private readonly ActionType[] draftActions = new ActionType[BattlePlan.SlotCount];
+    private readonly ActionType[] revealedAiActions = new ActionType[BattlePlan.SlotCount];
 
-    private CanvasGroup canvasGroup;
     private BattleController controller;
     private BoboBattleRequest currentRequest;
     private BoboBattleSessionResult lastEndedResult;
     private Coroutine roundAnimationCoroutine;
+    private ActionType selectedPaletteAction = ActionType.None;
+    private int focusedPlayerSlotIndex;
+    private int resolvingSlotIndex = -1;
     private bool isAnimating;
     private bool sessionCompleted;
+    private bool isInitialized;
 
-    private TextMeshProUGUI titleText;
-    private TextMeshProUGUI roundText;
-    private TextMeshProUGUI playerStateText;
-    private TextMeshProUGUI aiStateText;
-    private TextMeshProUGUI statusText;
-    private TextMeshProUGUI resultText;
-    private TextMeshProUGUI submitButtonText;
-    private Button submitButton;
-    private Button restartButton;
-    private Button closeButton;
+    public bool IsVisible => canvasGroup != null && canvasGroup.blocksRaycasts;
 
-    /// <summary>
-    /// 判断面板当前是否处于“真正打开并接管输入”的状态。
-    /// </summary>
-    public bool IsVisible
+    public bool Initialize(CanvasGroup targetCanvasGroup)
     {
-        get { return canvasGroup != null && canvasGroup.blocksRaycasts; }
-    }
+        if (targetCanvasGroup != null)
+        {
+            canvasGroup = targetCanvasGroup;
+        }
+        else if (canvasGroup == null)
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
+        }
 
-    /// <summary>
-    /// 服务层首次创建面板后调用一次。
-    /// </summary>
-    public void Initialize(CanvasGroup targetCanvasGroup)
-    {
-        canvasGroup = targetCanvasGroup;
-        BuildUi();
+        if (canvasGroup == null)
+        {
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+
+        if (autoApplyPreferredFont)
+        {
+            ApplyPreferredFontToBindings();
+        }
+
+        if (!ValidateBindings())
+        {
+            return false;
+        }
+
         CreateController();
+        BindUiEvents();
         HideImmediate();
+        isInitialized = true;
+        return true;
     }
 
-    /// <summary>
-    /// 根据请求打开一场新的小游戏。
-    /// </summary>
     public void Show(BoboBattleRequest request)
     {
+        if (!isInitialized && !Initialize(canvasGroup))
+        {
+            return;
+        }
+
         currentRequest = request ?? new BoboBattleRequest();
         sessionCompleted = false;
         lastEndedResult = null;
         StopRoundAnimation();
 
-        // 每次 Show 都从请求参数重新初始化整场战斗，确保状态干净。
         controller.StartNewBattle(currentRequest.PlayerName, currentRequest.AiName, currentRequest.StartingHP, currentRequest.StartingEnergy);
         ResetDraft(true);
         UpdateTitle();
-        resultText.gameObject.SetActive(false);
-        restartButton.gameObject.SetActive(false);
-        submitButtonText.text = "锁定三槽";
-        UpdateStatus("请选择本回合的三槽行动，结算顺序固定为 1 → 2 → 3。");
+
+        if (resultText != null) resultText.gameObject.SetActive(false);
+        if (restartButton != null) restartButton.gameObject.SetActive(false);
+        if (submitButtonText != null) submitButtonText.text = "确定";
+
+        UpdateStatus("先选左侧动作，再放入下方三张玩家牌位。");
 
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
     }
 
-    /// <summary>
-    /// 按“中途取消”语义关闭面板。
-    /// 主要供外层流程中断时使用。
-    /// </summary>
     public void CloseAsCancelled()
     {
         CompleteSession(controller == null || controller.Model == null || !controller.Model.IsFinished);
     }
 
-    /// <summary>
-    /// 在 UI 内部组装 BattleController 及其依赖。
-    /// 当前小游戏规模较小，因此这里直接本地创建依赖，避免引入额外容器。
-    /// </summary>
+    private void OnDestroy()
+    {
+        if (controller != null)
+        {
+            controller.BattleStateChanged -= HandleBattleStateChanged;
+            controller.BattleEnded -= HandleBattleEnded;
+        }
+    }
+
     private void CreateController()
     {
+        if (controller != null)
+        {
+            controller.BattleStateChanged -= HandleBattleStateChanged;
+            controller.BattleEnded -= HandleBattleEnded;
+        }
+
         BattleRuleSystem ruleSystem = new BattleRuleSystem();
         BattleSimulator simulator = new BattleSimulator(ruleSystem);
         BattleAiPlanner aiPlanner = new BattleAiPlanner(ruleSystem, simulator);
@@ -140,200 +210,268 @@ public class BoboBattlePanel : MonoBehaviour
         controller.BattleEnded += HandleBattleEnded;
     }
 
-    /// <summary>
-    /// 动态创建整套弹窗 UI。
-    /// 之所以全部在代码里构建，是为了做到模块化接入，不额外依赖场景预制体。
-    /// </summary>
-    private void BuildUi()
+    private void BindUiEvents()
     {
-        // 全屏半透明遮罩，负责挡住底层交互。
-        Image blocker = BoboBattleUIFactory.CreateImage("Blocker", transform, new Color(0f, 0f, 0f, 0.72f));
-        BoboBattleUIFactory.StretchToParent(blocker.rectTransform);
-
-        // 主面板容器。
-        Image panel = BoboBattleUIFactory.CreateImage("Panel", transform, new Color(0.07f, 0.10f, 0.15f, 0.98f));
-        RectTransform panelRect = panel.rectTransform;
-        panelRect.anchorMin = new Vector2(0.06f, 0.08f);
-        panelRect.anchorMax = new Vector2(0.94f, 0.92f);
-        panelRect.offsetMin = Vector2.zero;
-        panelRect.offsetMax = Vector2.zero;
-        Outline outline = panel.gameObject.AddComponent<Outline>();
-        outline.effectColor = new Color(0.26f, 0.42f, 0.60f, 0.9f);
-        outline.effectDistance = new Vector2(2f, -2f);
-
-        VerticalLayoutGroup panelLayout = panel.gameObject.AddComponent<VerticalLayoutGroup>();
-        panelLayout.padding = new RectOffset(24, 24, 24, 24);
-        panelLayout.spacing = 14;
-        panelLayout.childAlignment = TextAnchor.UpperLeft;
-        panelLayout.childControlWidth = true;
-        panelLayout.childControlHeight = false;
-        panelLayout.childForceExpandWidth = true;
-        panelLayout.childForceExpandHeight = false;
-
-        RectTransform header = BoboBattleUIFactory.CreateRect("Header", panel.transform);
-        HorizontalLayoutGroup headerLayout = header.gameObject.AddComponent<HorizontalLayoutGroup>();
-        headerLayout.spacing = 12;
-        headerLayout.childAlignment = TextAnchor.MiddleLeft;
-        headerLayout.childControlWidth = true;
-        headerLayout.childControlHeight = true;
-        headerLayout.childForceExpandWidth = false;
-        headerLayout.childForceExpandHeight = true;
-        BoboBattleUIFactory.AddLayoutElement(header, preferredHeight: 56f);
-
-        titleText = BoboBattleUIFactory.CreateText("Title", header, "波波攒对抗演练", 32f, FontStyles.Bold, TextAlignmentOptions.Left, Color.white);
-        BoboBattleUIFactory.AddLayoutElement(titleText, flexibleWidth: 1f, minWidth: 240f);
-
-        roundText = BoboBattleUIFactory.CreateText("Round", header, "第1回合", 24f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.79f, 0.89f, 1f));
-        BoboBattleUIFactory.AddLayoutElement(roundText, preferredWidth: 140f);
-
-        closeButton = BoboBattleUIFactory.CreateButton("CloseButton", header, "退出", new Color(0.39f, 0.18f, 0.20f), Color.white, out var closeLabel);
-        BoboBattleUIFactory.AddLayoutElement(closeButton, preferredWidth: 110f, preferredHeight: 48f);
-        closeButton.onClick.AddListener(OnCloseClicked);
-
-        RectTransform stats = BoboBattleUIFactory.CreateRect("Stats", panel.transform);
-        HorizontalLayoutGroup statsLayout = stats.gameObject.AddComponent<HorizontalLayoutGroup>();
-        statsLayout.spacing = 12;
-        statsLayout.childAlignment = TextAnchor.MiddleCenter;
-        statsLayout.childControlWidth = true;
-        statsLayout.childControlHeight = true;
-        statsLayout.childForceExpandWidth = true;
-        statsLayout.childForceExpandHeight = true;
-        BoboBattleUIFactory.AddLayoutElement(stats, preferredHeight: 92f);
-
-        playerStateText = CreateStateCard(stats, "玩家");
-        TextMeshProUGUI tipsText = CreateStateCard(stats, "同步锁定\n按槽结算\n可读对手但非完美AI");
-        tipsText.alignment = TextAlignmentOptions.Center;
-        aiStateText = CreateStateCard(stats, "AI");
-
-        TextMeshProUGUI noteText = BoboBattleUIFactory.CreateText("Note", panel.transform, "改动前面的槽位会清空后续选择，确保能量校验始终正确。", 20f, FontStyles.Normal, TextAlignmentOptions.Left, new Color(0.73f, 0.82f, 0.94f));
-        BoboBattleUIFactory.AddLayoutElement(noteText, preferredHeight: 30f);
-
-        RectTransform slotsRoot = BoboBattleUIFactory.CreateRect("SlotsRoot", panel.transform);
-        VerticalLayoutGroup slotsLayout = slotsRoot.gameObject.AddComponent<VerticalLayoutGroup>();
-        slotsLayout.spacing = 12;
-        slotsLayout.childAlignment = TextAnchor.UpperLeft;
-        slotsLayout.childControlWidth = true;
-        slotsLayout.childControlHeight = false;
-        slotsLayout.childForceExpandWidth = true;
-        slotsLayout.childForceExpandHeight = false;
-        BoboBattleUIFactory.AddLayoutElement(slotsRoot, flexibleHeight: 1f, minHeight: 260f);
-
-        for (int i = 0; i < BattlePlan.SlotCount; i++)
+        if (closeButton != null)
         {
-            slotRows[i] = CreateSlotRow(slotsRoot, i);
+            closeButton.onClick.RemoveListener(OnCloseClicked);
+            closeButton.onClick.AddListener(OnCloseClicked);
         }
 
-        Image statusCard = BoboBattleUIFactory.CreateImage("StatusCard", panel.transform, new Color(0.11f, 0.16f, 0.22f, 0.95f));
-        VerticalLayoutGroup statusLayout = statusCard.gameObject.AddComponent<VerticalLayoutGroup>();
-        statusLayout.padding = new RectOffset(18, 18, 14, 14);
-        statusLayout.spacing = 8;
-        statusLayout.childControlWidth = true;
-        statusLayout.childControlHeight = false;
-        statusLayout.childForceExpandWidth = true;
-        statusLayout.childForceExpandHeight = false;
-        BoboBattleUIFactory.AddLayoutElement(statusCard, preferredHeight: 120f);
-
-        resultText = BoboBattleUIFactory.CreateText("Result", statusCard.transform, string.Empty, 24f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(1f, 0.87f, 0.48f));
-        BoboBattleUIFactory.AddLayoutElement(resultText, preferredHeight: 30f);
-        resultText.gameObject.SetActive(false);
-
-        statusText = BoboBattleUIFactory.CreateText("Status", statusCard.transform, string.Empty, 21f, FontStyles.Normal, TextAlignmentOptions.TopLeft, Color.white);
-        BoboBattleUIFactory.AddLayoutElement(statusText, flexibleHeight: 1f);
-
-        RectTransform footer = BoboBattleUIFactory.CreateRect("Footer", panel.transform);
-        HorizontalLayoutGroup footerLayout = footer.gameObject.AddComponent<HorizontalLayoutGroup>();
-        footerLayout.spacing = 12;
-        footerLayout.childAlignment = TextAnchor.MiddleRight;
-        footerLayout.childControlWidth = true;
-        footerLayout.childControlHeight = true;
-        footerLayout.childForceExpandWidth = false;
-        footerLayout.childForceExpandHeight = true;
-        BoboBattleUIFactory.AddLayoutElement(footer, preferredHeight: 56f);
-
-        restartButton = BoboBattleUIFactory.CreateButton("RestartButton", footer, "再来一局", new Color(0.15f, 0.44f, 0.34f), Color.white, out var restartLabel);
-        BoboBattleUIFactory.AddLayoutElement(restartButton, preferredWidth: 140f, preferredHeight: 50f);
-        restartButton.onClick.AddListener(RestartBattle);
-        restartButton.gameObject.SetActive(false);
-
-        submitButton = BoboBattleUIFactory.CreateButton("SubmitButton", footer, "锁定三槽", new Color(0.17f, 0.40f, 0.68f), Color.white, out submitButtonText);
-        BoboBattleUIFactory.AddLayoutElement(submitButton, preferredWidth: 160f, preferredHeight: 50f);
-        submitButton.onClick.AddListener(OnSubmitClicked);
-    }
-
-    /// <summary>
-    /// 创建顶部状态卡片，用于展示玩家/AI 当前 HP 与能量。
-    /// </summary>
-    private TextMeshProUGUI CreateStateCard(Transform parent, string initialText)
-    {
-        Image card = BoboBattleUIFactory.CreateImage("StateCard", parent, new Color(0.11f, 0.16f, 0.22f, 0.95f));
-        BoboBattleUIFactory.AddLayoutElement(card, flexibleWidth: 1f, preferredHeight: 92f);
-        TextMeshProUGUI text = BoboBattleUIFactory.CreateText("Text", card.transform, initialText, 24f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
-        BoboBattleUIFactory.StretchToParent(text.rectTransform, 16f, 16f, 12f, 12f);
-        return text;
-    }
-
-    /// <summary>
-    /// 创建单个槽位的整行 UI。
-    /// </summary>
-    private SlotRowRef CreateSlotRow(Transform parent, int slotIndex)
-    {
-        SlotRowRef row = new SlotRowRef();
-        row.Background = BoboBattleUIFactory.CreateImage("SlotRow_" + slotIndex, parent, new Color(0.11f, 0.16f, 0.22f, 0.92f));
-        BoboBattleUIFactory.AddLayoutElement(row.Background, preferredHeight: 84f);
-
-        HorizontalLayoutGroup layout = row.Background.gameObject.AddComponent<HorizontalLayoutGroup>();
-        layout.padding = new RectOffset(16, 16, 12, 12);
-        layout.spacing = 10;
-        layout.childAlignment = TextAnchor.MiddleLeft;
-        layout.childControlWidth = true;
-        layout.childControlHeight = true;
-        layout.childForceExpandWidth = false;
-        layout.childForceExpandHeight = true;
-
-        TextMeshProUGUI slotLabel = BoboBattleUIFactory.CreateText("SlotLabel", row.Background.transform, "槽位 " + (slotIndex + 1), 22f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.83f, 0.91f, 1f));
-        BoboBattleUIFactory.AddLayoutElement(slotLabel, preferredWidth: 90f);
-
-        row.PlayerActionText = BoboBattleUIFactory.CreateText("PlayerAction", row.Background.transform, "玩家：未选择", 20f, FontStyles.Normal, TextAlignmentOptions.Center, Color.white);
-        BoboBattleUIFactory.AddLayoutElement(row.PlayerActionText, preferredWidth: 170f);
-
-        row.AiActionText = BoboBattleUIFactory.CreateText("AiAction", row.Background.transform, "AI：待锁定", 20f, FontStyles.Normal, TextAlignmentOptions.Center, new Color(0.85f, 0.88f, 0.95f));
-        BoboBattleUIFactory.AddLayoutElement(row.AiActionText, preferredWidth: 170f);
-
-        RectTransform buttonsRoot = BoboBattleUIFactory.CreateRect("ButtonsRoot", row.Background.transform);
-        HorizontalLayoutGroup buttonsLayout = buttonsRoot.gameObject.AddComponent<HorizontalLayoutGroup>();
-        buttonsLayout.spacing = 8;
-        buttonsLayout.childAlignment = TextAnchor.MiddleCenter;
-        buttonsLayout.childControlWidth = true;
-        buttonsLayout.childControlHeight = true;
-        buttonsLayout.childForceExpandWidth = true;
-        buttonsLayout.childForceExpandHeight = true;
-        BoboBattleUIFactory.AddLayoutElement(buttonsRoot, flexibleWidth: 1f, minWidth: 480f);
-
-        for (int i = 0; i < SelectableActions.Length; i++)
+        if (restartButton != null)
         {
-            ActionType actionType = SelectableActions[i];
-            Button button = BoboBattleUIFactory.CreateButton(actionType.GetDisplayName(), buttonsRoot, actionType.GetDisplayName(), actionType.GetThemeColor(), Color.white, out var label);
-            BoboBattleUIFactory.AddLayoutElement(button, flexibleWidth: 1f, preferredHeight: 44f);
-
-            ActionButtonRef buttonRef = new ActionButtonRef();
-            buttonRef.ActionType = actionType;
-            buttonRef.Button = button;
-            buttonRef.Background = button.GetComponent<Image>();
-            buttonRef.Label = label;
-            row.ActionButtons.Add(buttonRef);
-
-            int capturedSlotIndex = slotIndex;
-            ActionType capturedActionType = actionType;
-            button.onClick.AddListener(() => SelectDraftAction(capturedSlotIndex, capturedActionType));
+            restartButton.onClick.RemoveListener(RestartBattle);
+            restartButton.onClick.AddListener(RestartBattle);
         }
 
-        return row;
+        if (submitButton != null)
+        {
+            submitButton.onClick.RemoveListener(OnSubmitClicked);
+            submitButton.onClick.AddListener(OnSubmitClicked);
+        }
+
+        for (int i = 0; i < playerCardSlots.Length; i++)
+        {
+            CardSlotBinding slot = playerCardSlots[i];
+            if (slot == null) continue;
+            if (slot.SlotIndexText != null) slot.SlotIndexText.text = (i + 1).ToString();
+            if (slot.Button == null) continue;
+
+            int capturedIndex = i;
+            slot.Button.onClick.RemoveAllListeners();
+            slot.Button.onClick.AddListener(() => OnPlayerCardSlotClicked(capturedIndex));
+        }
+
+        for (int i = 0; i < aiCardSlots.Length; i++)
+        {
+            CardSlotBinding slot = aiCardSlots[i];
+            if (slot != null && slot.SlotIndexText != null)
+            {
+                slot.SlotIndexText.text = (i + 1).ToString();
+            }
+        }
+
+        for (int i = 0; i < actionButtons.Length; i++)
+        {
+            ActionButtonBinding binding = actionButtons[i];
+            if (binding == null || binding.Button == null) continue;
+
+            if (binding.Label != null) binding.Label.text = binding.ActionType.GetDisplayName();
+            ApplyActionVisual(binding.ActionType, binding.IconImage, binding.Label);
+
+            int capturedIndex = i;
+            binding.Button.onClick.RemoveAllListeners();
+            binding.Button.onClick.AddListener(() => OnPaletteActionClicked(actionButtons[capturedIndex].ActionType));
+        }
     }
 
-    /// <summary>
-    /// 点击“锁定三槽”后的处理。
-    /// 真正的战斗执行入口在 Controller，不在 UI。
-    /// </summary>
+    private void ApplyPreferredFontToBindings()
+    {
+        BoboBattleUIFactory.ApplyPreferredFont(titleText);
+        BoboBattleUIFactory.ApplyPreferredFont(roundText);
+        BoboBattleUIFactory.ApplyPreferredFont(playerNameText);
+        BoboBattleUIFactory.ApplyPreferredFont(aiNameText);
+        BoboBattleUIFactory.ApplyPreferredFont(statusText);
+        BoboBattleUIFactory.ApplyPreferredFont(resultText);
+        BoboBattleUIFactory.ApplyPreferredFont(submitButtonText);
+
+        for (int i = 0; i < actionButtons.Length; i++)
+        {
+            if (actionButtons[i] != null) BoboBattleUIFactory.ApplyPreferredFont(actionButtons[i].Label);
+        }
+
+        ApplyFontsToSlots(playerCardSlots);
+        ApplyFontsToSlots(aiCardSlots);
+    }
+
+    private void ApplyFontsToSlots(CardSlotBinding[] slots)
+    {
+        if (slots == null) return;
+        for (int i = 0; i < slots.Length; i++)
+        {
+            CardSlotBinding slot = slots[i];
+            if (slot == null) continue;
+            BoboBattleUIFactory.ApplyPreferredFont(slot.SlotIndexText);
+            BoboBattleUIFactory.ApplyPreferredFont(slot.ActionText);
+            BoboBattleUIFactory.ApplyPreferredFont(slot.HiddenText);
+        }
+    }
+
+    private bool ValidateBindings()
+    {
+        bool valid = true;
+
+        valid &= ValidateReference(canvasGroup, "CanvasGroup");
+        valid &= ValidateReference(titleText, "TitleText");
+        valid &= ValidateReference(roundText, "RoundText");
+        valid &= ValidateReference(statusText, "StatusText");
+        valid &= ValidateReference(resultText, "ResultText");
+        valid &= ValidateReference(submitButton, "SubmitButton");
+        valid &= ValidateReference(submitButtonText, "SubmitButtonText");
+        valid &= ValidateReference(restartButton, "RestartButton");
+        valid &= ValidateReference(closeButton, "CloseButton");
+
+        valid &= ValidateSlots(playerCardSlots, true, "PlayerCardSlots");
+        valid &= ValidateSlots(aiCardSlots, false, "AiCardSlots");
+
+        if (actionButtons == null || actionButtons.Length == 0)
+        {
+            LogBindingError("ActionButtons 未绑定。");
+            valid = false;
+        }
+        else
+        {
+            for (int i = 0; i < actionButtons.Length; i++)
+            {
+                ActionButtonBinding binding = actionButtons[i];
+                if (binding == null)
+                {
+                    LogBindingError("ActionButtons[" + i + "] 未绑定。");
+                    valid = false;
+                    continue;
+                }
+
+                valid &= ValidateReference(binding.Button, "ActionButtons[" + i + "].Button");
+                valid &= ValidateReference(binding.Background, "ActionButtons[" + i + "].Background");
+                valid &= ValidateReference(binding.Label, "ActionButtons[" + i + "].Label");
+            }
+        }
+
+        return valid;
+    }
+
+    private bool ValidateSlots(CardSlotBinding[] slots, bool requireButton, string fieldName)
+    {
+        if (slots == null || slots.Length != BattlePlan.SlotCount)
+        {
+            LogBindingError(fieldName + " 数量错误。");
+            return false;
+        }
+
+        bool valid = true;
+        for (int i = 0; i < slots.Length; i++)
+        {
+            CardSlotBinding slot = slots[i];
+            if (slot == null)
+            {
+                LogBindingError(fieldName + "[" + i + "] 未绑定。");
+                valid = false;
+                continue;
+            }
+
+            valid &= ValidateReference(slot.Background, fieldName + "[" + i + "].Background");
+            valid &= ValidateReference(slot.SlotIndexText, fieldName + "[" + i + "].SlotIndexText");
+            valid &= ValidateReference(slot.ActionText, fieldName + "[" + i + "].ActionText");
+            if (requireButton)
+            {
+                valid &= ValidateReference(slot.Button, fieldName + "[" + i + "].Button");
+            }
+        }
+
+        return valid;
+    }
+
+    private bool ValidateReference(UnityEngine.Object reference, string fieldName)
+    {
+        if (reference != null) return true;
+        LogBindingError("缺少 UI 引用: " + fieldName);
+        return false;
+    }
+
+    private void LogBindingError(string message)
+    {
+        if (logBindingWarnings)
+        {
+            Debug.LogError("[BoboBattlePanel] " + message, this);
+        }
+    }
+
+    private void OnPaletteActionClicked(ActionType actionType)
+    {
+        if (controller == null || controller.Model == null || controller.Model.IsFinished || isAnimating)
+        {
+            return;
+        }
+
+        if (actionType == ActionType.None)
+        {
+            return;
+        }
+
+        selectedPaletteAction = actionType;
+        if (!IsSlotEditable(focusedPlayerSlotIndex))
+        {
+            focusedPlayerSlotIndex = GetNextAssignableSlotIndex();
+        }
+
+        UpdateDraftUi();
+
+        if (IsSlotEditable(focusedPlayerSlotIndex))
+        {
+            TryAssignActionToSlot(focusedPlayerSlotIndex, selectedPaletteAction);
+        }
+        else
+        {
+            UpdateStatus("动作已选中，请点击下方可编辑牌位。");
+        }
+    }
+
+    private void OnPlayerCardSlotClicked(int slotIndex)
+    {
+        if (controller == null || controller.Model == null || controller.Model.IsFinished || isAnimating)
+        {
+            return;
+        }
+
+        if (!IsSlotEditable(slotIndex))
+        {
+            UpdateStatus("请按顺序从左到右放置玩家牌位。");
+            return;
+        }
+
+        focusedPlayerSlotIndex = slotIndex;
+        UpdateDraftUi();
+
+        if (selectedPaletteAction != ActionType.None)
+        {
+            TryAssignActionToSlot(slotIndex, selectedPaletteAction);
+        }
+        else
+        {
+            UpdateStatus(string.Format("已选中第 {0} 张牌位，请从左侧选择动作。", slotIndex + 1));
+        }
+    }
+
+    private bool TryAssignActionToSlot(int slotIndex, ActionType actionType)
+    {
+        if (!IsSlotEditable(slotIndex))
+        {
+            UpdateStatus("当前牌位不可编辑。");
+            return false;
+        }
+
+        int projectedEnergy = GetProjectedEnergyBeforeSlot(slotIndex);
+        if (!controller.RuleSystem.CanAffordAction(projectedEnergy, actionType))
+        {
+            UpdateStatus(string.Format("第 {0} 张牌位能量不足，无法放入 {1}。", slotIndex + 1, actionType.GetDisplayName()));
+            UpdateDraftUi();
+            return false;
+        }
+
+        draftActions[slotIndex] = actionType;
+        for (int i = slotIndex + 1; i < BattlePlan.SlotCount; i++)
+        {
+            draftActions[i] = ActionType.None;
+        }
+
+        int nextSlot = GetNextAssignableSlotIndex();
+        focusedPlayerSlotIndex = nextSlot >= 0 ? nextSlot : BattlePlan.SlotCount - 1;
+
+        UpdateDraftUi();
+        UpdateStatus(string.Format("第 {0} 张牌位已设置为 {1}。", slotIndex + 1, actionType.GetDisplayName()));
+        return true;
+    }
+
     private void OnSubmitClicked()
     {
         if (controller == null || isAnimating)
@@ -344,7 +482,7 @@ public class BoboBattlePanel : MonoBehaviour
         BattlePlan playerPlan = new BattlePlan(draftActions);
         if (playerPlan.HasUnselectedSlot())
         {
-            UpdateStatus("三槽行动未填满，无法锁定。");
+            UpdateStatus("玩家三张牌尚未填满，无法确认。");
             return;
         }
 
@@ -354,38 +492,37 @@ public class BoboBattlePanel : MonoBehaviour
             return;
         }
 
-        // AI 方案在提交后一次性揭示，再按槽位播放结算。
-        ShowAiPlan(roundResult.AIPlan);
-        submitButton.interactable = false;
-        closeButton.interactable = false;
-        restartButton.interactable = false;
+        RevealAiPlan(roundResult.AIPlan);
+
+        if (submitButton != null) submitButton.interactable = false;
+        if (closeButton != null) closeButton.interactable = false;
+        if (restartButton != null) restartButton.interactable = false;
+
         isAnimating = true;
         roundAnimationCoroutine = StartCoroutine(PlayRoundResult(roundResult));
     }
 
-    /// <summary>
-    /// 播放一整回合的逐槽结算动画。
-    /// 当前实现是轻量文本 + 高亮切换，后面也可以在这里挂更丰富的表现。
-    /// </summary>
     private IEnumerator PlayRoundResult(BattleRoundResult roundResult)
     {
-        UpdateStatus("AI 已锁定行动，开始同步结算。");
+        UpdateStatus("AI 已揭示牌型，开始按 1 -> 2 -> 3 依次结算。");
 
         for (int i = 0; i < roundResult.SlotInfos.Count; i++)
         {
             ActionResolveInfo info = roundResult.SlotInfos[i];
-            // 强调当前结算到的槽位，帮助玩家理解“同步选择、顺序结算”的规则。
-            HighlightSlot(info.SlotIndex, true);
+            resolvingSlotIndex = info.SlotIndex;
+            UpdateDraftUi();
             yield return new WaitForSeconds(0.2f);
             ApplyResolveInfo(info);
             UpdateStatus(info.Summary);
             yield return new WaitForSeconds(0.65f);
-            HighlightSlot(info.SlotIndex, false);
+            resolvingSlotIndex = -1;
+            UpdateDraftUi();
         }
 
         roundAnimationCoroutine = null;
         isAnimating = false;
-        closeButton.interactable = true;
+        resolvingSlotIndex = -1;
+        if (closeButton != null) closeButton.interactable = true;
 
         if (roundResult.IsBattleFinished)
         {
@@ -393,47 +530,33 @@ public class BoboBattlePanel : MonoBehaviour
         }
         else
         {
-            // 新回合开始前清掉玩家草稿，但保留上一回合已经揭示过的 AI 行动历史文本。
             ResetDraft(false);
             RefreshState(controller.Model);
-            UpdateStatus("本回合结算完毕，请重新选择下一轮三槽行动。");
+            UpdateStatus("本回合结算完成，请继续选择下一轮玩家三张牌。");
         }
     }
 
-    /// <summary>
-    /// 把单槽位结算结果同步到顶部状态卡。
-    /// </summary>
     private void ApplyResolveInfo(ActionResolveInfo info)
     {
-        playerStateText.text = BuildStateText(currentRequest.PlayerName, info.PlayerHPAfter, info.PlayerEnergyAfter);
-        aiStateText.text = BuildStateText(currentRequest.AiName, info.AiHPAfter, info.AiEnergyAfter);
+        UpdatePipGroup(playerHpPips, info.PlayerHPAfter);
+        UpdatePipGroup(playerEnergyPips, info.PlayerEnergyAfter);
+        UpdatePipGroup(aiHpPips, info.AiHPAfter);
+        UpdatePipGroup(aiEnergyPips, info.AiEnergyAfter);
     }
 
-    /// <summary>
-    /// Controller 状态改变时刷新 UI。
-    /// 正在播放回合动画时不抢刷新，避免状态跳变破坏表现。
-    /// </summary>
     private void HandleBattleStateChanged(BattleModel snapshot)
     {
-        if (isAnimating || snapshot == null)
+        if (!isAnimating && snapshot != null)
         {
-            return;
+            RefreshState(snapshot);
         }
-
-        RefreshState(snapshot);
     }
 
-    /// <summary>
-    /// 先缓存结束结果，等 UI 播放到结束态时再统一消费。
-    /// </summary>
     private void HandleBattleEnded(BoboBattleSessionResult result)
     {
         lastEndedResult = result;
     }
 
-    /// <summary>
-    /// 用快照完整刷新顶部状态和草稿按钮区。
-    /// </summary>
     private void RefreshState(BattleModel snapshot)
     {
         if (snapshot == null || currentRequest == null)
@@ -441,132 +564,250 @@ public class BoboBattlePanel : MonoBehaviour
             return;
         }
 
-        roundText.text = "第" + snapshot.RoundIndex + "回合";
-        playerStateText.text = BuildStateText(currentRequest.PlayerName, snapshot.Player.HP, snapshot.Player.Energy);
-        aiStateText.text = BuildStateText(currentRequest.AiName, snapshot.AI.HP, snapshot.AI.Energy);
+        if (roundText != null) roundText.text = "第 " + snapshot.RoundIndex + " 回合";
+        if (playerNameText != null) playerNameText.text = currentRequest.PlayerName;
+        if (aiNameText != null) aiNameText.text = currentRequest.AiName;
+
+        UpdatePipGroup(playerHpPips, snapshot.Player.HP);
+        UpdatePipGroup(playerEnergyPips, snapshot.Player.Energy);
+        UpdatePipGroup(aiHpPips, snapshot.AI.HP);
+        UpdatePipGroup(aiEnergyPips, snapshot.AI.Energy);
         UpdateDraftUi();
     }
 
-    /// <summary>
-    /// 构造状态卡显示文本。
-    /// </summary>
-    private string BuildStateText(string displayName, int hp, int energy)
+    private void UpdatePipGroup(Image[] pips, int activeCount)
     {
-        return string.Format("{0}\nHP {1}  |  EN {2}", displayName, hp, energy);
+        if (pips == null) return;
+        for (int i = 0; i < pips.Length; i++)
+        {
+            if (pips[i] != null)
+            {
+                pips[i].color = i < activeCount ? pipEnabledColor : pipDisabledColor;
+            }
+        }
     }
 
-    /// <summary>
-    /// 玩家点击某个槽位动作按钮后的处理。
-    /// 这里会强制按顺序选槽，并实时做能量投影校验。
-    /// </summary>
-    private void SelectDraftAction(int slotIndex, ActionType actionType)
-    {
-        if (controller == null || controller.Model == null || controller.Model.IsFinished || isAnimating)
-        {
-            return;
-        }
-
-        if (!ArePreviousSlotsFilled(slotIndex))
-        {
-            UpdateStatus("请按顺序从前往后选择槽位行动。");
-            return;
-        }
-
-        int projectedEnergy = GetProjectedEnergyBeforeSlot(slotIndex);
-        if (!controller.RuleSystem.CanAffordAction(projectedEnergy, actionType))
-        {
-            UpdateStatus(string.Format("第{0}槽当前能量不足，无法选择{1}。", slotIndex + 1, actionType.GetDisplayName()));
-            return;
-        }
-
-        draftActions[slotIndex] = actionType;
-        // 如果改了前面的槽位，后面的能量前提就变了，因此必须清空后续选择。
-        for (int i = slotIndex + 1; i < BattlePlan.SlotCount; i++)
-        {
-            draftActions[i] = ActionType.None;
-        }
-
-        UpdateDraftUi();
-        UpdateStatus(string.Format("第{0}槽已设置为{1}。", slotIndex + 1, actionType.GetDisplayName()));
-    }
-
-    /// <summary>
-    /// 重置当前回合的玩家草稿。
-    /// clearAiPlan 为 true 时通常表示整局刚开始或重新开局。
-    /// </summary>
     private void ResetDraft(bool clearAiPlan)
     {
         for (int i = 0; i < BattlePlan.SlotCount; i++)
         {
             draftActions[i] = ActionType.None;
-            if (clearAiPlan && slotRows[i] != null)
+            if (clearAiPlan)
             {
-                slotRows[i].AiActionText.text = "AI：待锁定";
+                revealedAiActions[i] = ActionType.None;
+            }
+        }
+
+        selectedPaletteAction = ActionType.None;
+        focusedPlayerSlotIndex = 0;
+        resolvingSlotIndex = -1;
+        UpdateDraftUi();
+    }
+
+    private void UpdateDraftUi()
+    {
+        UpdateActionPaletteUi();
+        UpdatePlayerCardSlotsUi();
+        UpdateAiCardSlotsUi();
+
+        if (submitButton != null)
+        {
+            submitButton.interactable = controller != null &&
+                                        controller.Model != null &&
+                                        !controller.Model.IsFinished &&
+                                        !isAnimating &&
+                                        !new BattlePlan(draftActions).HasUnselectedSlot();
+        }
+    }
+
+    private void UpdateActionPaletteUi()
+    {
+        int targetSlotIndex = GetEffectiveFocusedSlotIndex();
+        int energyBefore = targetSlotIndex >= 0 ? GetProjectedEnergyBeforeSlot(targetSlotIndex) : 0;
+
+        for (int i = 0; i < actionButtons.Length; i++)
+        {
+            ActionButtonBinding binding = actionButtons[i];
+            if (binding == null || binding.Button == null) continue;
+
+            bool canUse = controller != null &&
+                          controller.Model != null &&
+                          !controller.Model.IsFinished &&
+                          !isAnimating &&
+                          targetSlotIndex >= 0 &&
+                          controller.RuleSystem.CanAffordAction(energyBefore, binding.ActionType);
+            bool isSelected = selectedPaletteAction == binding.ActionType;
+
+            binding.Button.interactable = canUse;
+            SetActionButtonColor(binding, isSelected);
+
+            if (binding.Label != null)
+            {
+                binding.Label.text = binding.ActionType.GetDisplayName();
+                binding.Label.fontStyle = isSelected ? FontStyles.Bold | FontStyles.UpperCase : FontStyles.Bold;
             }
 
-            HighlightSlot(i, false);
+            if (binding.SelectedFrame != null)
+            {
+                binding.SelectedFrame.gameObject.SetActive(isSelected);
+            }
+        }
+    }
+
+    private void UpdatePlayerCardSlotsUi()
+    {
+        for (int i = 0; i < playerCardSlots.Length; i++)
+        {
+            CardSlotBinding slot = playerCardSlots[i];
+            if (slot == null) continue;
+
+            ActionType actionType = draftActions[i];
+            bool isFocused = i == GetEffectiveFocusedSlotIndex() && !isAnimating;
+            bool isResolving = i == resolvingSlotIndex;
+
+            if (slot.Background != null)
+            {
+                slot.Background.color = isResolving ? resolvingCardColor : isFocused ? playerCardFocusColor : playerCardNormalColor;
+            }
+
+            if (slot.HighlightFrame != null)
+            {
+                slot.HighlightFrame.gameObject.SetActive(isFocused || isResolving);
+            }
+
+            if (slot.Button != null)
+            {
+                slot.Button.interactable = controller != null &&
+                                           controller.Model != null &&
+                                           !controller.Model.IsFinished &&
+                                           !isAnimating &&
+                                           IsSlotEditable(i);
+            }
+
+            if (slot.ActionText != null)
+            {
+                slot.ActionText.text = actionType == ActionType.None ? "未放置" : actionType.GetDisplayName();
+                slot.ActionText.color = actionType == ActionType.None ? new Color(1f, 1f, 1f, 0.55f) : Color.white;
+            }
+
+            if (slot.HiddenRoot != null) slot.HiddenRoot.SetActive(false);
+            ApplyCardActionVisual(slot, actionType);
+        }
+    }
+
+    private void UpdateAiCardSlotsUi()
+    {
+        for (int i = 0; i < aiCardSlots.Length; i++)
+        {
+            CardSlotBinding slot = aiCardSlots[i];
+            if (slot == null) continue;
+
+            bool revealed = revealedAiActions[i] != ActionType.None;
+            bool isResolving = i == resolvingSlotIndex;
+
+            if (slot.Background != null)
+            {
+                slot.Background.color = isResolving ? resolvingCardColor : revealed ? aiCardRevealColor : aiCardNormalColor;
+            }
+
+            if (slot.HighlightFrame != null)
+            {
+                slot.HighlightFrame.gameObject.SetActive(isResolving);
+            }
+
+            if (slot.HiddenRoot != null) slot.HiddenRoot.SetActive(!revealed);
+            if (slot.HiddenText != null) slot.HiddenText.text = aiHiddenSlotText;
+            if (slot.ActionText != null) slot.ActionText.text = revealed ? revealedAiActions[i].GetDisplayName() : string.Empty;
+
+            ApplyCardActionVisual(slot, revealed ? revealedAiActions[i] : ActionType.None);
+        }
+    }
+
+    private void RevealAiPlan(BattlePlan aiPlan)
+    {
+        for (int i = 0; i < BattlePlan.SlotCount; i++)
+        {
+            revealedAiActions[i] = aiPlan[i];
         }
 
         UpdateDraftUi();
     }
 
-    /// <summary>
-    /// 按当前草稿和能量预测结果刷新每个按钮的可用状态与高亮。
-    /// </summary>
-    private void UpdateDraftUi()
+    private void ApplyCardActionVisual(CardSlotBinding slot, ActionType actionType)
     {
-        for (int i = 0; i < BattlePlan.SlotCount; i++)
-        {
-            SlotRowRef row = slotRows[i];
-            if (row == null)
-            {
-                continue;
-            }
+        if (slot == null || slot.ActionIcon == null) return;
 
-            row.PlayerActionText.text = "玩家：" + draftActions[i].GetDisplayName();
-            bool slotEditable = controller != null &&
-                                controller.Model != null &&
-                                !controller.Model.IsFinished &&
-                                !isAnimating &&
-                                ArePreviousSlotsFilled(i);
-
-            int energyBefore = GetProjectedEnergyBeforeSlot(i);
-
-            for (int buttonIndex = 0; buttonIndex < row.ActionButtons.Count; buttonIndex++)
-            {
-                ActionButtonRef buttonRef = row.ActionButtons[buttonIndex];
-                bool canUseAction = slotEditable && controller.RuleSystem.CanAffordAction(energyBefore, buttonRef.ActionType);
-                bool isSelected = draftActions[i] == buttonRef.ActionType;
-
-                buttonRef.Button.interactable = canUseAction;
-                buttonRef.Background.color = isSelected
-                    ? BoboBattleUIFactory.Tint(buttonRef.ActionType.GetThemeColor(), 1.18f)
-                    : buttonRef.ActionType.GetThemeColor();
-                buttonRef.Label.fontStyle = isSelected ? FontStyles.Bold | FontStyles.UpperCase : FontStyles.Bold;
-            }
-        }
-
-        submitButton.interactable = controller != null &&
-                                    controller.Model != null &&
-                                    !controller.Model.IsFinished &&
-                                    !isAnimating &&
-                                    !new BattlePlan(draftActions).HasUnselectedSlot();
+        Sprite sprite = GetActionSprite(actionType);
+        slot.ActionIcon.sprite = sprite;
+        slot.ActionIcon.enabled = sprite != null && actionType != ActionType.None;
+        slot.ActionIcon.color = actionType == ActionType.None ? Color.clear : actionType.GetThemeColor();
     }
 
-    /// <summary>
-    /// 向玩家揭示 AI 本回合已经锁定的动作。
-    /// </summary>
-    private void ShowAiPlan(BattlePlan aiPlan)
+    private void ApplyActionVisual(ActionType actionType, Image iconImage, TextMeshProUGUI fallbackLabel)
     {
-        for (int i = 0; i < BattlePlan.SlotCount; i++)
+        if (iconImage == null) return;
+
+        Sprite sprite = GetActionSprite(actionType);
+        iconImage.sprite = sprite;
+        iconImage.enabled = sprite != null;
+
+        if (sprite == null && fallbackLabel != null)
         {
-            slotRows[i].AiActionText.text = "AI：" + aiPlan[i].GetDisplayName();
+            fallbackLabel.text = actionType.GetDisplayName();
         }
     }
 
-    /// <summary>
-    /// 当前槽位能否编辑，依赖前面的槽位是否都已经选好。
-    /// </summary>
+    private Sprite GetActionSprite(ActionType actionType)
+    {
+        for (int i = 0; i < actionVisuals.Length; i++)
+        {
+            if (actionVisuals[i] != null && actionVisuals[i].ActionType == actionType)
+            {
+                return actionVisuals[i].Sprite;
+            }
+        }
+
+        return null;
+    }
+
+    private void SetActionButtonColor(ActionButtonBinding binding, bool isSelected)
+    {
+        if (binding == null || binding.Background == null) return;
+
+        Color baseColor = binding.ActionType.GetThemeColor();
+        binding.Background.color = isSelected ? BoboBattleUIFactory.Tint(baseColor, 1.18f) : baseColor;
+    }
+
+    private int GetEffectiveFocusedSlotIndex()
+    {
+        if (IsSlotEditable(focusedPlayerSlotIndex))
+        {
+            return focusedPlayerSlotIndex;
+        }
+
+        return GetNextAssignableSlotIndex();
+    }
+
+    private int GetNextAssignableSlotIndex()
+    {
+        for (int i = 0; i < BattlePlan.SlotCount; i++)
+        {
+            if (draftActions[i] == ActionType.None && ArePreviousSlotsFilled(i))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private bool IsSlotEditable(int slotIndex)
+    {
+        return slotIndex >= 0 &&
+               slotIndex < BattlePlan.SlotCount &&
+               ArePreviousSlotsFilled(slotIndex);
+    }
+
     private bool ArePreviousSlotsFilled(int slotIndex)
     {
         for (int i = 0; i < slotIndex; i++)
@@ -580,10 +821,6 @@ public class BoboBattlePanel : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// 预测进入某一槽位之前，玩家应当拥有多少能量。
-    /// UI 会用它做本地预校验，避免玩家选完三槽后才发现中途能量不够。
-    /// </summary>
     private int GetProjectedEnergyBeforeSlot(int slotIndex)
     {
         if (controller == null || controller.Model == null || controller.Model.Player == null)
@@ -605,46 +842,37 @@ public class BoboBattlePanel : MonoBehaviour
         return energy;
     }
 
-    /// <summary>
-    /// 设置槽位高亮，用于结算播放时强调当前步骤。
-    /// </summary>
-    private void HighlightSlot(int slotIndex, bool highlighted)
-    {
-        if (slotIndex < 0 || slotIndex >= slotRows.Length || slotRows[slotIndex] == null)
-        {
-            return;
-        }
-
-        slotRows[slotIndex].Background.color = highlighted
-            ? new Color(0.17f, 0.28f, 0.40f, 0.98f)
-            : new Color(0.11f, 0.16f, 0.22f, 0.92f);
-    }
-
-    /// <summary>
-    /// 把 UI 切换到战斗结束态。
-    /// 结束后允许玩家重开，也允许直接关闭返回外层流程。
-    /// </summary>
     private void ApplyEndedState()
     {
         BoboBattleSessionResult result = lastEndedResult ?? controller.BuildSessionResult(false);
-        resultText.gameObject.SetActive(true);
-        resultText.text = GetResultText(result.Winner);
-        restartButton.gameObject.SetActive(true);
-        restartButton.interactable = true;
-        submitButton.interactable = false;
-        submitButtonText.text = "已结算";
+
+        if (resultText != null)
+        {
+            resultText.gameObject.SetActive(true);
+            resultText.text = GetResultText(result.Winner);
+        }
+
+        if (restartButton != null)
+        {
+            restartButton.gameObject.SetActive(true);
+            restartButton.interactable = true;
+        }
+
+        if (submitButton != null) submitButton.interactable = false;
+        if (submitButtonText != null) submitButtonText.text = "已结束";
+
         UpdateDraftUi();
 
         switch (result.Winner)
         {
             case BattleWinner.Player:
-                UpdateStatus("你赢下了这场波波攒对抗，可以关闭弹窗返回主流程，也可以立即再开一局。");
+                UpdateStatus("你赢下了这场对局，可以返回主流程，或直接再来一局。");
                 break;
             case BattleWinner.AI:
-                UpdateStatus("镜像 AI 取得胜利。可以直接关闭返回主流程，也可以再试一局。");
+                UpdateStatus("AI 赢下了这场对局，可以继续尝试新的组合。");
                 break;
             case BattleWinner.Draw:
-                UpdateStatus("双方同时倒下，判定为平局。");
+                UpdateStatus("双方同时倒下，本局判定为平局。");
                 break;
             default:
                 UpdateStatus("对局已结束。");
@@ -652,9 +880,6 @@ public class BoboBattlePanel : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 将胜负枚举转成结果标题。
-    /// </summary>
     private string GetResultText(BattleWinner winner)
     {
         switch (winner)
@@ -670,33 +895,19 @@ public class BoboBattlePanel : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 在当前请求参数下重新开始一局。
-    /// </summary>
     private void RestartBattle()
     {
-        if (currentRequest == null)
-        {
-            return;
-        }
-
+        if (currentRequest == null) return;
         StopRoundAnimation();
         Show(currentRequest);
     }
 
-    /// <summary>
-    /// 关闭按钮的行为：如果战斗未结束，按取消处理；否则按正常结束关闭。
-    /// </summary>
     private void OnCloseClicked()
     {
         bool shouldCancel = controller == null || controller.Model == null || !controller.Model.IsFinished;
         CompleteSession(shouldCancel);
     }
 
-    /// <summary>
-    /// 统一收口小游戏生命周期。
-    /// 这里会停止动画、隐藏 UI，并把结果回调给外层。
-    /// </summary>
     private void CompleteSession(bool wasCancelled)
     {
         if (sessionCompleted)
@@ -716,14 +927,11 @@ public class BoboBattlePanel : MonoBehaviour
 
         HideImmediate();
 
-        var callback = currentRequest != null ? currentRequest.OnCompleted : null;
+        Action<BoboBattleSessionResult> callback = currentRequest != null ? currentRequest.OnCompleted : null;
         currentRequest = null;
         callback?.Invoke(result);
     }
 
-    /// <summary>
-    /// 停掉正在播放的回合协程。
-    /// </summary>
     private void StopRoundAnimation()
     {
         if (roundAnimationCoroutine != null)
@@ -733,35 +941,36 @@ public class BoboBattlePanel : MonoBehaviour
         }
 
         isAnimating = false;
+        resolvingSlotIndex = -1;
     }
 
-    /// <summary>
-    /// 立即隐藏面板，但不销毁对象。
-    /// 这样后续再次打开时可以复用 UI 结构。
-    /// </summary>
     private void HideImmediate()
     {
-        canvasGroup.alpha = 0f;
-        canvasGroup.interactable = false;
-        canvasGroup.blocksRaycasts = false;
-        resultText.gameObject.SetActive(false);
-        restartButton.gameObject.SetActive(false);
-        submitButtonText.text = "锁定三槽";
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
+
+        if (resultText != null) resultText.gameObject.SetActive(false);
+        if (restartButton != null) restartButton.gameObject.SetActive(false);
+        if (submitButtonText != null) submitButtonText.text = "确定";
     }
 
-    /// <summary>
-    /// 刷新标题。
-    /// </summary>
     private void UpdateTitle()
     {
-        titleText.text = currentRequest != null ? currentRequest.Title : "波波攒对抗演练";
+        if (titleText != null)
+        {
+            titleText.text = currentRequest != null ? currentRequest.Title : "波波攒对抗演练";
+        }
+
+        if (playerNameText != null && currentRequest != null) playerNameText.text = currentRequest.PlayerName;
+        if (aiNameText != null && currentRequest != null) aiNameText.text = currentRequest.AiName;
     }
 
-    /// <summary>
-    /// 刷新底部状态说明。
-    /// </summary>
     private void UpdateStatus(string message)
     {
-        statusText.text = message;
+        if (statusText != null) statusText.text = message;
     }
 }

@@ -3,12 +3,17 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// 小游戏模块的服务入口。
-/// 它负责确保运行时有可用的宿主对象、弹窗节点和 EventSystem，
-/// 对外只暴露 Open / Close 这类简单接口，方便剧情系统或其他模块直接调用。
+/// 波波攒小游戏模块的服务入口。
+/// 负责：
+/// 1. 确保存在可用的宿主 Canvas / Popup 层；
+/// 2. 懒加载小游戏预制件；
+/// 3. 对外暴露统一的 Open / Close 接口。
+/// 这样剧情系统、调试入口、按钮入口都不需要关心 UI 是怎么实例化的。
 /// </summary>
 public class BoboBattleService : MonoBehaviour
 {
+    private const string PanelPrefabResourcePath = "BoboBattle/BoboBattlePanel";
+
     private static BoboBattleService instance;
 
     private BoboBattlePanel panel;
@@ -34,7 +39,7 @@ public class BoboBattleService : MonoBehaviour
     }
 
     /// <summary>
-    /// 保证服务是单例存在的，并且跨场景存活。
+    /// 保证服务以单例形式存在，并跨场景存活。
     /// </summary>
     private static BoboBattleService EnsureInstance()
     {
@@ -57,7 +62,6 @@ public class BoboBattleService : MonoBehaviour
 
     private void Awake()
     {
-        // 标准的运行时单例防重逻辑。
         if (instance == null)
         {
             instance = this;
@@ -77,9 +81,11 @@ public class BoboBattleService : MonoBehaviour
     private bool OpenInternal(BoboBattleRequest request)
     {
         EnsureEventSystem();
-        EnsurePanel();
+        if (!EnsurePanel())
+        {
+            return false;
+        }
 
-        // 当前小游戏已打开时不重复弹同一个面板，避免多层 UI 叠加。
         if (panel != null && panel.IsVisible)
         {
             return false;
@@ -90,33 +96,57 @@ public class BoboBattleService : MonoBehaviour
     }
 
     /// <summary>
-    /// 懒创建小游戏面板。
-    /// 这样首次进入相关剧情节点时才会生成 UI，平时不占场景层级。
+    /// 懒加载小游戏面板预制件。
+    /// 约定资源路径为：
+    /// Assets/Resources/BoboBattle/BoboBattlePanel.prefab
     /// </summary>
-    private void EnsurePanel()
+    private bool EnsurePanel()
     {
         if (panel != null)
         {
-            return;
+            return true;
         }
 
         Transform parent = ResolvePopupParent();
-        GameObject panelObject = new GameObject("BoboBattlePanelRoot", typeof(RectTransform), typeof(CanvasGroup));
-        RectTransform panelRect = panelObject.GetComponent<RectTransform>();
-        panelRect.SetParent(parent, false);
-        panelRect.anchorMin = Vector2.zero;
-        panelRect.anchorMax = Vector2.one;
-        panelRect.offsetMin = Vector2.zero;
-        panelRect.offsetMax = Vector2.zero;
+        BoboBattlePanel panelPrefab = Resources.Load<BoboBattlePanel>(PanelPrefabResourcePath);
+        if (panelPrefab == null)
+        {
+            Debug.LogError("[BoboBattleService] 未找到波波攒面板预制件，请确认路径为 Assets/Resources/BoboBattle/BoboBattlePanel.prefab。");
+            return false;
+        }
 
-        CanvasGroup canvasGroup = panelObject.GetComponent<CanvasGroup>();
-        panel = panelObject.AddComponent<BoboBattlePanel>();
-        panel.Initialize(canvasGroup);
+        panel = Instantiate(panelPrefab, parent, false);
+        panel.name = "BoboBattlePanel";
+
+        RectTransform panelRect = panel.transform as RectTransform;
+        if (panelRect != null)
+        {
+            panelRect.anchorMin = Vector2.zero;
+            panelRect.anchorMax = Vector2.one;
+            panelRect.offsetMin = Vector2.zero;
+            panelRect.offsetMax = Vector2.zero;
+            panelRect.localScale = Vector3.one;
+            panelRect.localRotation = Quaternion.identity;
+        }
+
+        CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = panel.gameObject.AddComponent<CanvasGroup>();
+        }
+
+        if (!panel.Initialize(canvasGroup))
+        {
+            Debug.LogError("[BoboBattleService] 波波攒面板初始化失败，请检查预制件引用是否完整。", panel);
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
-    /// 优先复用现有项目里的 PopupCanvas。
-    /// 如果项目里没有对应节点，再退化到任何可用 Canvas，最后才自己兜底创建。
+    /// 优先复用项目已有的 PopupCanvas。
+    /// 如果没有，再退化到任意 Canvas，最后才自己创建兜底 Canvas。
     /// </summary>
     private Transform ResolvePopupParent()
     {
@@ -153,8 +183,8 @@ public class BoboBattleService : MonoBehaviour
     }
 
     /// <summary>
-    /// 确保当前场景中存在 EventSystem。
-    /// 因为小游戏是运行时创建的弹窗，不能假定每个场景都已经配好了输入系统。
+    /// 确保当前场景存在 EventSystem。
+    /// 因为小游戏是运行时弹出，不能假设每个场景都预先配好了输入系统。
     /// </summary>
     private void EnsureEventSystem()
     {
