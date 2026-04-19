@@ -8,6 +8,8 @@ using UnityEngine;
 /// </summary>
 public class BattleRuleSystem
 {
+    public const int MaxEnergy = 3;
+
     /// <summary>
     /// 预检查一套三槽方案是否可执行。
     /// 这里不会改真实状态，只会沿着槽位顺序预测能量变化并检查动作是否可用。
@@ -23,7 +25,7 @@ public class BattleRuleSystem
             return false;
         }
 
-        int predictedEnergy = startingEnergy;
+        int predictedEnergy = ClampEnergy(startingEnergy);
 
         for (int i = 0; i < BattlePlan.SlotCount; i++)
         {
@@ -83,14 +85,23 @@ public class BattleRuleSystem
         switch (actionType)
         {
             case ActionType.Charge:
-                return currentEnergy + 1;
+                return ClampEnergy(currentEnergy + 1);
             case ActionType.Attack:
-                return currentEnergy - 1;
+                return ClampEnergy(currentEnergy - 1);
             case ActionType.Ultimate:
-                return currentEnergy - 3;
+                return ClampEnergy(currentEnergy - 3);
             default:
-                return currentEnergy;
+                return ClampEnergy(currentEnergy);
         }
+    }
+
+    /// <summary>
+    /// 统一约束能量区间。
+    /// 当前玩法的设计上限为 3，因此任何入口和结算结果都不应超过 3。
+    /// </summary>
+    public int ClampEnergy(int energy)
+    {
+        return Mathf.Clamp(energy, 0, MaxEnergy);
     }
 
     /// <summary>
@@ -147,8 +158,8 @@ public class BattleRuleSystem
         // 保险处理，避免极端情况下出现负血或负能量落到外层。
         player.HP = Mathf.Max(0, player.HP);
         ai.HP = Mathf.Max(0, ai.HP);
-        player.Energy = Mathf.Max(0, player.Energy);
-        ai.Energy = Mathf.Max(0, ai.Energy);
+        player.Energy = ClampEnergy(player.Energy);
+        ai.Energy = ClampEnergy(ai.Energy);
 
         info.PlayerHPAfter = player.HP;
         info.AiHPAfter = ai.HP;
@@ -195,7 +206,7 @@ public class BattleRuleSystem
     {
         if (actionType == ActionType.Charge)
         {
-            fighterState.Energy += 1;
+            fighterState.Energy = ClampEnergy(fighterState.Energy + 1);
         }
     }
 

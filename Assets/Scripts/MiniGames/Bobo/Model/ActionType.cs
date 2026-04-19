@@ -118,4 +118,25 @@ public static class ActionTypeExtensions
                 return new Color(0.36f, 0.39f, 0.46f);
         }
     }
+
+    /// <summary>
+    /// 返回动作在悬浮提示中的说明文本。
+    /// 这里统一维护动作文案，避免提示逻辑散落在各个 UI 组件里。
+    /// </summary>
+    public static string GetTooltipDescription(this ActionType actionType)
+    {
+        switch (actionType)
+        {
+            case ActionType.Charge:
+                return "攒气：本槽位获得1点能量，不造成伤害。常用于为后续槽位准备进攻或大招资源。";
+            case ActionType.Guard:
+                return "防御：本槽位抵挡一次攻击或大招，不消耗能量。若对方没有进攻，则本槽位只起到防守准备作用。";
+            case ActionType.Attack:
+                return "进攻：消耗1点能量，造成1点伤害。若双方同时出进攻，则本槽位互相抵消。";
+            case ActionType.Ultimate:
+                return "大招：消耗3点能量，造成3点伤害。若遇到防御会被格挡；若对方只是普通进攻，则按大招结算。";
+            default:
+                return "当前槽位尚未放置动作。";
+        }
+    }
 }

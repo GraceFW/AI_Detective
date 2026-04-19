@@ -1,27 +1,47 @@
-# Bobo Battle UI 预制件制作指南
+# Bobo Battle UI 预制件配置指南
 
-## 1. 当前 UI 架构已经升级到什么状态
+## 1. 当前这版 UI 支持什么
 
-现在的 `BoboBattlePanel` 已经不是旧版的“每个槽位里塞四个按钮”结构了，而是改成了真正适配你那张参考图的战斗面板模型：
+当前 `BoboBattlePanel` 已经支持下面这几类交互：
 
-- 左侧：全局动作栏 `ActionButtons`
-- 下方：玩家三张牌位 `PlayerCardSlots`
-- 上方：AI 三张牌位 `AiCardSlots`
-- 左上 / 右下：血量与能量圆饼 `PlayerHpPips / PlayerEnergyPips / AiHpPips / AiEnergyPips`
-- 顶部：标题、回合、角色名
-- 底部或中下：提示文本、结果文本、确认按钮、重开按钮
+- 左侧行动按钮点击选牌
+- 左侧行动按钮拖拽到玩家牌槽
+- 左侧行动按钮悬停提示
+- 玩家已放入牌槽的行动悬停提示
+- AI 牌槽悬停提示
+- 每回合结算后，玩家牌区和 AI 牌区同步重置显示
 
-运行入口和资源路径不变：
+对应脚本入口：
 
-- 入口：`BoboBattleService`
-- 面板脚本：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattlePanel.cs`
-- 预制件路径：`Assets/Resources/BoboBattle/BoboBattlePanel.prefab`
+- 面板主脚本：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattlePanel.cs`
+- 悬停提示代理：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleHoverTarget.cs`
+- 行动拖拽源：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleDragActionItem.cs`
+- 玩家牌槽拖拽落点：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleCardDropSlot.cs`
 
-只要 prefab 放到这个路径，并把 `BoboBattlePanel` 的 Inspector 字段绑完整，`BoboBattleService.Open(...)` 就能直接拉起。
+注意：
 
-## 2. 推荐层级
+- `BoboBattleHoverTarget`
+- `BoboBattleDragActionItem`
+- `BoboBattleCardDropSlot`
 
-建议你按下面这个层级来搭，和你给的草图基本是一一对应的：
+这三个辅助组件会由 `BoboBattlePanel` 在运行时自动补到对应 UI 节点上。
+也就是说，你通常不需要手动给按钮或卡槽一个个挂这些脚本。
+
+## 2. 预制件路径
+
+预制件仍然放在：
+
+`Assets/Resources/BoboBattle/BoboBattlePanel.prefab`
+
+小游戏服务仍通过：
+
+`BoboBattleService.Open(...)`
+
+去加载并显示这个 prefab。
+
+## 3. 推荐层级
+
+推荐继续保持这类层级：
 
 ```text
 BoboBattlePanel
@@ -36,13 +56,7 @@ BoboBattlePanel
 │  │  └─ CloseButton
 │  ├─ LeftTopStatus
 │  │  ├─ PlayerHpPips
-│  │  │  ├─ Hp_1
-│  │  │  ├─ Hp_2
-│  │  │  └─ Hp_3
 │  │  └─ PlayerEnergyPips
-│  │     ├─ En_1
-│  │     ├─ En_2
-│  │     └─ En_3
 │  ├─ LeftActionColumn
 │  │  ├─ ChargeButton
 │  │  ├─ GuardButton
@@ -60,59 +74,80 @@ BoboBattlePanel
 │  ├─ EnemyPortrait
 │  ├─ RightBottomStatus
 │  │  ├─ AiHpPips
-│  │  │  ├─ Hp_1
-│  │  │  ├─ Hp_2
-│  │  │  └─ Hp_3
 │  │  └─ AiEnergyPips
-│  │     ├─ En_1
-│  │     ├─ En_2
-│  │     └─ En_3
 │  ├─ ConfirmButton
-│  │  └─ Label
 │  ├─ RestartButton
 │  ├─ StatusText
 │  └─ ResultText
+└─ TooltipRoot
+   ├─ TooltipTitleText
+   └─ TooltipBodyText
 ```
 
-## 3. 每个区域建议怎么做
+## 4. 你现在必须新增的 UI 节点
 
-### 3.1 背景层
+相比上一版 prefab，这次建议你新增一个 tooltip 组：
 
-- `Blocker`：全屏半透明遮罩，挡住底层点击
-- `Background`：全屏背景图
-- `MainRoot`：真正承载战斗 UI 的根
+### 4.1 TooltipRoot
 
-建议：
+新建一个悬浮提示根节点，例如：
 
-- `Background` 用大图
-- `Blocker` 用低透明深色
-- 背景和立绘不要被布局组件强行挤压，尽量用手工锚点
+- `TooltipRoot`
 
-### 3.2 玩家状态区
+建议组件：
 
-放左上角，按你图里的样式做成两排圆饼：
+- `RectTransform`
+- `Image`
+- `CanvasGroup`
 
-- 第一排是 HP
-- 第二排是 Energy
+建议设置：
 
-`BoboBattlePanel` 会直接刷新这些 `Image` 的颜色亮灭，所以这里已经不需要再额外放隐藏文本兼容了。
+- 默认 `SetActive(false)`
+- 锚点建议居中或左上都可以
+- 尺寸建议先做成 `320 x 140` 左右
+- 背景图可以是深色半透明底
+- `Raycast Target` 建议关闭，避免挡住下面的按钮事件
 
-建议：
+### 4.2 TooltipTitleText
 
-- HP：红色系
-- Energy：蓝青色系
-- 未点亮状态：灰色或低透明
+挂在 `TooltipRoot` 下：
 
-### 3.3 左侧动作栏
+- `TextMeshProUGUI`
 
-放四个纵向方形按钮：
+用途：
 
-- `Charge`
-- `Guard`
-- `Attack`
-- `Ultimate`
+- 显示动作名或槽位标题
 
-每个按钮建议结构：
+### 4.3 TooltipBodyText
+
+挂在 `TooltipRoot` 下：
+
+- `TextMeshProUGUI`
+
+用途：
+
+- 显示动作说明或槽位状态说明
+
+## 5. 现有预制件需要保证的组件
+
+### 5.1 根节点
+
+`BoboBattlePanel` 根节点需要：
+
+- `RectTransform`
+- `CanvasGroup`
+- `BoboBattlePanel`
+
+并且它应当处于某个 `Canvas` 之下。
+
+### 5.2 左侧行动按钮
+
+每个行动按钮至少需要：
+
+- `Button`
+- `Image`
+
+推荐按钮子节点结构：
 
 ```text
 ChargeButton
@@ -122,26 +157,20 @@ ChargeButton
 └─ SelectedFrame
 ```
 
-说明：
+对应 `ActionButtonBinding` 字段：
 
-- `Bg` 绑定到 `ActionButtonBinding.Background`
-- `Icon` 绑定到 `ActionButtonBinding.IconImage`
-- `Label` 绑定到 `ActionButtonBinding.Label`
-- `SelectedFrame` 绑定到 `ActionButtonBinding.SelectedFrame`
+- `ActionType`
+- `Button`
+- `Background`
+- `IconImage`
+- `Label`
+- `SelectedFrame`
 
-当前交互方式是：
+### 5.3 玩家牌槽
 
-1. 点左边动作按钮
-2. 再点下方某一张玩家牌位
-3. 动作会被放入该牌位
+每个玩家牌槽必须有一个可点击对象，通常直接整张卡挂 `Button`。
 
-如果当前已经有聚焦牌位，点左边动作也会直接尝试填入。
-
-### 3.4 玩家牌区
-
-放中下位置，三张牌横排。
-
-每个牌位建议结构：
+推荐结构：
 
 ```text
 PlayerCardSlot_1
@@ -149,31 +178,23 @@ PlayerCardSlot_1
 ├─ Highlight
 ├─ ActionIcon
 ├─ ActionText
-├─ SlotIndexText
-└─ Button
+└─ SlotIndexText
 ```
 
-字段对应：
+对应 `CardSlotBinding` 字段：
 
-- `Button`：整个牌位的点击按钮
-- `CardBg`：绑定到 `Background`
-- `Highlight`：绑定到 `HighlightFrame`
-- `ActionIcon`：绑定到 `ActionIcon`
-- `ActionText`：绑定到 `ActionText`
-- `SlotIndexText`：绑定到 `SlotIndexText`
+- `Button`
+- `Background`
+- `HighlightFrame`
+- `ActionIcon`
+- `SlotIndexText`
+- `ActionText`
 
-当前脚本支持：
+玩家牌槽不需要 `HiddenRoot / HiddenText`。
 
-- 牌位默认显示“未放置”
-- 被选中的牌位高亮
-- 当前结算到的牌位高亮
-- 修改前面牌位时，后面牌位会自动清空
+### 5.4 AI 牌槽
 
-### 3.5 AI 牌区
-
-放右上，三张牌横排。
-
-结构和玩家牌位类似，但通常不需要 `Button`：
+推荐结构：
 
 ```text
 EnemyCardSlot_1
@@ -186,105 +207,7 @@ EnemyCardSlot_1
 └─ SlotIndexText
 ```
 
-说明：
-
-- 未确认前，`HiddenRoot` 会显示，通常放一个 `?`
-- 玩家确认后，AI 三张牌会揭示
-- 结算时会按 1 -> 2 -> 3 依次高亮
-
-### 3.6 AI 状态区
-
-放右下，与玩家状态区对角呼应。
-
-建议和玩家状态区保持完全一致：
-
-- 一排 HP
-- 一排 Energy
-
-### 3.7 立绘区
-
-建议：
-
-- 玩家立绘放中左偏下
-- AI 立绘放右下偏上
-- 立绘只做纯视觉，不需要绑 `BoboBattlePanel` 字段
-
-注意图层：
-
-- 背景最低
-- 立绘在中层
-- 牌区和按钮在立绘之上
-- 结果文本和关闭按钮最高
-
-### 3.8 底部交互区
-
-建议：
-
-- `ConfirmButton` 放中下偏右
-- `StatusText` 放按钮上方或旁边
-- `ResultText` 放画面中上，便于结束时提示
-- `RestartButton` 放在确认按钮附近，默认隐藏
-
-## 4. Inspector 绑定清单
-
-这是你在 Unity 里最需要照着绑的部分。
-
-### 4.1 Root
-
-- `Canvas Group`：根节点自己的 `CanvasGroup`
-
-### 4.2 Header
-
-- `Title Text`
-- `Round Text`
-- `Player Name Text`
-- `Ai Name Text`
-
-### 4.3 Status Pips
-
-- `Player Hp Pips`：绑定 3 个 HP 圆饼 `Image`
-- `Player Energy Pips`：绑定 3 个能量圆饼 `Image`
-- `Ai Hp Pips`：绑定 3 个 HP 圆饼 `Image`
-- `Ai Energy Pips`：绑定 3 个能量圆饼 `Image`
-
-### 4.4 Action Palette
-
-`Action Buttons` 数组里放 4 个元素，顺序建议就是：
-
-1. `Charge`
-2. `Guard`
-3. `Attack`
-4. `Ultimate`
-
-每个元素都要绑定：
-
-- `ActionType`
-- `Button`
-- `Background`
-- `IconImage`
-- `Label`
-- `SelectedFrame`
-
-### 4.5 Player Card Slots
-
-`Player Card Slots` 数组必须是 3 个。
-
-每个元素绑定：
-
-- `Button`
-- `Background`
-- `HighlightFrame`
-- `ActionIcon`
-- `SlotIndexText`
-- `ActionText`
-
-`HiddenRoot / HiddenText` 对玩家牌位通常可以留空。
-
-### 4.6 AI Card Slots
-
-`Ai Card Slots` 数组必须是 3 个。
-
-每个元素绑定：
+对应 `CardSlotBinding` 字段：
 
 - `Background`
 - `HighlightFrame`
@@ -294,25 +217,63 @@ EnemyCardSlot_1
 - `HiddenRoot`
 - `HiddenText`
 
-`Button` 对 AI 牌位可以不绑。
+AI 牌槽的 `Button` 可不绑。
+如果你也给 AI 卡槽挂了 `Button`，也没问题，悬停仍可工作。
 
-### 4.7 Action Visuals
+## 6. BoboBattlePanel Inspector 绑定清单
 
-如果你有动作图标，就在 `Action Visuals` 里加 4 个映射：
+下面这些是你需要在 `BoboBattlePanel` 组件上确认的字段。
 
-- `Charge -> sprite`
-- `Guard -> sprite`
-- `Attack -> sprite`
-- `Ultimate -> sprite`
+### 6.1 Root
 
-这样左侧动作栏和牌面 `ActionIcon` 都能自动复用。
+- `Canvas Group`
 
-如果你暂时没有 sprite，也没关系：
+### 6.2 Header
 
-- 左侧按钮会回退显示文字
-- 牌位也可以只显示 `ActionText`
+- `Title Text`
+- `Round Text`
+- `Player Name Text`
+- `Ai Name Text`
 
-### 4.8 Footer
+### 6.3 Status Pips
+
+- `Player Hp Pips`
+- `Player Energy Pips`
+- `Ai Hp Pips`
+- `Ai Energy Pips`
+
+每组都应该是 3 个 `Image`，并且顺序要正确。
+尤其要确认玩家能量豆中间那个引用不要再次绑到第一个豆，否则会出现“中间永远亮”的问题。
+
+### 6.4 Action Palette
+
+`Action Buttons` 数组固定 4 个，建议顺序：
+
+1. `Charge`
+2. `Guard`
+3. `Attack`
+4. `Ultimate`
+
+### 6.5 Player Card Slots
+
+`Player Card Slots` 数组固定 3 个，顺序必须和画面从左到右一致。
+
+### 6.6 AI Card Slots
+
+`Ai Card Slots` 数组固定 3 个，顺序必须和画面从左到右一致。
+
+### 6.7 Action Visuals
+
+如果玩家和 AI 使用不同图：
+
+- 为玩家图标配一组 `owner = Player`
+- 为 AI 图标配一组 `owner = AI`
+
+如果某动作只有一张通用图：
+
+- 可以使用 `owner = Shared`
+
+### 6.8 Footer
 
 - `Status Text`
 - `Result Text`
@@ -321,145 +282,120 @@ EnemyCardSlot_1
 - `Restart Button`
 - `Close Button`
 
-## 5. 推荐布局方式
+### 6.9 Tooltip
 
-这一版 UI 不建议用一个总的 `VerticalLayoutGroup` 自动排满全屏。
+这是这次新增的重点字段：
 
-更合适的是：
+- `Tooltip Root` 绑定到 `TooltipRoot`
+- `Tooltip Canvas Group` 绑定到 `TooltipRoot` 的 `CanvasGroup`
+- `Tooltip Title Text` 绑定到标题 TMP
+- `Tooltip Body Text` 绑定到正文 TMP
+- `Tooltip Offset` 视你的 UI 调整，默认可先用 `(26, -18)`
 
-- `MainRoot` 用手工锚点布局
-- 各个局部区域再用布局组件
+## 7. 拖拽功能的工作方式
 
-推荐用布局组件的地方：
+这次拖拽没有直接复用线索系统那套业务耦合逻辑，而是为 Bobo 单独做了轻量实现。
 
-- HP 圆饼一排：`HorizontalLayoutGroup`
-- Energy 圆饼一排：`HorizontalLayoutGroup`
-- 左侧动作栏：`VerticalLayoutGroup`
-- 玩家牌区：`HorizontalLayoutGroup`
-- AI 牌区：`HorizontalLayoutGroup`
+原因很简单：
 
-推荐手工锚点的地方：
+- 线索拖拽和 `ClueData`、特定投放目标接口耦合较深
+- Bobo 只需要“动作源 -> 卡槽”这类单一交互
+- 单独做一个轻量层，侵入更小，也更容易维护
 
-- `LeftTopStatus`
-- `LeftActionColumn`
-- `PlayerPortrait`
-- `EnemyPortrait`
-- `RightBottomStatus`
-- `ConfirmButton`
-- `StatusText`
-- `ResultText`
+现在的拖拽链路是：
 
-## 6. 字体和颜色建议
+1. 左侧行动按钮运行时自动挂上 `BoboBattleDragActionItem`
+2. 玩家牌槽运行时自动挂上 `BoboBattleCardDropSlot`
+3. 当你把左侧行动拖到玩家卡槽上时，面板会直接给该槽位写入对应 `ActionType`
+4. 之后仍会走原有的能量校验、顺序校验和后续槽位清空逻辑
 
-字体统一使用：
+所以你在 prefab 侧需要保证的只有两件事：
 
-`Msyh Fin (TMP_Font Asset)`
+- 左侧行动按钮是可响应事件的 `Button`
+- 玩家卡槽是可响应事件的 `Button`
 
-推荐字号：
+## 8. 悬浮提示的工作方式
 
-- 标题：28~32
-- 回合：22~26
-- 角色名：18~22
-- 按钮文字：20~24
-- 卡面动作文字：20~24
-- 提示文字：18~22
+悬浮提示现在覆盖三类对象：
 
-推荐配色：
+### 8.1 左侧行动按钮
 
-- 玩家阵营：蓝 / 青
-- AI 阵营：橙 / 红
-- 确认按钮：亮绿
-- 未激活圆饼：半透明灰白
+显示内容：
 
-## 7. 实际制作步骤
+- 行动名
+- 该行动的规则说明
 
-### 第一步
+### 8.2 玩家牌槽
 
-新建 UI 根节点 `BoboBattlePanel`，挂：
+如果该槽已经放牌：
 
-- `RectTransform`
-- `CanvasGroup`
-- `BoboBattlePanel`
+- 显示槽位标题
+- 显示当前行动的规则说明
 
-### 第二步
+如果该槽为空：
 
-创建：
+- 显示该槽是否可编辑
+- 提示可点击或拖拽放牌
 
-- `Blocker`
-- `Background`
-- `MainRoot`
+### 8.3 AI 牌槽
 
-都按全屏或主区域铺开。
+如果尚未揭示：
 
-### 第三步
+- 提示该牌仍然隐藏
 
-按层级创建：
+如果已经揭示：
 
-- `TopBar`
-- `LeftTopStatus`
-- `LeftActionColumn`
-- `PlayerPortrait`
-- `EnemyCardArea`
-- `PlayerCardArea`
-- `EnemyPortrait`
-- `RightBottomStatus`
-- `ConfirmButton`
-- `RestartButton`
-- `StatusText`
-- `ResultText`
+- 显示 AI 当前行动说明
 
-### 第四步
+## 9. 推荐布局细节
 
-做圆饼：
+### 9.1 左侧行动列
 
-- 左上两排 3 + 3
-- 右下两排 3 + 3
+- 使用 `VerticalLayoutGroup`
+- 四个按钮尺寸尽量一致
+- `Spacing` 建议 16 到 24
 
-### 第五步
+### 9.2 玩家牌区与 AI 牌区
 
-做左侧动作按钮 4 个。
+- 使用 `HorizontalLayoutGroup`
+- 3 个卡槽等宽
+- `Spacing` 建议 18 到 28
 
-### 第六步
+### 9.3 状态圆饼
 
-做玩家三牌位和 AI 三牌位。
+- HP 一排 3 个
+- Energy 一排 3 个
+- 各自使用 `HorizontalLayoutGroup`
 
-### 第七步
+### 9.4 TooltipRoot
 
-摆立绘和背景。
+建议不要放进会自动重新排版的位置组里。
+最好作为根节点下独立浮层，由脚本直接改 `anchoredPosition`。
 
-### 第八步
+## 10. 制作完成后的自测顺序
 
-回到 `BoboBattlePanel` Inspector，把字段按第 4 节全部绑完。
+你可以按这个顺序快速验收：
 
-### 第九步
+1. 打开小游戏面板
+2. 悬停左侧四个行动按钮，确认都能弹出不同提示
+3. 把任意行动拖到玩家第 1 槽，确认成功放入
+4. 再拖到第 2、3 槽，确认按顺序可放
+5. 悬停玩家已放入的牌，确认提示与动作一致
+6. 悬停 AI 牌槽，未揭示时应提示“隐藏中”
+7. 点击确认后，AI 三张牌揭示
+8. 回合结算完毕后，确认玩家牌槽和 AI 牌槽一起回到空状态
+9. 再次进入下一回合，确认拖拽与悬停仍然正常
 
-把 prefab 保存到：
+## 11. 这次你需要实际新增或确认的东西
 
-`Assets/Resources/BoboBattle/BoboBattlePanel.prefab`
+如果你已经有旧 prefab，这次最关键的改动只有这些：
 
-## 8. 现在这套 UI 的交互逻辑
+- 新增 `TooltipRoot`
+- 在 `TooltipRoot` 下新增 `TooltipTitleText`
+- 在 `TooltipRoot` 下新增 `TooltipBodyText`
+- 给 `TooltipRoot` 挂 `CanvasGroup`
+- 回到 `BoboBattlePanel` Inspector，把 Tooltip 区域的 4 个引用绑上
+- 检查所有玩家卡槽都绑定了 `Button`
+- 再检查玩家能量豆数组顺序是否正确
 
-你后面调试时可以按这个顺序验证：
-
-1. 打开小游戏
-2. 左上和右下圆饼显示初始状态
-3. 点击左侧动作按钮
-4. 点击下方玩家牌位，动作进入对应牌位
-5. 填满三张玩家牌后，点击“确定”
-6. 右上 AI 牌位揭示
-7. 按 1 -> 2 -> 3 逐张结算
-8. 圆饼随结算变化
-9. 对局结束后显示 `ResultText` 和 `RestartButton`
-
-## 9. 最后给你的工程建议
-
-现在这份代码和这份文档已经是同一套模型了，所以你可以直接开始做 prefab。
-
-最稳的做法是：
-
-- 先不追求一步到位的美术精修
-- 先按绑定结构把一个可运行 prefab 搭出来
-- 跑通交互和结算
-- 再逐步替换背景、立绘、按钮图、卡槽边框、动作 sprite
-
-这样节奏最稳，也最不容易在 UI 细节里卡很久。
+除此之外，拖拽和悬停辅助脚本会在运行时自动补齐，不要求你手工挂满。

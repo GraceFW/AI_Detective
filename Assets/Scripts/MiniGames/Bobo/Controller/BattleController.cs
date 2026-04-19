@@ -47,9 +47,11 @@ public class BattleController
     /// </summary>
     public void StartNewBattle(string playerName, string aiName, int startingHp, int startingEnergy)
     {
+        int normalizedEnergy = RuleSystem != null ? RuleSystem.ClampEnergy(startingEnergy) : Mathf.Clamp(startingEnergy, 0, BattleRuleSystem.MaxEnergy);
+
         Model = new BattleModel();
-        Model.Player = new FighterState(playerName, startingHp, startingEnergy);
-        Model.AI = new FighterState(aiName, startingHp, startingEnergy);
+        Model.Player = new FighterState(playerName, startingHp, normalizedEnergy);
+        Model.AI = new FighterState(aiName, startingHp, normalizedEnergy);
         Model.RoundIndex = 1;
         Model.IsFinished = false;
         Model.Winner = BattleWinner.None;
