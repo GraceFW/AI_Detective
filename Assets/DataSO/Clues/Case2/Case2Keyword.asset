@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a4e1a08df99db47b344219735b3174, type: 3}
+  m_Name: Case2Keyword
+  m_EditorClassIdentifier: 
+  keywords:
+  - term: "\u677E\u4E95\u65E9\u82D7"
+    revealsClue: {fileID: 11400000, guid: 95f7e7911c9e254408ef68d958d9b458, type: 2}
+  - term: "\u5496\u5561\u676F"
+    revealsClue: {fileID: 11400000, guid: 18c8d410869a5034ead3a727ac4adc6e, type: 2}
+  - term: "\u7A7A\u5496\u5561\u676F"
+    revealsClue: {fileID: 11400000, guid: 70c2e39ee0f338046a9fca4a4b2d3c4c, type: 2}
+  - term: "\u677E\u4E95\u77F3\u6839"
+    revealsClue: {fileID: 11400000, guid: 8b338377abe23e14d87780ff857ce5d7, type: 2}
+  - term: "\u51AC\u9A6C\u88D5\u4ECB"
+    revealsClue: {fileID: 11400000, guid: 1b1049098f6931c45969f49399b28c49, type: 2}
+  - term: "\u82A5\u826F\u592B"
+    revealsClue: {fileID: 11400000, guid: 262e9d31b28c87f4b8fe18e06aa693ba, type: 2}
+  - term: "\u725B\u4ED3\u9A6C\u592B"
+    revealsClue: {fileID: 11400000, guid: e584e81da617f5246b0ed0b0e90d43b1, type: 2}
+  - term: "\u73B0\u573A\u52D8\u5BDF\u62A5\u544A"
+    revealsClue: {fileID: 11400000, guid: 4c5cb59e06fadce43a56adc4267f6393, type: 2}
+  - term: "\u5C38\u68C0\u62A5\u544A"
+    revealsClue: {fileID: 11400000, guid: 84ab7165ee37b4648b446110afb8e98d, type: 2}
+  - term: "\u512A\u54C1\u5802"
+    revealsClue: {fileID: 11400000, guid: efca99e4445ef464ba0ad779bf4ba4f4, type: 2}
+  - term: "\u5BCC\u5DDDJP\u5854"
+    revealsClue: {fileID: 11400000, guid: 8d5e2b5860b411e42a13373be85fe267, type: 2}
+  - term: "\u91C7\u8D2D\u90E8\u529E\u516C\u5BA4"
+    revealsClue: {fileID: 11400000, guid: 0a7db88cebc1c2f46812a0da22ce0e9b, type: 2}
+  - term: "\u603B\u52A1\u90E8"
+    revealsClue: {fileID: 11400000, guid: 0a7db88cebc1c2f46812a0da22ce0e9b, type: 2}
+  - term: "\u4E8B\u4E1A\u90E8"
+    revealsClue: {fileID: 11400000, guid: 7893eed2161cecf4ab2544cf50a5909c, type: 2}
+  - term: "\u91C7\u8D2D\u90E8"
+    revealsClue: {fileID: 11400000, guid: b10b00cc0d4186249a62696f2bfdcef4, type: 2}
+  - term: "\u6863\u6848\u5BA4"
+    revealsClue: {fileID: 11400000, guid: ad0141cc1dde6ee448d3d7b94b74e893, type: 2}
+  - term: "\u673A\u623F"
+    revealsClue: {fileID: 11400000, guid: 1063d73e64a836d409c58d69413cd62f, type: 2}
+  - term: "\u6B7B\u4EA1\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: 096d0509299243943bd38689caff0d84, type: 2}
+  - term: "\u62A5\u6848\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: 058d4d8ee0a2c3e45b9b3f05245dc704, type: 2}
+  - term: "\u4E24\u4EFD\u5408\u540C"
+    revealsClue: {fileID: 11400000, guid: 08c7fb05769a50e4ea982c24217bb65b, type: 2}
+  - term: "\u6B7B\u8005\u7684\u624B\u673A"
+    revealsClue: {fileID: 11400000, guid: 0f597436025c0de44982723459239fd2, type: 2}
+  - term: "\u7EAA\u5FF5\u7167"
+    revealsClue: {fileID: 11400000, guid: 1d75b73fd6ce9134db70790951c6800d, type: 2}
+  - term: "\u4FDD\u6E29\u676F"
+    revealsClue: {fileID: 11400000, guid: 14ccad0be4ce68947a79efd690463a92, type: 2}
+  - term: "\u5496\u5561\u6E0D"
+    revealsClue: {fileID: 11400000, guid: caa9d1d3c07aee64083e5a8a17a8c706, type: 2}
+  - term: "\u63D0\u5305"
+    revealsClue: {fileID: 11400000, guid: b6fd833f078c79344b8eb7882cc1b623, type: 2}
+  - term: "\u665A\u996D\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: ff9327d0ee0d9454693be54815e1d9ca, type: 2}
+  - term: "\u95E8\u7981"
+    revealsClue: {fileID: 11400000, guid: afa38cfa68a6ec549ba631f5e506732b, type: 2}
+  - term: "\u4FBF\u5F53"
+    revealsClue: {fileID: 11400000, guid: d7a985789ae34e249ad378f79317817d, type: 2}
+  - term: "\u6D88\u8D39\u8BB0\u5F55"
+    revealsClue: {fileID: 11400000, guid: 304c4a612597e2b4182331bfa2a270c4, type: 2}
+  - term: "\u624B\u5E15"
+    revealsClue: {fileID: 11400000, guid: ca3dea0d70259fa41b125b06cec483e5, type: 2}
+  - term: "\u90AE\u4EF6"
+    revealsClue: {fileID: 11400000, guid: e6fae6259ee8ed74c9b19b0c68cea0cc, type: 2}
+  - term: "\u8336\u6C34\u95F4\u63A5\u543B"
+    revealsClue: {fileID: 11400000, guid: da2f84cfc98036a4cb3e978e88173d77, type: 2}
+  - term: "\u635F\u574F\u7684\u95E8"
+    revealsClue: {fileID: 11400000, guid: 452e9475fdbb6724ea39a1ec8879e1c9, type: 2}
+  - term: "\u672C\u95F4\u7EB8\u696D"
+    revealsClue: {fileID: 11400000, guid: 5326b9366f0fd424eb173dca796eee1f, type: 2}
+  - term: "\u95E8\u6253\u4E0D\u5F00"
+    revealsClue: {fileID: 11400000, guid: 219f1eca6ad533c41b02784021a89b2e, type: 2}
+  - term: "\u804A\u5929\u8BB0\u5F55"
+    revealsClue: {fileID: 11400000, guid: 03142746ba52c6146a38dd477ce79505, type: 2}
+  - term: "\u5DE5\u85E4\u65B0\u4E00"
+    revealsClue: {fileID: 11400000, guid: 87adc4ca08b3f144a8792fcd83cb343c, type: 2}
+  - term: "\u9ED1\u7FBD\u5FEB\u6597"
+    revealsClue: {fileID: 11400000, guid: c64c619dd091b20488103546deb649c1, type: 2}
+  - term: "\u529E\u516C\u5BA4\u6444\u50CF\u5934"
+    revealsClue: {fileID: 11400000, guid: fca487be7e70ead48bae792c7a24be4c, type: 2}
+  - term: "\u6863\u6848\u5BA4\u6444\u50CF\u5934"
+    revealsClue: {fileID: 11400000, guid: fef484cd4e1b98b4495360f7c8e43713, type: 2}
+  - term: "\u8336\u6C34\u95F4\u6444\u50CF\u5934"
+    revealsClue: {fileID: 11400000, guid: ef64e69e41b4311479229bb35edf91e2, type: 2}

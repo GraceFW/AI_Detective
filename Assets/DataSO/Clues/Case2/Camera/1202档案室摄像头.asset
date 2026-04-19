@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0cbeb00849e6e844a21966c127b1526, type: 3}
+  m_Name: "1202\u6863\u6848\u5BA4\u6444\u50CF\u5934"
+  m_EditorClassIdentifier: 
+  id: 1202
+  displayName: "\u6863\u6848\u5BA4\u6444\u50CF\u5934"
+  detectable: 1
+  collectable: 1
+  collected: 1
+  attackKey: 
+  isAttackContentUnlocked: 0
+  showAttackContentDirectly: 1
+  attackUnlockContent: 
+  summary: "\u5728\u91C7\u8D2D\u90E8\u529E\u516C\u5BA4\u9644\u8FD1\u5929\u82B1\u677F\u4E0A\u4F38\u51FA\u7684\u4E00\u4E2A\u6444\u50CF\u5934\uFF0C\u53EF\u4EE5\u770B\u5230\u793E\u957F\u5BA4\u3001\u6863\u6848\u5BA4\u4EE5\u53CA\u5395\u6240\u65B9\u5411\u7684\u4EBA\u5458\u8FDB\u51FA\u60C5\u51B5\u3002"
+  detailText: 
+  Detail_Mark: 
+  defaultImage: {fileID: 21300000, guid: b0c0750354fad6746bdf9360c57a4dfd, type: 3}
+  defaultAreas:
+  - rect:
+      serializedVersion: 2
+      x: 0.52
+      y: 0.8
+      width: 0.15
+      height: 0.2
+    reveals: {fileID: 11400000, guid: fca487be7e70ead48bae792c7a24be4c, type: 2}
+  frames:
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 25
+    endTime:
+      day: 4
+      hour: 17
+      minute: 25
+    image: {fileID: 21300000, guid: afa21d0f40696a741bc4a164c6c29a98, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 0.8
+      reveals: {fileID: 11400000, guid: ae4782eb8a2649d45a2a69bf4a516cbd, type: 2}
+    - rect:
+        serializedVersion: 2
+        x: 0.52
+        y: 0.8
+        width: 0.15
+        height: 0.2
+      reveals: {fileID: 11400000, guid: fca487be7e70ead48bae792c7a24be4c, type: 2}
+  - startTime:
+      day: 4
+      hour: 17
+      minute: 42
+    endTime:
+      day: 4
+      hour: 17
+      minute: 42
+    image: {fileID: 21300000, guid: 5da437e08ebf9dd44b216506910bee90, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0.3
+        width: 1
+        height: 0.7
+      reveals: {fileID: 11400000, guid: a78353470b7c1a84d9f7c109fea30633, type: 2}
+    - rect:
+        serializedVersion: 2
+        x: 0.72
+        y: 0.15
+        width: 0.1
+        height: 0.15
+      reveals: {fileID: 11400000, guid: b6fd833f078c79344b8eb7882cc1b623, type: 2}
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0.1
+        width: 0.6
+        height: 0.2
+      reveals: {fileID: 11400000, guid: a78353470b7c1a84d9f7c109fea30633, type: 2}
+    - rect:
+        serializedVersion: 2
+        x: 0.52
+        y: 0.8
+        width: 0.15
+        height: 0.2
+      reveals: {fileID: 11400000, guid: fca487be7e70ead48bae792c7a24be4c, type: 2}
