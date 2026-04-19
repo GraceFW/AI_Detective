@@ -1910,7 +1910,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 4
+  m_ChildAlignment: 3
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -2797,7 +2797,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 4
+  m_ChildAlignment: 0
   m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -4452,7 +4452,15 @@ MonoBehaviour:
     actionText: {fileID: 2737518020376814428}
     hiddenRoot: {fileID: 5000896536148158753}
     hiddenText: {fileID: 1285553314740167239}
-  actionVisuals: []
+  actionVisuals:
+  - actionType: 1
+    sprite: {fileID: 21300000, guid: 18ea0f72571448444a517d51482c61bb, type: 3}
+  - actionType: 2
+    sprite: {fileID: 21300000, guid: 779845d306aa9b249a0327e16ca74175, type: 3}
+  - actionType: 3
+    sprite: {fileID: 21300000, guid: b5e979a1c4696c543afd643d51de248b, type: 3}
+  - actionType: 4
+    sprite: {fileID: 21300000, guid: bc2cd17d324b0e94292ba52367d0f2fd, type: 3}
   statusText: {fileID: 489617233617551757}
   resultText: {fileID: 1776450373270145915}
   submitButton: {fileID: 7818687911190261616}

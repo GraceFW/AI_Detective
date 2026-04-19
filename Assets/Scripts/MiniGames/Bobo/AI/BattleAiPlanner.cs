@@ -21,7 +21,7 @@ public class BattleAiPlanner
     /// <summary>
     /// 最终只在前几名中随机选，保证“有脑子但不完美”。
     /// </summary>
-    private const int TopPoolCount = 3;
+    private const int TopPoolCount = 6;
 
     private readonly BattleRuleSystem ruleSystem;
     private readonly BattleSimulator simulator;
