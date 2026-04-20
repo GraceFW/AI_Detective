@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -67,6 +66,53 @@ public class BoboBattlePanel : MonoBehaviour
         public Sprite Sprite => sprite;
     }
 
+    private enum TooltipSourceType
+    {
+        ActionPalette = 0,
+        PlayerSlot = 1,
+        AiSlot = 2
+    }
+
+    private enum TooltipPlacement
+    {
+        Right = 0,
+        Left = 1,
+        Above = 2,
+        Below = 3
+    }
+
+    [Serializable]
+    private class TooltipTextConfig
+    {
+        [SerializeField] private string title;
+        [SerializeField] [TextArea(2, 5)] private string body;
+
+        public string Title => title;
+        public string Body => body;
+    }
+
+    [Serializable]
+    private class ActionTooltipBinding
+    {
+        [SerializeField] private ActionType actionType = ActionType.None;
+        [SerializeField] private TooltipTextConfig content = new TooltipTextConfig();
+
+        public ActionType ActionType => actionType;
+        public TooltipTextConfig Content => content;
+    }
+
+    [Serializable]
+    private class TooltipPlacementBinding
+    {
+        [SerializeField] private TooltipSourceType sourceType = TooltipSourceType.ActionPalette;
+        [SerializeField] private TooltipPlacement placement = TooltipPlacement.Right;
+        [SerializeField] private Vector2 offset = new Vector2(26f, -18f);
+
+        public TooltipSourceType SourceType => sourceType;
+        public TooltipPlacement Placement => placement;
+        public Vector2 Offset => offset;
+    }
+
     [Header("Root")]
     [SerializeField] private CanvasGroup canvasGroup;
 
@@ -105,7 +151,13 @@ public class BoboBattlePanel : MonoBehaviour
     [SerializeField] private CanvasGroup tooltipCanvasGroup;
     [SerializeField] private TextMeshProUGUI tooltipTitleText;
     [SerializeField] private TextMeshProUGUI tooltipBodyText;
-    [SerializeField] private Vector2 tooltipOffset = new Vector2(26f, -18f);
+    [SerializeField] private TooltipAutoSize tooltipAutoSize;
+    [SerializeField] private ActionTooltipBinding[] actionTooltipContents = new ActionTooltipBinding[0];
+    [SerializeField] private ActionTooltipBinding[] aiActionTooltipContents = new ActionTooltipBinding[0];
+    [SerializeField] private TooltipTextConfig playerEditableEmptySlotTooltip = new TooltipTextConfig();
+    [SerializeField] private TooltipTextConfig playerLockedEmptySlotTooltip = new TooltipTextConfig();
+    [SerializeField] private TooltipTextConfig aiHiddenSlotTooltip = new TooltipTextConfig();
+    [SerializeField] private TooltipPlacementBinding[] tooltipPlacements = new TooltipPlacementBinding[0];
 
     [Header("Theme")]
     [SerializeField] private Color playerCardNormalColor = new Color(0.11f, 0.16f, 0.22f, 0.92f);
@@ -120,6 +172,11 @@ public class BoboBattlePanel : MonoBehaviour
     [SerializeField] private bool autoApplyPreferredFont = true;
     [SerializeField] private bool logBindingWarnings = true;
     [SerializeField] private string aiHiddenSlotText = "?";
+
+    [Header("Round Presentation")]
+    [SerializeField] private float engagementRevealLeadDelay = 0.2f;
+    [SerializeField] private float engagementReadDuration = 1.75f;
+    [SerializeField] private float engagementTransitionDelay = 0.45f;
 
     private readonly ActionType[] draftActions = new ActionType[BattlePlan.SlotCount];
     private readonly ActionType[] revealedAiActions = new ActionType[BattlePlan.SlotCount];
@@ -307,10 +364,10 @@ public class BoboBattlePanel : MonoBehaviour
 
         BoboBattleHoverTarget hoverTarget = EnsureComponent<BoboBattleHoverTarget>(binding.Button.gameObject);
         hoverTarget.Configure(
-            () => binding.ActionType.GetDisplayName(),
-            () => binding.ActionType.GetTooltipDescription(),
-            ShowTooltip,
-            MoveTooltip,
+            () => GetActionTooltipTitle(binding.ActionType, TooltipSourceType.ActionPalette),
+            () => GetActionTooltipBody(binding.ActionType, TooltipSourceType.ActionPalette),
+            (title, body, target) => ShowTooltip(title, body, target, TooltipSourceType.ActionPalette),
+            target => MoveTooltip(target, TooltipSourceType.ActionPalette),
             HideTooltip);
     }
 
@@ -343,8 +400,8 @@ public class BoboBattlePanel : MonoBehaviour
         hoverTarget.Configure(
             () => BuildPlayerSlotTooltipTitle(slotIndex),
             () => BuildPlayerSlotTooltipBody(slotIndex),
-            ShowTooltip,
-            MoveTooltip,
+            (title, body, target) => ShowTooltip(title, body, target, TooltipSourceType.PlayerSlot),
+            target => MoveTooltip(target, TooltipSourceType.PlayerSlot),
             HideTooltip);
     }
 
@@ -378,8 +435,8 @@ public class BoboBattlePanel : MonoBehaviour
         hoverTarget.Configure(
             () => BuildAiSlotTooltipTitle(slotIndex),
             () => BuildAiSlotTooltipBody(slotIndex),
-            ShowTooltip,
-            MoveTooltip,
+            (title, body, target) => ShowTooltip(title, body, target, TooltipSourceType.AiSlot),
+            target => MoveTooltip(target, TooltipSourceType.AiSlot),
             HideTooltip);
     }
 
@@ -593,6 +650,13 @@ public class BoboBattlePanel : MonoBehaviour
             return false;
         }
 
+        if (!controller.RuleSystem.CanPlaceActionInDraft(draftActions, slotIndex, actionType, out string placementError))
+        {
+            UpdateStatus(placementError);
+            UpdateDraftUi();
+            return false;
+        }
+
         int projectedEnergy = GetProjectedEnergyBeforeSlot(slotIndex);
         if (!controller.RuleSystem.CanAffordAction(projectedEnergy, actionType))
         {
@@ -635,8 +699,6 @@ public class BoboBattlePanel : MonoBehaviour
             return;
         }
 
-        RevealAiPlan(roundResult.AIPlan);
-
         if (submitButton != null) submitButton.interactable = false;
         if (closeButton != null) closeButton.interactable = false;
         if (restartButton != null) restartButton.interactable = false;
@@ -653,13 +715,20 @@ public class BoboBattlePanel : MonoBehaviour
         {
             ActionResolveInfo info = roundResult.SlotInfos[i];
             resolvingSlotIndex = info.SlotIndex;
+            RevealAiAction(info.SlotIndex, roundResult.AIPlan[info.SlotIndex]);
             UpdateDraftUi();
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(engagementRevealLeadDelay);
             ApplyResolveInfo(info);
-            UpdateStatus(info.Summary);
-            yield return new WaitForSeconds(0.65f);
+            UpdateStatus(BuildEngagementStatus(info));
+            yield return new WaitForSeconds(engagementReadDuration);
             resolvingSlotIndex = -1;
             UpdateDraftUi();
+
+            bool hasNextEngagement = i < roundResult.SlotInfos.Count - 1 && !info.BattleEndedAfterSlot;
+            if (hasNextEngagement)
+            {
+                yield return new WaitForSeconds(engagementTransitionDelay);
+            }
         }
 
         roundAnimationCoroutine = null;
@@ -685,6 +754,66 @@ public class BoboBattlePanel : MonoBehaviour
         UpdatePipGroup(playerEnergyPips, info.PlayerEnergyAfter);
         UpdatePipGroup(aiHpPips, info.AiHPAfter);
         UpdatePipGroup(aiEnergyPips, info.AiEnergyAfter);
+    }
+
+    private string BuildEngagementStatus(ActionResolveInfo info)
+    {
+        if (info == null)
+        {
+            return string.Empty;
+        }
+
+        return string.Format(
+            "标题：当前回合第{0}次交手\n玩家行动：{1}\nAI行动：{2}\n结果：{3}",
+            info.SlotIndex + 1,
+            FormatStatusAction(info.PlayerSelectedAction, info.PlayerExecutedAction, info.PlayerFailedByEnergy),
+            FormatStatusAction(info.AiSelectedAction, info.AiExecutedAction, info.AiFailedByEnergy),
+            BuildEngagementResultText(info));
+    }
+
+    private string FormatStatusAction(ActionType selectedAction, ActionType executedAction, bool failedByEnergy)
+    {
+        if (failedByEnergy)
+        {
+            return string.Format("{0}（能量不足，未成功执行）", selectedAction.GetDisplayName());
+        }
+
+        if (selectedAction != executedAction && executedAction != ActionType.None)
+        {
+            return string.Format("{0}（实际执行：{1}）", selectedAction.GetDisplayName(), executedAction.GetDisplayName());
+        }
+
+        if (selectedAction != executedAction && executedAction == ActionType.None)
+        {
+            return string.Format("{0}（未成功执行）", selectedAction.GetDisplayName());
+        }
+
+        return selectedAction.GetDisplayName();
+    }
+
+    private string BuildEngagementResultText(ActionResolveInfo info)
+    {
+        if (!string.IsNullOrEmpty(info.Summary))
+        {
+            return info.Summary;
+        }
+
+        if (info.DamageToAI > 0 || info.DamageToPlayer > 0)
+        {
+            return string.Format("玩家受到 {0} 点伤害，AI 受到 {1} 点伤害。", info.DamageToPlayer, info.DamageToAI);
+        }
+
+        if (info.PlayerBlocked || info.AiBlocked)
+        {
+            return "本次交手出现了格挡，伤害被成功拦下。";
+        }
+
+        if (info.PlayerActionCancelled || info.AiActionCancelled)
+        {
+            return "本次交手中双方行动发生抵消，没有造成有效伤害。";
+        }
+
+        return "本次交手结束，双方状态已更新。";
     }
 
     private void HandleBattleStateChanged(BattleModel snapshot)
@@ -778,7 +907,8 @@ public class BoboBattlePanel : MonoBehaviour
                           !controller.Model.IsFinished &&
                           !isAnimating &&
                           targetSlotIndex >= 0 &&
-                          controller.RuleSystem.CanAffordAction(energyBefore, binding.ActionType);
+                          controller.RuleSystem.CanAffordAction(energyBefore, binding.ActionType) &&
+                          controller.RuleSystem.CanPlaceActionInDraft(draftActions, targetSlotIndex, binding.ActionType, out _);
             bool isSelected = selectedPaletteAction == binding.ActionType;
 
             binding.Button.interactable = canUse;
@@ -864,6 +994,16 @@ public class BoboBattlePanel : MonoBehaviour
 
             ApplyCardActionVisual(slot, revealed ? revealedAiActions[i] : ActionType.None, ActionVisualOwner.AI);
         }
+    }
+
+    private void RevealAiAction(int slotIndex, ActionType actionType)
+    {
+        if (slotIndex < 0 || slotIndex >= BattlePlan.SlotCount)
+        {
+            return;
+        }
+
+        revealedAiActions[slotIndex] = actionType;
     }
 
     private void RevealAiPlan(BattlePlan aiPlan)
@@ -1112,6 +1252,7 @@ public class BoboBattlePanel : MonoBehaviour
         if (resultText != null) resultText.gameObject.SetActive(false);
         if (restartButton != null) restartButton.gameObject.SetActive(false);
         if (submitButtonText != null) submitButtonText.text = "确定";
+        HideTooltip();
     }
 
     private void EnsureTooltipCanvasGroup()
@@ -1130,11 +1271,23 @@ public class BoboBattlePanel : MonoBehaviour
         {
             tooltipCanvasGroup = tooltipRoot.gameObject.AddComponent<CanvasGroup>();
         }
+
+        if (tooltipAutoSize == null)
+        {
+            tooltipAutoSize = tooltipRoot.GetComponent<TooltipAutoSize>();
+        }
+
+        if (tooltipAutoSize == null)
+        {
+            tooltipAutoSize = tooltipRoot.gameObject.AddComponent<TooltipAutoSize>();
+        }
+
+        tooltipAutoSize.Configure(tooltipRoot, tooltipTitleText, tooltipBodyText);
     }
 
-    private void ShowTooltip(string title, string body, PointerEventData eventData)
+    private void ShowTooltip(string title, string body, RectTransform target, TooltipSourceType sourceType)
     {
-        if (tooltipRoot == null)
+        if (tooltipRoot == null || target == null)
         {
             return;
         }
@@ -1155,12 +1308,16 @@ public class BoboBattlePanel : MonoBehaviour
         tooltipCanvasGroup.alpha = 1f;
         tooltipCanvasGroup.blocksRaycasts = false;
         tooltipCanvasGroup.interactable = false;
-        MoveTooltip(eventData);
+        if (tooltipAutoSize != null)
+        {
+            tooltipAutoSize.RefreshLayout();
+        }
+        MoveTooltip(target, sourceType);
     }
 
-    private void MoveTooltip(PointerEventData eventData)
+    private void MoveTooltip(RectTransform target, TooltipSourceType sourceType)
     {
-        if (tooltipRoot == null || rootCanvas == null || eventData == null)
+        if (tooltipRoot == null || rootCanvas == null || target == null)
         {
             return;
         }
@@ -1171,13 +1328,25 @@ public class BoboBattlePanel : MonoBehaviour
             return;
         }
 
+        TooltipPlacementBinding placementBinding = GetTooltipPlacementBinding(sourceType);
+        TooltipPlacement placement = placementBinding != null ? placementBinding.Placement : TooltipPlacement.Right;
+        Vector2 offset = placementBinding != null ? placementBinding.Offset : new Vector2(26f, -18f);
+
+        Vector3[] corners = new Vector3[4];
+        target.GetWorldCorners(corners);
+
+        Vector3 worldAnchorPoint = GetTooltipWorldAnchorPoint(corners, placement);
+        Camera eventCamera = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : rootCanvas.worldCamera;
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, worldAnchorPoint);
+
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvasRect,
-            eventData.position,
-            eventData.enterEventCamera,
+            screenPoint,
+            eventCamera,
             out Vector2 localPoint);
 
-        tooltipRoot.anchoredPosition = localPoint + tooltipOffset;
+        tooltipRoot.pivot = GetTooltipPivot(placement);
+        tooltipRoot.anchoredPosition = localPoint + offset;
     }
 
     private void HideTooltip()
@@ -1194,12 +1363,130 @@ public class BoboBattlePanel : MonoBehaviour
         tooltipRoot.gameObject.SetActive(false);
     }
 
+    private TooltipPlacementBinding GetTooltipPlacementBinding(TooltipSourceType sourceType)
+    {
+        if (tooltipPlacements == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < tooltipPlacements.Length; i++)
+        {
+            TooltipPlacementBinding placement = tooltipPlacements[i];
+            if (placement != null && placement.SourceType == sourceType)
+            {
+                return placement;
+            }
+        }
+
+        return null;
+    }
+
+    private TooltipTextConfig GetActionTooltipConfig(ActionType actionType, TooltipSourceType sourceType)
+    {
+        ActionTooltipBinding[] bindings = sourceType == TooltipSourceType.AiSlot && aiActionTooltipContents != null && aiActionTooltipContents.Length > 0
+            ? aiActionTooltipContents
+            : actionTooltipContents;
+
+        if (bindings == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < bindings.Length; i++)
+        {
+            ActionTooltipBinding binding = bindings[i];
+            if (binding != null && binding.ActionType == actionType)
+            {
+                return binding.Content;
+            }
+        }
+
+        if (!ReferenceEquals(bindings, actionTooltipContents) && actionTooltipContents != null)
+        {
+            for (int i = 0; i < actionTooltipContents.Length; i++)
+            {
+                ActionTooltipBinding binding = actionTooltipContents[i];
+                if (binding != null && binding.ActionType == actionType)
+                {
+                    return binding.Content;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private string GetActionTooltipTitle(ActionType actionType, TooltipSourceType sourceType)
+    {
+        TooltipTextConfig config = GetActionTooltipConfig(actionType, sourceType);
+        if (config != null && !string.IsNullOrEmpty(config.Title))
+        {
+            return config.Title;
+        }
+
+        return actionType.GetDisplayName();
+    }
+
+    private string GetActionTooltipBody(ActionType actionType, TooltipSourceType sourceType)
+    {
+        TooltipTextConfig config = GetActionTooltipConfig(actionType, sourceType);
+        if (config != null && !string.IsNullOrEmpty(config.Body))
+        {
+            return config.Body;
+        }
+
+        return actionType.GetTooltipDescription();
+    }
+
+    private string ResolveTooltipTitle(TooltipTextConfig config, string fallback)
+    {
+        return config != null && !string.IsNullOrEmpty(config.Title) ? config.Title : fallback;
+    }
+
+    private string ResolveTooltipBody(TooltipTextConfig config, string fallback)
+    {
+        return config != null && !string.IsNullOrEmpty(config.Body) ? config.Body : fallback;
+    }
+
+    private Vector3 GetTooltipWorldAnchorPoint(Vector3[] corners, TooltipPlacement placement)
+    {
+        switch (placement)
+        {
+            case TooltipPlacement.Left:
+                return (corners[0] + corners[1]) * 0.5f;
+            case TooltipPlacement.Above:
+                return (corners[1] + corners[2]) * 0.5f;
+            case TooltipPlacement.Below:
+                return (corners[0] + corners[3]) * 0.5f;
+            default:
+                return (corners[2] + corners[3]) * 0.5f;
+        }
+    }
+
+    private Vector2 GetTooltipPivot(TooltipPlacement placement)
+    {
+        switch (placement)
+        {
+            case TooltipPlacement.Left:
+                return new Vector2(1f, 0.5f);
+            case TooltipPlacement.Above:
+                return new Vector2(0.5f, 0f);
+            case TooltipPlacement.Below:
+                return new Vector2(0.5f, 1f);
+            default:
+                return new Vector2(0f, 0.5f);
+        }
+    }
+
     private string BuildPlayerSlotTooltipTitle(int slotIndex)
     {
         ActionType actionType = IsSlotIndexValid(slotIndex) ? draftActions[slotIndex] : ActionType.None;
         return actionType == ActionType.None
-            ? string.Format("Player Slot {0}", slotIndex + 1)
-            : string.Format("Player Slot {0} - {1}", slotIndex + 1, actionType.GetDisplayName());
+            ? ResolveTooltipTitle(
+                IsSlotEditable(slotIndex) ? playerEditableEmptySlotTooltip : playerLockedEmptySlotTooltip,
+                string.Format("Player Slot {0}", slotIndex + 1))
+            : GetActionTooltipTitle(actionType, TooltipSourceType.PlayerSlot);
     }
 
     private string BuildPlayerSlotTooltipBody(int slotIndex)
@@ -1213,11 +1500,11 @@ public class BoboBattlePanel : MonoBehaviour
         if (actionType == ActionType.None)
         {
             return IsSlotEditable(slotIndex)
-                ? "This slot is editable. Click a left action or drag one into this slot."
-                : "This slot is locked until all previous player slots are filled in order.";
+                ? ResolveTooltipBody(playerEditableEmptySlotTooltip, "This slot is editable. Click a left action or drag one into this slot.")
+                : ResolveTooltipBody(playerLockedEmptySlotTooltip, "This slot is locked until all previous player slots are filled in order.");
         }
 
-        return actionType.GetTooltipDescription();
+        return GetActionTooltipBody(actionType, TooltipSourceType.PlayerSlot);
     }
 
     private string BuildAiSlotTooltipTitle(int slotIndex)
@@ -1229,8 +1516,8 @@ public class BoboBattlePanel : MonoBehaviour
 
         ActionType actionType = revealedAiActions[slotIndex];
         return actionType == ActionType.None
-            ? string.Format("AI Slot {0}", slotIndex + 1)
-            : string.Format("AI Slot {0} - {1}", slotIndex + 1, actionType.GetDisplayName());
+            ? ResolveTooltipTitle(aiHiddenSlotTooltip, string.Format("AI Slot {0}", slotIndex + 1))
+            : GetActionTooltipTitle(actionType, TooltipSourceType.AiSlot);
     }
 
     private string BuildAiSlotTooltipBody(int slotIndex)
@@ -1242,8 +1529,8 @@ public class BoboBattlePanel : MonoBehaviour
 
         ActionType actionType = revealedAiActions[slotIndex];
         return actionType == ActionType.None
-            ? "This AI card is still hidden. It will be revealed after the player confirms the round."
-            : actionType.GetTooltipDescription();
+            ? ResolveTooltipBody(aiHiddenSlotTooltip, "This AI card is still hidden. It will be revealed after the player confirms the round.")
+            : GetActionTooltipBody(actionType, TooltipSourceType.AiSlot);
     }
 
     private bool IsSlotIndexValid(int slotIndex)

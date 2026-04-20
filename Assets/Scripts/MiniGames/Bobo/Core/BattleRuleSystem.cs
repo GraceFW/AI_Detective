@@ -9,6 +9,7 @@ using UnityEngine;
 public class BattleRuleSystem
 {
     public const int MaxEnergy = 3;
+    public const int MaxGuardPerRound = 1;
 
     /// <summary>
     /// 预检查一套三槽方案是否可执行。
@@ -26,6 +27,7 @@ public class BattleRuleSystem
         }
 
         int predictedEnergy = ClampEnergy(startingEnergy);
+        int guardCount = 0;
 
         for (int i = 0; i < BattlePlan.SlotCount; i++)
         {
@@ -35,6 +37,17 @@ public class BattleRuleSystem
                 invalidSlotIndex = i;
                 errorMessage = string.Format("第{0}槽尚未选择行动。", i + 1);
                 return false;
+            }
+
+            if (actionType == ActionType.Guard)
+            {
+                guardCount++;
+                if (guardCount > MaxGuardPerRound)
+                {
+                    invalidSlotIndex = i;
+                    errorMessage = "防御牌每回合只能使用一次。";
+                    return false;
+                }
             }
 
             if (!CanAffordAction(predictedEnergy, actionType))
@@ -63,6 +76,41 @@ public class BattleRuleSystem
     /// 读取动作的能量消耗。
     /// 如果后面要做数值配置化，这里会是一个很自然的抽离点。
     /// </summary>
+    public bool CanPlaceActionInDraft(IReadOnlyList<ActionType> currentDraft, int slotIndex, ActionType actionType, out string errorMessage)
+    {
+        errorMessage = string.Empty;
+        if (actionType != ActionType.Guard)
+        {
+            return true;
+        }
+
+        int guardCount = 0;
+        if (currentDraft != null)
+        {
+            int count = Mathf.Min(currentDraft.Count, BattlePlan.SlotCount);
+            for (int i = 0; i < count; i++)
+            {
+                if (i == slotIndex)
+                {
+                    continue;
+                }
+
+                if (currentDraft[i] == ActionType.Guard)
+                {
+                    guardCount++;
+                }
+            }
+        }
+
+        if (guardCount >= MaxGuardPerRound)
+        {
+            errorMessage = "防御牌每回合只能使用一次。";
+            return false;
+        }
+
+        return true;
+    }
+
     public int GetEnergyCost(ActionType actionType)
     {
         switch (actionType)

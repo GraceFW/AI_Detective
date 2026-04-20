@@ -71,7 +71,7 @@ public class BattleAiPlanner
     {
         List<BattlePlan> plans = new List<BattlePlan>();
         ActionType[] buffer = new ActionType[BattlePlan.SlotCount];
-        GeneratePlanRecursive(0, startingEnergy, buffer, plans);
+        GeneratePlanRecursive(0, startingEnergy, false, buffer, plans);
         return plans;
     }
 
@@ -79,7 +79,7 @@ public class BattleAiPlanner
     /// 递归构造完整方案树。
     /// 每深入一层，都会把当前槽位的动作效果投影到后续能量上。
     /// </summary>
-    private void GeneratePlanRecursive(int slotIndex, int currentEnergy, ActionType[] buffer, List<BattlePlan> plans)
+    private void GeneratePlanRecursive(int slotIndex, int currentEnergy, bool hasUsedGuard, ActionType[] buffer, List<BattlePlan> plans)
     {
         if (slotIndex >= BattlePlan.SlotCount)
         {
@@ -87,24 +87,28 @@ public class BattleAiPlanner
             return;
         }
 
-        List<ActionType> availableActions = GetAvailableActions(currentEnergy);
+        List<ActionType> availableActions = GetAvailableActions(currentEnergy, hasUsedGuard);
         for (int i = 0; i < availableActions.Count; i++)
         {
             ActionType actionType = availableActions[i];
             buffer[slotIndex] = actionType;
             int nextEnergy = ruleSystem.ProjectEnergyAfterAction(currentEnergy, actionType);
-            GeneratePlanRecursive(slotIndex + 1, nextEnergy, buffer, plans);
+            bool nextHasUsedGuard = hasUsedGuard || actionType == ActionType.Guard;
+            GeneratePlanRecursive(slotIndex + 1, nextEnergy, nextHasUsedGuard, buffer, plans);
         }
     }
 
     /// <summary>
     /// 给定当前能量，返回这一槽理论上可以用的动作集合。
     /// </summary>
-    private List<ActionType> GetAvailableActions(int currentEnergy)
+    private List<ActionType> GetAvailableActions(int currentEnergy, bool hasUsedGuard)
     {
         List<ActionType> actions = new List<ActionType>(4);
         actions.Add(ActionType.Charge);
-        actions.Add(ActionType.Guard);
+        if (!hasUsedGuard)
+        {
+            actions.Add(ActionType.Guard);
+        }
 
         if (ruleSystem.CanAffordAction(currentEnergy, ActionType.Attack))
         {

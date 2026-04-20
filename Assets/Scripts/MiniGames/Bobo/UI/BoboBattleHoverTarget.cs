@@ -11,15 +11,16 @@ public class BoboBattleHoverTarget : MonoBehaviour, IPointerEnterHandler, IPoint
 {
     private Func<string> titleProvider;
     private Func<string> bodyProvider;
-    private Action<string, string, PointerEventData> onShow;
-    private Action<PointerEventData> onMove;
+    private Action<string, string, RectTransform> onShow;
+    private Action<RectTransform> onMove;
     private Action onHide;
+    private RectTransform cachedRectTransform;
 
     public void Configure(
         Func<string> titleProvider,
         Func<string> bodyProvider,
-        Action<string, string, PointerEventData> onShow,
-        Action<PointerEventData> onMove,
+        Action<string, string, RectTransform> onShow,
+        Action<RectTransform> onMove,
         Action onHide)
     {
         this.titleProvider = titleProvider;
@@ -27,18 +28,19 @@ public class BoboBattleHoverTarget : MonoBehaviour, IPointerEnterHandler, IPoint
         this.onShow = onShow;
         this.onMove = onMove;
         this.onHide = onHide;
+        cachedRectTransform = transform as RectTransform;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         string title = titleProvider != null ? titleProvider() : string.Empty;
         string body = bodyProvider != null ? bodyProvider() : string.Empty;
-        onShow?.Invoke(title, body, eventData);
+        onShow?.Invoke(title, body, cachedRectTransform);
     }
 
     public void OnPointerMove(PointerEventData eventData)
     {
-        onMove?.Invoke(eventData);
+        onMove?.Invoke(cachedRectTransform);
     }
 
     public void OnPointerExit(PointerEventData eventData)

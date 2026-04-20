@@ -1,401 +1,294 @@
 # Bobo Battle UI 预制件配置指南
 
-## 1. 当前这版 UI 支持什么
+## 1. 这次更新了什么
 
-当前 `BoboBattlePanel` 已经支持下面这几类交互：
+当前这版 `BoboBattlePanel` 的 Tooltip 机制已经改成两件事：
 
-- 左侧行动按钮点击选牌
-- 左侧行动按钮拖拽到玩家牌槽
-- 左侧行动按钮悬停提示
-- 玩家已放入牌槽的行动悬停提示
-- AI 牌槽悬停提示
-- 每回合结算后，玩家牌区和 AI 牌区同步重置显示
+- Tooltip 文案支持在 Inspector 里可视化配置
+- Tooltip 位置跟随被悬浮的 UI 元素，而不是跟随鼠标
 
-对应脚本入口：
+这意味着你现在可以直接在 prefab 上配置：
+
+- 每个行动的提示标题与正文
+- 玩家空槽位可编辑时的提示
+- 玩家空槽位锁定时的提示
+- AI 未揭示槽位的提示
+- 不同来源 Tooltip 出现在目标 UI 的哪一侧
+
+## 2. 对应脚本
 
 - 面板主脚本：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattlePanel.cs`
-- 悬停提示代理：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleHoverTarget.cs`
-- 行动拖拽源：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleDragActionItem.cs`
-- 玩家牌槽拖拽落点：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleCardDropSlot.cs`
+- 悬浮代理：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleHoverTarget.cs`
+- 拖拽源：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleDragActionItem.cs`
+- 拖拽落点：`Assets/Scripts/MiniGames/Bobo/UI/BoboBattleCardDropSlot.cs`
 
-注意：
+## 3. Tooltip 相关字段
 
-- `BoboBattleHoverTarget`
-- `BoboBattleDragActionItem`
-- `BoboBattleCardDropSlot`
+在 `BoboBattlePanel` 组件上，你现在会看到新的 Tooltip 配置区。
 
-这三个辅助组件会由 `BoboBattlePanel` 在运行时自动补到对应 UI 节点上。
-也就是说，你通常不需要手动给按钮或卡槽一个个挂这些脚本。
+### 3.1 基础引用
 
-## 2. 预制件路径
+这些引用还是必须绑定：
 
-预制件仍然放在：
+- `Tooltip Root`
+- `Tooltip Canvas Group`
+- `Tooltip Title Text`
+- `Tooltip Body Text`
 
-`Assets/Resources/BoboBattle/BoboBattlePanel.prefab`
+Tooltip 的宽高自适应现在由代码自动接入 `TooltipAutoSize` 完成。
+如果 `TooltipRoot` 上没有这个组件，`BoboBattlePanel` 会在运行时自动补上并配置，不需要你手工添加。
 
-小游戏服务仍通过：
-
-`BoboBattleService.Open(...)`
-
-去加载并显示这个 prefab。
-
-## 3. 推荐层级
-
-推荐继续保持这类层级：
+建议结构：
 
 ```text
-BoboBattlePanel
-├─ Blocker
-├─ Background
-├─ MainRoot
-│  ├─ TopBar
-│  │  ├─ TitleText
-│  │  ├─ RoundText
-│  │  ├─ PlayerNameText
-│  │  ├─ AiNameText
-│  │  └─ CloseButton
-│  ├─ LeftTopStatus
-│  │  ├─ PlayerHpPips
-│  │  └─ PlayerEnergyPips
-│  ├─ LeftActionColumn
-│  │  ├─ ChargeButton
-│  │  ├─ GuardButton
-│  │  ├─ AttackButton
-│  │  └─ UltimateButton
-│  ├─ PlayerPortrait
-│  ├─ EnemyCardArea
-│  │  ├─ EnemyCardSlot_1
-│  │  ├─ EnemyCardSlot_2
-│  │  └─ EnemyCardSlot_3
-│  ├─ PlayerCardArea
-│  │  ├─ PlayerCardSlot_1
-│  │  ├─ PlayerCardSlot_2
-│  │  └─ PlayerCardSlot_3
-│  ├─ EnemyPortrait
-│  ├─ RightBottomStatus
-│  │  ├─ AiHpPips
-│  │  └─ AiEnergyPips
-│  ├─ ConfirmButton
-│  ├─ RestartButton
-│  ├─ StatusText
-│  └─ ResultText
-└─ TooltipRoot
-   ├─ TooltipTitleText
-   └─ TooltipBodyText
+TooltipRoot
+├─ TooltipTitleText
+└─ TooltipBodyText
 ```
-
-## 4. 你现在必须新增的 UI 节点
-
-相比上一版 prefab，这次建议你新增一个 tooltip 组：
-
-### 4.1 TooltipRoot
-
-新建一个悬浮提示根节点，例如：
-
-- `TooltipRoot`
 
 建议组件：
 
-- `RectTransform`
-- `Image`
-- `CanvasGroup`
+- `TooltipRoot`：`RectTransform + Image + CanvasGroup`
+- `TooltipTitleText`：`TextMeshProUGUI`
+- `TooltipBodyText`：`TextMeshProUGUI`
 
-建议设置：
+建议：
 
-- 默认 `SetActive(false)`
-- 锚点建议居中或左上都可以
-- 尺寸建议先做成 `320 x 140` 左右
-- 背景图可以是深色半透明底
-- `Raycast Target` 建议关闭，避免挡住下面的按钮事件
+- `TooltipRoot` 默认隐藏
+- `TooltipRoot` 不要放进会自动挤压位置的布局组
+- Tooltip 背景图 `Raycast Target` 关闭
 
-### 4.2 TooltipTitleText
+### 3.2 Action Tooltip Contents
 
-挂在 `TooltipRoot` 下：
+这是行动提示的可视化配置数组。
 
-- `TextMeshProUGUI`
-
-用途：
-
-- 显示动作名或槽位标题
-
-### 4.3 TooltipBodyText
-
-挂在 `TooltipRoot` 下：
-
-- `TextMeshProUGUI`
-
-用途：
-
-- 显示动作说明或槽位状态说明
-
-## 5. 现有预制件需要保证的组件
-
-### 5.1 根节点
-
-`BoboBattlePanel` 根节点需要：
-
-- `RectTransform`
-- `CanvasGroup`
-- `BoboBattlePanel`
-
-并且它应当处于某个 `Canvas` 之下。
-
-### 5.2 左侧行动按钮
-
-每个行动按钮至少需要：
-
-- `Button`
-- `Image`
-
-推荐按钮子节点结构：
-
-```text
-ChargeButton
-├─ Bg
-├─ Icon
-├─ Label
-└─ SelectedFrame
-```
-
-对应 `ActionButtonBinding` 字段：
-
-- `ActionType`
-- `Button`
-- `Background`
-- `IconImage`
-- `Label`
-- `SelectedFrame`
-
-### 5.3 玩家牌槽
-
-每个玩家牌槽必须有一个可点击对象，通常直接整张卡挂 `Button`。
-
-推荐结构：
-
-```text
-PlayerCardSlot_1
-├─ CardBg
-├─ Highlight
-├─ ActionIcon
-├─ ActionText
-└─ SlotIndexText
-```
-
-对应 `CardSlotBinding` 字段：
-
-- `Button`
-- `Background`
-- `HighlightFrame`
-- `ActionIcon`
-- `SlotIndexText`
-- `ActionText`
-
-玩家牌槽不需要 `HiddenRoot / HiddenText`。
-
-### 5.4 AI 牌槽
-
-推荐结构：
-
-```text
-EnemyCardSlot_1
-├─ CardBg
-├─ Highlight
-├─ HiddenRoot
-│  └─ HiddenText
-├─ ActionIcon
-├─ ActionText
-└─ SlotIndexText
-```
-
-对应 `CardSlotBinding` 字段：
-
-- `Background`
-- `HighlightFrame`
-- `ActionIcon`
-- `SlotIndexText`
-- `ActionText`
-- `HiddenRoot`
-- `HiddenText`
-
-AI 牌槽的 `Button` 可不绑。
-如果你也给 AI 卡槽挂了 `Button`，也没问题，悬停仍可工作。
-
-## 6. BoboBattlePanel Inspector 绑定清单
-
-下面这些是你需要在 `BoboBattlePanel` 组件上确认的字段。
-
-### 6.1 Root
-
-- `Canvas Group`
-
-### 6.2 Header
-
-- `Title Text`
-- `Round Text`
-- `Player Name Text`
-- `Ai Name Text`
-
-### 6.3 Status Pips
-
-- `Player Hp Pips`
-- `Player Energy Pips`
-- `Ai Hp Pips`
-- `Ai Energy Pips`
-
-每组都应该是 3 个 `Image`，并且顺序要正确。
-尤其要确认玩家能量豆中间那个引用不要再次绑到第一个豆，否则会出现“中间永远亮”的问题。
-
-### 6.4 Action Palette
-
-`Action Buttons` 数组固定 4 个，建议顺序：
+你需要给 4 个行动各配一条：
 
 1. `Charge`
 2. `Guard`
 3. `Attack`
 4. `Ultimate`
 
-### 6.5 Player Card Slots
+每条包含：
 
-`Player Card Slots` 数组固定 3 个，顺序必须和画面从左到右一致。
+- `ActionType`
+- `Content.Title`
+- `Content.Body`
 
-### 6.6 AI Card Slots
+说明：
 
-`Ai Card Slots` 数组固定 3 个，顺序必须和画面从左到右一致。
+- 左侧行动按钮悬浮时，直接用这里的标题和正文
+- 玩家牌槽和 AI 牌槽里如果已经有牌，也复用这里的对应行动提示
 
-### 6.7 Action Visuals
+所以这里就是整套小游戏“行动说明文案”的主配置表。
 
-如果玩家和 AI 使用不同图：
+### 3.3 AI Action Tooltip Contents
 
-- 为玩家图标配一组 `owner = Player`
-- 为 AI 图标配一组 `owner = AI`
+这是敌人牌型专用的行动提示配置数组。
 
-如果某动作只有一张通用图：
+用途：
 
-- 可以使用 `owner = Shared`
+- 只在 `AI` 牌槽悬浮时使用
+- 会覆盖默认的 `Action Tooltip Contents`
 
-### 6.8 Footer
+建议同样配置 4 条：
 
-- `Status Text`
-- `Result Text`
-- `Submit Button`
-- `Submit Button Text`
-- `Restart Button`
-- `Close Button`
+1. `Charge`
+2. `Guard`
+3. `Attack`
+4. `Ultimate`
 
-### 6.9 Tooltip
+每条包含：
 
-这是这次新增的重点字段：
+- `ActionType`
+- `Content.Title`
+- `Content.Body`
 
-- `Tooltip Root` 绑定到 `TooltipRoot`
-- `Tooltip Canvas Group` 绑定到 `TooltipRoot` 的 `CanvasGroup`
-- `Tooltip Title Text` 绑定到标题 TMP
-- `Tooltip Body Text` 绑定到正文 TMP
-- `Tooltip Offset` 视你的 UI 调整，默认可先用 `(26, -18)`
+回退规则：
 
-## 7. 拖拽功能的工作方式
+- 如果这里配置了某个动作，就优先显示这里的标题和正文
+- 如果这里没配该动作，则自动回退到 `Action Tooltip Contents`
 
-这次拖拽没有直接复用线索系统那套业务耦合逻辑，而是为 Bobo 单独做了轻量实现。
+### 3.4 玩家空槽 Tooltip
 
-原因很简单：
+你还会看到两个单独配置：
 
-- 线索拖拽和 `ClueData`、特定投放目标接口耦合较深
-- Bobo 只需要“动作源 -> 卡槽”这类单一交互
-- 单独做一个轻量层，侵入更小，也更容易维护
+- `Player Editable Empty Slot Tooltip`
+- `Player Locked Empty Slot Tooltip`
 
-现在的拖拽链路是：
+用途：
 
-1. 左侧行动按钮运行时自动挂上 `BoboBattleDragActionItem`
-2. 玩家牌槽运行时自动挂上 `BoboBattleCardDropSlot`
-3. 当你把左侧行动拖到玩家卡槽上时，面板会直接给该槽位写入对应 `ActionType`
-4. 之后仍会走原有的能量校验、顺序校验和后续槽位清空逻辑
+- 玩家槽位为空且当前可编辑时，用前者
+- 玩家槽位为空但因为顺序未解锁时，用后者
 
-所以你在 prefab 侧需要保证的只有两件事：
+每个都可以配置：
 
-- 左侧行动按钮是可响应事件的 `Button`
-- 玩家卡槽是可响应事件的 `Button`
+- `Title`
+- `Body`
 
-## 8. 悬浮提示的工作方式
+### 3.5 AI 隐藏槽 Tooltip
 
-悬浮提示现在覆盖三类对象：
+字段：
 
-### 8.1 左侧行动按钮
+- `Ai Hidden Slot Tooltip`
 
-显示内容：
+用途：
 
-- 行动名
-- 该行动的规则说明
+- AI 槽位还没揭示时，悬浮显示这里的内容
 
-### 8.2 玩家牌槽
+### 3.6 Tooltip Placements
 
-如果该槽已经放牌：
+这是本次位置逻辑最关键的新数组。
 
-- 显示槽位标题
-- 显示当前行动的规则说明
+你可以按来源分别配置 Tooltip 出现在哪一侧。
 
-如果该槽为空：
+推荐配置 3 条：
 
-- 显示该槽是否可编辑
-- 提示可点击或拖拽放牌
+1. `SourceType = ActionPalette`
+2. `SourceType = PlayerSlot`
+3. `SourceType = AiSlot`
 
-### 8.3 AI 牌槽
+每条包含：
 
-如果尚未揭示：
+- `SourceType`
+- `Placement`
+- `Offset`
 
-- 提示该牌仍然隐藏
+`Placement` 可选：
 
-如果已经揭示：
+- `Right`
+- `Left`
+- `Above`
+- `Below`
 
-- 显示 AI 当前行动说明
+建议初始值：
 
-## 9. 推荐布局细节
+- `ActionPalette`：`Right`
+- `PlayerSlot`：`Above`
+- `AiSlot`：`Left` 或 `Below`
 
-### 9.1 左侧行动列
+`Offset` 是在目标 UI 锚点基础上的微调。
+比如：
 
-- 使用 `VerticalLayoutGroup`
-- 四个按钮尺寸尽量一致
-- `Spacing` 建议 16 到 24
+- 右侧弹出可先试 `(24, 0)`
+- 上方弹出可先试 `(0, 18)`
+- 左侧弹出可先试 `(-24, 0)`
 
-### 9.2 玩家牌区与 AI 牌区
+## 4. Tooltip 现在的工作方式
 
-- 使用 `HorizontalLayoutGroup`
-- 3 个卡槽等宽
-- `Spacing` 建议 18 到 28
+### 4.1 左侧行动按钮
 
-### 9.3 状态圆饼
+悬浮时：
 
-- HP 一排 3 个
-- Energy 一排 3 个
-- 各自使用 `HorizontalLayoutGroup`
+- 定位基于按钮自身的 `RectTransform`
+- 文案来自 `Action Tooltip Contents`
+- 位置来自 `Tooltip Placements` 中的 `ActionPalette`
 
-### 9.4 TooltipRoot
+### 4.2 玩家牌槽
 
-建议不要放进会自动重新排版的位置组里。
-最好作为根节点下独立浮层，由脚本直接改 `anchoredPosition`。
+悬浮时：
 
-## 10. 制作完成后的自测顺序
+- 如果槽里已有行动牌，文案复用对应行动的 Tooltip 配置
+- 如果槽是空的，则根据“可编辑 / 锁定”状态选择空槽 Tooltip
+- 位置来自 `Tooltip Placements` 中的 `PlayerSlot`
 
-你可以按这个顺序快速验收：
+### 4.3 AI 牌槽
 
-1. 打开小游戏面板
-2. 悬停左侧四个行动按钮，确认都能弹出不同提示
-3. 把任意行动拖到玩家第 1 槽，确认成功放入
-4. 再拖到第 2、3 槽，确认按顺序可放
-5. 悬停玩家已放入的牌，确认提示与动作一致
-6. 悬停 AI 牌槽，未揭示时应提示“隐藏中”
-7. 点击确认后，AI 三张牌揭示
-8. 回合结算完毕后，确认玩家牌槽和 AI 牌槽一起回到空状态
-9. 再次进入下一回合，确认拖拽与悬停仍然正常
+悬浮时：
 
-## 11. 这次你需要实际新增或确认的东西
+- 如果槽位尚未揭示，显示 `Ai Hidden Slot Tooltip`
+- 如果已揭示，复用对应行动的 Tooltip 配置
+- 位置来自 `Tooltip Placements` 中的 `AiSlot`
 
-如果你已经有旧 prefab，这次最关键的改动只有这些：
+## 5. 为什么现在不跟随鼠标了
 
-- 新增 `TooltipRoot`
-- 在 `TooltipRoot` 下新增 `TooltipTitleText`
-- 在 `TooltipRoot` 下新增 `TooltipBodyText`
-- 给 `TooltipRoot` 挂 `CanvasGroup`
-- 回到 `BoboBattlePanel` Inspector，把 Tooltip 区域的 4 个引用绑上
-- 检查所有玩家卡槽都绑定了 `Button`
-- 再检查玩家能量豆数组顺序是否正确
+当前实现已经改成“跟随目标 UI”：
 
-除此之外，拖拽和悬停辅助脚本会在运行时自动补齐，不要求你手工挂满。
+- Tooltip 的锚点取自被悬浮 UI 的矩形边缘
+- 然后根据 `Placement` 决定挂在左、右、上、下哪一侧
+- 最后再叠加你配置的 `Offset`
+
+所以现在 Tooltip 会稳定贴着行动按钮或卡槽出现，不会随着鼠标抖动。
+
+## 6. 你在 Unity 里应该怎么配
+
+### 第一步
+
+确认 `BoboBattlePanel.prefab` 上已经绑定：
+
+- `Tooltip Root`
+- `Tooltip Canvas Group`
+- `Tooltip Title Text`
+- `Tooltip Body Text`
+
+### 第二步
+
+展开 `Action Tooltip Contents`，填满 4 条行动说明。
+
+建议至少先填：
+
+- 标题：行动名
+- 正文：规则说明
+
+### 第三步
+
+填写：
+
+- `Player Editable Empty Slot Tooltip`
+- `Player Locked Empty Slot Tooltip`
+- `Ai Hidden Slot Tooltip`
+
+### 第四步
+
+展开 `Tooltip Placements`，新增 3 条。
+
+推荐先这样配：
+
+1. `ActionPalette / Right / (24, 0)`
+2. `PlayerSlot / Above / (0, 18)`
+3. `AiSlot / Left / (-24, 0)`
+
+### 第五步
+
+进 Play Mode 逐个试：
+
+- 左侧行动按钮悬浮
+- 玩家空槽悬浮
+- 玩家已放牌槽位悬浮
+- AI 未揭示槽位悬浮
+- AI 已揭示槽位悬浮
+
+## 7. 其他 UI 绑定不变
+
+这次没有改动你原本这些核心绑定方式：
+
+- `Action Buttons`
+- `Player Card Slots`
+- `Ai Card Slots`
+- `Action Visuals`
+- `PlayerHpPips / PlayerEnergyPips / AiHpPips / AiEnergyPips`
+
+拖拽逻辑也不需要你手动给按钮逐个挂脚本，运行时会自动补：
+
+- `BoboBattleHoverTarget`
+- `BoboBattleDragActionItem`
+- `BoboBattleCardDropSlot`
+
+## 8. 推荐的自测顺序
+
+1. 左侧四个行动按钮分别悬浮，确认内容取自 Inspector 配置。
+2. Tooltip 是否固定贴着按钮右侧，而不是跟着鼠标跑。
+3. 玩家第 1 槽为空时悬浮，确认显示“可编辑空槽”配置。
+4. 玩家第 2 或第 3 槽在未解锁时悬浮，确认显示“锁定空槽”配置。
+5. 把行动拖进玩家槽位后再次悬浮，确认显示对应行动配置。
+6. AI 牌未揭示时悬浮，确认显示隐藏提示。
+7. 确认回合后 AI 牌揭示，再悬浮检查是否改为对应行动提示。
+
+## 9. 这次你最需要补的就是这些
+
+- 给 `TooltipRoot` 绑定完整
+- 在 `Action Tooltip Contents` 里配齐 4 个行动
+- 配置 3 个状态 Tooltip
+- 配置 `Tooltip Placements`
+
+如果你愿意，我下一步可以继续帮你把这 4 个行动的 Tooltip 文案直接整理成一份适合放进 Inspector 的中文版配置稿，你只要照着填就行。 
