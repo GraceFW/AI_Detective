@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
+  m_Name: "2033\u6B7B\u8005\u7684\u624B\u673A"
+  m_EditorClassIdentifier: 
+  id: 2032
+  displayName: "\u9ED1\u7FBD\u5FEB\u6597"
+  detectable: 1
+  collectable: 1
+  collected: 0
+  attackKey: 
+  isAttackContentUnlocked: 0
+  showAttackContentDirectly: 1
+  attackUnlockContent: 
+  summary: "\u4FE1\u606F\u88AB\u5C01\u9501\uFF0C\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002"
+  detailText: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F55 0 \u6761\u3002\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002\n\n\u2014\u2014\u2014\u2014
+    K.K SAYS \u2014\u2014\u2014\u2014\n\r                           \r\n                     
+    .  t  i  i  i  L  i  i  i  i  t  j  .      \n                     E  t  ,  . 
+    .             .  ,  j  i  E  ,    \n                     L                                     
+    j  j    \n                     i                                       j  j   
+    \n                  .  t                                      t  j    \n                 
+    ,  j                                       i  ,    \n                  t  .                                     
+    L  .    \n                  G                                       G     \n                 
+    G                                       G     \n                  E .  ,  j 
+    j  t  t  i  i  L  L  G  G  i     \n                  W  G  L  i  t  t  j  j 
+    j  ,  ,  .  . t j     \n                  W  G  L  i  t  t  j  j  j  ,  ,  . 
+    . t j     \n                ,  t                                        i  ,    
+    \n                j  j                                       E j ,    \n               
+    i   .          .  ,  t  i  L  G  K  #  E  L    \n    j  t  i  i  K  E  E  E 
+    E  E  E  K  L  K  #  #  #  #  K      \n    t  G  t K ,                 G                 
+    j  G  #  G      \n        i     G                   L                          
+    ,  i      \n        i     G             t  t  j                           j 
+    j      \n        i      j  L        . i G G                       ,  j G      
+    \n        L       K L  G j                    .  ,  t  .  j  L       \n     . 
+    K       L .    ,  ,  ,  ,  j  j                 ,  j  E        \n     K  #  L    
+    E  i  ,                      t  t  G  t         \nG  #  #  #  ,       ,   i  
+    i   i   i   L   i  ,\n .  ,  ."
+  Detail_Mark: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F55 0 \u6761\u3002\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002\n\n=====
+    K.K SAYS =====\n\r                           \r\n                      .  t 
+    i  i  i  L  i  i  i  i  t  j  .      \n                     E  t  ,  .  .            
+    .  ,  j  i  E  ,    \n                     L                                     
+    j  j    \n                     i                                       j  j   
+    \n                  .  t                                      t  j    \n                 
+    ,  j                                       i  ,    \n                  t  .                                     
+    L  .    \n                  G                                       G     \n                 
+    G                                       G     \n                  E .  ,  j 
+    j  t  t  i  i  L  L  G  G  i     \n                  W  G  L  i  t  t  j  j 
+    j  ,  ,  .  . t j     \n                  W  G  L  i  t  t  j  j  j  ,  ,  . 
+    . t j     \n                ,  t                                        i  ,    
+    \n                j  j                                       E j ,    \n               
+    i   .          .  ,  t  i  L  G  K  #  E  L    \n    j  t  i  i  K  E  E  E 
+    E  E  E  K  L  K  #  #  #  #  K      \n    t  G  t K ,                 G                 
+    j  G  #  G      \n        i     G                   L                          
+    ,  i      \n        i     G             t  t  j                           j 
+    j      \n        i      j  L        . i G G                       ,  j G      
+    \n        L       K L  G j                    .  ,  t  .  j  L       \n     . 
+    K       L .    ,  ,  ,  ,  j  j                 ,  j  E        \n     K  #  L    
+    E  i  ,                      t  t  G  t         \nG  #  #  #  ,       ,   i  
+    i   i   i   L   i  ,\n .  ,  ."

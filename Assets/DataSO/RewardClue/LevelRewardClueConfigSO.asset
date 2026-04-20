@@ -17,3 +17,7 @@ MonoBehaviour:
     triggerType: 0
     clueIDs:
     - 0007
+  - levelNumber: 1
+    triggerType: 0
+    clueIDs:
+    - 1001

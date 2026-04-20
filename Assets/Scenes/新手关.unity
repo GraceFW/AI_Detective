@@ -4593,7 +4593,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 80
-    m_Bottom: 0
+    m_Bottom: 80
   m_ChildAlignment: 4
   m_Spacing: 200
   m_ChildForceExpandWidth: 1
