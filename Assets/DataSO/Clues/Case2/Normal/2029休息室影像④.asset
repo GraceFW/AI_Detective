@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 2029
   displayName: "\u4F11\u606F\u5BA4\u5F71\u50CF\u2463"
   detectable: 0
-  collectable: 1
+  collectable: 0
   collected: 0
   attackKey: 
   isAttackContentUnlocked: 0

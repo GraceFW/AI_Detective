@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
-  m_Name: "2033\u6B7B\u8005\u7684\u624B\u673A"
+  m_Name: "2034\u4EB2\u543B\u7684\u7167\u7247"
   m_EditorClassIdentifier: 
-  id: 2033
-  displayName: "\u6B7B\u8005\u7684\u624B\u673A"
-  detectable: 1
-  collectable: 0
+  id: 2034
+  displayName: "\u4EB2\u543B\u7684\u7167\u7247"
+  detectable: 0
+  collectable: 1
   collected: 0
   attackKey: 
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
   attackUnlockContent: 
-  summary: "\u8C03\u53D6\u4E86\u6B7B\u8005\u624B\u673A\u4E2D\u90E8\u5206\u4E0E\u6848\u4EF6\u53EF\u80FD\u76F8\u5173\u7684\u5185\u5BB9\u3002"
+  summary: "\u767D\u5DDD\u96EA\u4E43\u4E0E\u6850\u751F\u83B2\u4EB2\u543B\u7684\u7167\u7247\uFF0C\u62CD\u6444\u4E8E7\u67087\u65E5\u3002"
   detailText: 
   Detail_Mark: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F553\u6761\u3002\r\n\r\n\u3010\u5BF9\u8BDD\u8BB0\u5F55\u3011\r\n\u6765\u6E90\uFF1A\u9AD8\u5CF0\u8BDA\u4E00\u90CE\u4E0E\u767D\u5DDD\u96EA\u4E43LINE\u804A\u5929\u8BB0\u5F55\r\n\u65F6\u95F4\uFF1A2056.07.08
     14:02 - 14:04\r\n\u9AD8\u5CF0\u8BDA\u4E00\u90CE\uFF1A[\u56FE\u7247][\u4EB2\u543B\u7684\u7167\u7247]\r\n\u767D\u5DDD\u96EA\u4E43\uFF1A\u60A8\u2026\u2026\uFF01\u4F60\u8981\u505A\u4EC0\u4E48\uFF1F\r\n\u9AD8\u5CF0\u8BDA\u4E00\u90CE\uFF1A\u60F3\u8BA9\u6211\u4FDD\u5BC6\u5417\uFF1F
