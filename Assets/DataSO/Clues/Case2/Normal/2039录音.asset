@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
-  m_Name: "2038\u6A58\u65E5\u5411\u7684\u624B\u673A"
+  m_Name: "2039\u5F55\u97F3"
   m_EditorClassIdentifier: 
   id: 2038
   displayName: "\u6A58\u65E5\u5411\u7684\u624B\u673A"
