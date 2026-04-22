@@ -8,6 +8,9 @@ using UnityEngine;
 /// </summary>
 public class BattleRuleSystem
 {
+    public const int MaxEnergy = 3;
+    public const int MaxGuardPerRound = 1;
+
     /// <summary>
     /// 预检查一套三槽方案是否可执行。
     /// 这里不会改真实状态，只会沿着槽位顺序预测能量变化并检查动作是否可用。
@@ -23,7 +26,8 @@ public class BattleRuleSystem
             return false;
         }
 
-        int predictedEnergy = startingEnergy;
+        int predictedEnergy = ClampEnergy(startingEnergy);
+        int guardCount = 0;
 
         for (int i = 0; i < BattlePlan.SlotCount; i++)
         {
@@ -33,6 +37,17 @@ public class BattleRuleSystem
                 invalidSlotIndex = i;
                 errorMessage = string.Format("第{0}槽尚未选择行动。", i + 1);
                 return false;
+            }
+
+            if (actionType == ActionType.Guard)
+            {
+                guardCount++;
+                if (guardCount > MaxGuardPerRound)
+                {
+                    invalidSlotIndex = i;
+                    errorMessage = "防御牌每回合只能使用一次。";
+                    return false;
+                }
             }
 
             if (!CanAffordAction(predictedEnergy, actionType))
@@ -61,6 +76,41 @@ public class BattleRuleSystem
     /// 读取动作的能量消耗。
     /// 如果后面要做数值配置化，这里会是一个很自然的抽离点。
     /// </summary>
+    public bool CanPlaceActionInDraft(IReadOnlyList<ActionType> currentDraft, int slotIndex, ActionType actionType, out string errorMessage)
+    {
+        errorMessage = string.Empty;
+        if (actionType != ActionType.Guard)
+        {
+            return true;
+        }
+
+        int guardCount = 0;
+        if (currentDraft != null)
+        {
+            int count = Mathf.Min(currentDraft.Count, BattlePlan.SlotCount);
+            for (int i = 0; i < count; i++)
+            {
+                if (i == slotIndex)
+                {
+                    continue;
+                }
+
+                if (currentDraft[i] == ActionType.Guard)
+                {
+                    guardCount++;
+                }
+            }
+        }
+
+        if (guardCount >= MaxGuardPerRound)
+        {
+            errorMessage = "防御牌每回合只能使用一次。";
+            return false;
+        }
+
+        return true;
+    }
+
     public int GetEnergyCost(ActionType actionType)
     {
         switch (actionType)
@@ -83,14 +133,23 @@ public class BattleRuleSystem
         switch (actionType)
         {
             case ActionType.Charge:
-                return currentEnergy + 1;
+                return ClampEnergy(currentEnergy + 1);
             case ActionType.Attack:
-                return currentEnergy - 1;
+                return ClampEnergy(currentEnergy - 1);
             case ActionType.Ultimate:
-                return currentEnergy - 3;
+                return ClampEnergy(currentEnergy - 3);
             default:
-                return currentEnergy;
+                return ClampEnergy(currentEnergy);
         }
+    }
+
+    /// <summary>
+    /// 统一约束能量区间。
+    /// 当前玩法的设计上限为 3，因此任何入口和结算结果都不应超过 3。
+    /// </summary>
+    public int ClampEnergy(int energy)
+    {
+        return Mathf.Clamp(energy, 0, MaxEnergy);
     }
 
     /// <summary>
@@ -147,8 +206,8 @@ public class BattleRuleSystem
         // 保险处理，避免极端情况下出现负血或负能量落到外层。
         player.HP = Mathf.Max(0, player.HP);
         ai.HP = Mathf.Max(0, ai.HP);
-        player.Energy = Mathf.Max(0, player.Energy);
-        ai.Energy = Mathf.Max(0, ai.Energy);
+        player.Energy = ClampEnergy(player.Energy);
+        ai.Energy = ClampEnergy(ai.Energy);
 
         info.PlayerHPAfter = player.HP;
         info.AiHPAfter = ai.HP;
@@ -195,7 +254,7 @@ public class BattleRuleSystem
     {
         if (actionType == ActionType.Charge)
         {
-            fighterState.Energy += 1;
+            fighterState.Energy = ClampEnergy(fighterState.Energy + 1);
         }
     }
 
