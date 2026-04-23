@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -21,14 +22,17 @@ public class BoboBattlePanel : MonoBehaviour
         [SerializeField] private Button button;
         [SerializeField] private Image background;
         [SerializeField] private Image iconImage;
-        [SerializeField] private TextMeshProUGUI label;
+        [FormerlySerializedAs("label")]
+        [SerializeField] private TextMeshProUGUI actionTitle;
+        [SerializeField] private TextMeshProUGUI actionText;
         [SerializeField] private Graphic selectedFrame;
 
         public ActionType ActionType => actionType;
         public Button Button => button;
         public Image Background => background;
         public Image IconImage => iconImage;
-        public TextMeshProUGUI Label => label;
+        public TextMeshProUGUI ActionTitle => actionTitle;
+        public TextMeshProUGUI ActionText => actionText;
         public Graphic SelectedFrame => selectedFrame;
     }
 
@@ -40,7 +44,10 @@ public class BoboBattlePanel : MonoBehaviour
         [SerializeField] private Graphic highlightFrame;
         [SerializeField] private Image actionIcon;
         [SerializeField] private TextMeshProUGUI slotIndexText;
+        [FormerlySerializedAs("actionText")]
+        [SerializeField] private TextMeshProUGUI actionTitle;
         [SerializeField] private TextMeshProUGUI actionText;
+        [SerializeField] private GameObject cutline;
         [SerializeField] private GameObject hiddenRoot;
         [SerializeField] private TextMeshProUGUI hiddenText;
 
@@ -49,7 +56,9 @@ public class BoboBattlePanel : MonoBehaviour
         public Graphic HighlightFrame => highlightFrame;
         public Image ActionIcon => actionIcon;
         public TextMeshProUGUI SlotIndexText => slotIndexText;
+        public TextMeshProUGUI ActionTitle => actionTitle;
         public TextMeshProUGUI ActionText => actionText;
+        public GameObject Cutline => cutline;
         public GameObject HiddenRoot => hiddenRoot;
         public TextMeshProUGUI HiddenText => hiddenText;
     }
@@ -86,9 +95,14 @@ public class BoboBattlePanel : MonoBehaviour
     {
         [SerializeField] private string title;
         [SerializeField] [TextArea(2, 5)] private string body;
+        [Header("Card Display")]
+        [SerializeField] private string actionTitle;
+        [SerializeField] [TextArea(1, 3)] private string actionText;
 
         public string Title => title;
         public string Body => body;
+        public string ActionTitle => string.IsNullOrEmpty(actionTitle) ? title : actionTitle;
+        public string ActionText => string.IsNullOrEmpty(actionText) ? body : actionText;
     }
 
     [Serializable]
@@ -344,8 +358,8 @@ public class BoboBattlePanel : MonoBehaviour
             ActionButtonBinding binding = actionButtons[i];
             if (binding == null || binding.Button == null) continue;
 
-            if (binding.Label != null) binding.Label.text = binding.ActionType.GetDisplayName();
-            ApplyActionVisual(binding.ActionType, ActionVisualOwner.Player, binding.IconImage, binding.Label);
+            ApplyActionButtonContent(binding);
+            ApplyActionVisual(binding.ActionType, ActionVisualOwner.Player, binding.IconImage, binding.ActionTitle);
 
             int capturedIndex = i;
             binding.Button.onClick.RemoveAllListeners();
@@ -371,6 +385,24 @@ public class BoboBattlePanel : MonoBehaviour
             HideTooltip);
     }
 
+    private void ApplyActionButtonContent(ActionButtonBinding binding)
+    {
+        if (binding == null)
+        {
+            return;
+        }
+
+        if (binding.ActionTitle != null)
+        {
+            binding.ActionTitle.text = GetActionDisplayTitle(binding.ActionType, TooltipSourceType.ActionPalette);
+        }
+
+        if (binding.ActionText != null)
+        {
+            binding.ActionText.text = GetActionDisplayText(binding.ActionType, TooltipSourceType.ActionPalette);
+        }
+    }
+
     private void ConfigureActionButtonDrag(ActionButtonBinding binding)
     {
         if (binding == null || binding.Button == null)
@@ -384,7 +416,7 @@ public class BoboBattlePanel : MonoBehaviour
             rootCanvas,
             binding.Background,
             binding.IconImage,
-            binding.Label,
+            binding.ActionTitle,
             OnActionDragStarted,
             OnActionDragEnded);
     }
@@ -454,7 +486,9 @@ public class BoboBattlePanel : MonoBehaviour
 
         for (int i = 0; i < actionButtons.Length; i++)
         {
-            if (actionButtons[i] != null) BoboBattleUIFactory.ApplyPreferredFont(actionButtons[i].Label);
+            if (actionButtons[i] == null) continue;
+            BoboBattleUIFactory.ApplyPreferredFont(actionButtons[i].ActionTitle);
+            BoboBattleUIFactory.ApplyPreferredFont(actionButtons[i].ActionText);
         }
 
         ApplyFontsToSlots(playerCardSlots);
@@ -469,6 +503,7 @@ public class BoboBattlePanel : MonoBehaviour
             CardSlotBinding slot = slots[i];
             if (slot == null) continue;
             BoboBattleUIFactory.ApplyPreferredFont(slot.SlotIndexText);
+            BoboBattleUIFactory.ApplyPreferredFont(slot.ActionTitle);
             BoboBattleUIFactory.ApplyPreferredFont(slot.ActionText);
             BoboBattleUIFactory.ApplyPreferredFont(slot.HiddenText);
         }
@@ -510,7 +545,7 @@ public class BoboBattlePanel : MonoBehaviour
 
                 valid &= ValidateReference(binding.Button, "ActionButtons[" + i + "].Button");
                 valid &= ValidateReference(binding.Background, "ActionButtons[" + i + "].Background");
-                valid &= ValidateReference(binding.Label, "ActionButtons[" + i + "].Label");
+                valid &= ValidateReference(binding.ActionTitle, "ActionButtons[" + i + "].ActionTitle");
             }
         }
 
@@ -538,7 +573,7 @@ public class BoboBattlePanel : MonoBehaviour
 
             valid &= ValidateReference(slot.Background, fieldName + "[" + i + "].Background");
             valid &= ValidateReference(slot.SlotIndexText, fieldName + "[" + i + "].SlotIndexText");
-            valid &= ValidateReference(slot.ActionText, fieldName + "[" + i + "].ActionText");
+            valid &= ValidateReference(slot.ActionTitle, fieldName + "[" + i + "].ActionTitle");
             if (requireButton)
             {
                 valid &= ValidateReference(slot.Button, fieldName + "[" + i + "].Button");
@@ -913,11 +948,11 @@ public class BoboBattlePanel : MonoBehaviour
 
             binding.Button.interactable = canUse;
             SetActionButtonColor(binding, isSelected);
+            ApplyActionButtonContent(binding);
 
-            if (binding.Label != null)
+            if (binding.ActionTitle != null)
             {
-                binding.Label.text = binding.ActionType.GetDisplayName();
-                binding.Label.fontStyle = isSelected ? FontStyles.Bold | FontStyles.UpperCase : FontStyles.Bold;
+                binding.ActionTitle.fontStyle = isSelected ? FontStyles.Bold | FontStyles.UpperCase : FontStyles.Bold;
             }
 
             if (binding.SelectedFrame != null)
@@ -957,10 +992,25 @@ public class BoboBattlePanel : MonoBehaviour
                                            IsSlotEditable(i);
             }
 
+            if (slot.ActionTitle != null)
+            {
+                slot.ActionTitle.text = actionType == ActionType.None
+                    ? "未放置"
+                    : GetActionDisplayTitle(actionType, TooltipSourceType.PlayerSlot);
+                slot.ActionTitle.color = actionType == ActionType.None ? new Color(1f, 1f, 1f, 0.55f) : Color.white;
+            }
+
             if (slot.ActionText != null)
             {
-                slot.ActionText.text = actionType == ActionType.None ? "未放置" : actionType.GetDisplayName();
-                slot.ActionText.color = actionType == ActionType.None ? new Color(1f, 1f, 1f, 0.55f) : Color.white;
+                slot.ActionText.text = actionType == ActionType.None
+                    ? string.Empty
+                    : GetActionDisplayText(actionType, TooltipSourceType.PlayerSlot);
+                slot.ActionText.color = actionType == ActionType.None ? new Color(1f, 1f, 1f, 0.45f) : Color.white;
+            }
+
+            if (slot.Cutline != null)
+            {
+                slot.Cutline.SetActive(actionType != ActionType.None);
             }
 
             if (slot.HiddenRoot != null) slot.HiddenRoot.SetActive(false);
@@ -990,7 +1040,24 @@ public class BoboBattlePanel : MonoBehaviour
 
             if (slot.HiddenRoot != null) slot.HiddenRoot.SetActive(!revealed);
             if (slot.HiddenText != null) slot.HiddenText.text = aiHiddenSlotText;
-            if (slot.ActionText != null) slot.ActionText.text = revealed ? revealedAiActions[i].GetDisplayName() : string.Empty;
+            if (slot.ActionTitle != null)
+            {
+                slot.ActionTitle.text = revealed
+                    ? GetActionDisplayTitle(revealedAiActions[i], TooltipSourceType.AiSlot)
+                    : string.Empty;
+            }
+
+            if (slot.ActionText != null)
+            {
+                slot.ActionText.text = revealed
+                    ? GetActionDisplayText(revealedAiActions[i], TooltipSourceType.AiSlot)
+                    : string.Empty;
+            }
+
+            if (slot.Cutline != null)
+            {
+                slot.Cutline.SetActive(revealed);
+            }
 
             ApplyCardActionVisual(slot, revealed ? revealedAiActions[i] : ActionType.None, ActionVisualOwner.AI);
         }
@@ -1437,6 +1504,28 @@ public class BoboBattlePanel : MonoBehaviour
         }
 
         return actionType.GetTooltipDescription();
+    }
+
+    private string GetActionDisplayTitle(ActionType actionType, TooltipSourceType sourceType)
+    {
+        TooltipTextConfig config = GetActionTooltipConfig(actionType, sourceType);
+        if (config != null && !string.IsNullOrEmpty(config.ActionTitle))
+        {
+            return config.ActionTitle;
+        }
+
+        return GetActionTooltipTitle(actionType, sourceType);
+    }
+
+    private string GetActionDisplayText(ActionType actionType, TooltipSourceType sourceType)
+    {
+        TooltipTextConfig config = GetActionTooltipConfig(actionType, sourceType);
+        if (config != null && !string.IsNullOrEmpty(config.ActionText))
+        {
+            return config.ActionText;
+        }
+
+        return GetActionTooltipBody(actionType, sourceType);
     }
 
     private string ResolveTooltipTitle(TooltipTextConfig config, string fallback)

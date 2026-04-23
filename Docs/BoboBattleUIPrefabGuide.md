@@ -291,4 +291,25 @@ TooltipRoot
 - 配置 3 个状态 Tooltip
 - 配置 `Tooltip Placements`
 
+## 10. 行动牌新版布局
+
+行动牌现在按“上方图标，下方标题和简介”的结构刷新：
+
+- 旧的 `Label` 字段已经兼容迁移为 `ActionTitle`
+- 旧的卡槽 `ActionText` 字段已经兼容迁移为 `ActionTitle`
+- 新增的 `ActionText` 用于显示行动简介
+
+行动标题和简介都来自 Tooltip 配置：
+
+- `Action Tooltip Contents.Content.ActionTitle`
+- `Action Tooltip Contents.Content.ActionText`
+- 如果这两个字段没有填写，则回退到 `Title / Body`
+
+AI 牌槽会优先读取：
+
+- `Ai Action Tooltip Contents.Content.ActionTitle`
+- `Ai Action Tooltip Contents.Content.ActionText`
+
+如果 AI 专用内容没有配置，则自动回退到通用的 `Action Tooltip Contents`。
+
 如果你愿意，我下一步可以继续帮你把这 4 个行动的 Tooltip 文案直接整理成一份适合放进 Inspector 的中文版配置稿，你只要照着填就行。 
