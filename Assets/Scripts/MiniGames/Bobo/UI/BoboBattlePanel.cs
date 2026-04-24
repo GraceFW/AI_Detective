@@ -997,7 +997,7 @@ public class BoboBattlePanel : MonoBehaviour
                 slot.ActionTitle.text = actionType == ActionType.None
                     ? "未放置"
                     : GetActionDisplayTitle(actionType, TooltipSourceType.PlayerSlot);
-                slot.ActionTitle.color = actionType == ActionType.None ? new Color(1f, 1f, 1f, 0.55f) : Color.white;
+                slot.ActionTitle.color = actionType == ActionType.None ? new Color(0f, 0f, 0f, 0.55f) : Color.black;
             }
 
             if (slot.ActionText != null)
@@ -1005,7 +1005,7 @@ public class BoboBattlePanel : MonoBehaviour
                 slot.ActionText.text = actionType == ActionType.None
                     ? string.Empty
                     : GetActionDisplayText(actionType, TooltipSourceType.PlayerSlot);
-                slot.ActionText.color = actionType == ActionType.None ? new Color(1f, 1f, 1f, 0.45f) : Color.white;
+                slot.ActionText.color = actionType == ActionType.None ? new Color(0f, 0f, 0f, 0.45f) : Color.black;
             }
 
             if (slot.Cutline != null)
@@ -1045,6 +1045,7 @@ public class BoboBattlePanel : MonoBehaviour
                 slot.ActionTitle.text = revealed
                     ? GetActionDisplayTitle(revealedAiActions[i], TooltipSourceType.AiSlot)
                     : string.Empty;
+                slot.ActionTitle.color = Color.black;
             }
 
             if (slot.ActionText != null)
@@ -1052,6 +1053,7 @@ public class BoboBattlePanel : MonoBehaviour
                 slot.ActionText.text = revealed
                     ? GetActionDisplayText(revealedAiActions[i], TooltipSourceType.AiSlot)
                     : string.Empty;
+                slot.ActionText.color = Color.black;
             }
 
             if (slot.Cutline != null)

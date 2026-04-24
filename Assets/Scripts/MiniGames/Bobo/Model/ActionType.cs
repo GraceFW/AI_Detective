@@ -104,19 +104,7 @@ public static class ActionTypeExtensions
     /// </summary>
     public static Color GetThemeColor(this ActionType actionType)
     {
-        switch (actionType)
-        {
-            case ActionType.Charge:
-                return new Color(0.24f, 0.57f, 0.86f);
-            case ActionType.Guard:
-                return new Color(0.19f, 0.70f, 0.48f);
-            case ActionType.Attack:
-                return new Color(0.89f, 0.33f, 0.28f);
-            case ActionType.Ultimate:
-                return new Color(0.84f, 0.58f, 0.16f);
-            default:
-                return new Color(0.36f, 0.39f, 0.46f);
-        }
+        return Color.white;
     }
 
     /// <summary>
