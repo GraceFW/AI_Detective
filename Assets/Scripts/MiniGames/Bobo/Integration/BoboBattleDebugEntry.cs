@@ -18,6 +18,9 @@ public class BoboBattleDebugEntry : MonoBehaviour
     [Tooltip("当 triggerButton 为空时，是否自动尝试获取当前物体上的 Button。")]
     [SerializeField] private bool autoBindSelfButton = true;
 
+    [Tooltip("Prefer the full story flow when a BoboStoryFlowController exists in the scene.")]
+    [SerializeField] private bool preferStoryFlowController = true;
+
     [Header("Battle Config")]
     [SerializeField] private string panelTitle = "波波攒调试";
     [SerializeField] private string playerName = "玩家";
@@ -53,6 +56,22 @@ public class BoboBattleDebugEntry : MonoBehaviour
     /// </summary>
     public void OpenBattle()
     {
+        if (preferStoryFlowController && BoboStoryFlowController.TryToggleAnyFromButton())
+        {
+            return;
+        }
+
+        if (BoboBattleService.IsCurrentBattleOpen())
+        {
+            bool closed = BoboBattleService.ForceHideCurrentWithoutCallback();
+            if (!closed && verboseLog)
+            {
+                Debug.LogWarning("[BoboBattleDebugEntry] Bobo battle panel is open, but it could not be closed.");
+            }
+
+            return;
+        }
+
         BoboBattleRequest request = new BoboBattleRequest();
         request.Title = panelTitle;
         request.PlayerName = playerName;
@@ -125,6 +144,43 @@ public class BoboBattleDebugEntry : MonoBehaviour
         }
 
         triggerButton.onClick.RemoveListener(OpenBattle);
+        if (HasPersistentStoryFlowBinding())
+        {
+            return;
+        }
+
         triggerButton.onClick.AddListener(OpenBattle);
+    }
+
+    private bool HasPersistentStoryFlowBinding()
+    {
+        if (triggerButton == null)
+        {
+            return false;
+        }
+
+        BoboStoryFlowController controller = FindObjectOfType<BoboStoryFlowController>();
+        if (controller != null && controller.UsesTriggerButton(triggerButton))
+        {
+            return true;
+        }
+
+        int eventCount = triggerButton.onClick.GetPersistentEventCount();
+        for (int i = 0; i < eventCount; i++)
+        {
+            if (!(triggerButton.onClick.GetPersistentTarget(i) is BoboStoryFlowController))
+            {
+                continue;
+            }
+
+            string methodName = triggerButton.onClick.GetPersistentMethodName(i);
+            if (methodName == nameof(BoboStoryFlowController.StartFlowFromButton) ||
+                methodName == nameof(BoboStoryFlowController.StartFlowNow))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

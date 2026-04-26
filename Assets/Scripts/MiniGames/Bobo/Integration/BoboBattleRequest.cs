@@ -13,6 +13,16 @@ public class BoboBattleRequest
     public string AiName = "镜像AI";
     public int StartingHP = 3;
     public int StartingEnergy = 0;
+    public BoboBattleAiMode AiMode = BoboBattleAiMode.Normal;
+    public bool AllowRestartAfterEnd = true;
+    public bool AllowCancelBeforeEnd = true;
+    public bool ShowCloseButton = false;
     public string SourceTag = string.Empty;
     public Action<BoboBattleSessionResult> OnCompleted;
+}
+
+public enum BoboBattleAiMode
+{
+    Normal = 0,
+    GuaranteedCounter = 1
 }

@@ -145,6 +145,12 @@ public class SettlementPanelUI : MonoBehaviour
         }
     }
 
+    public void DebugCompleteLevel(int levelNumber = -1)
+    {
+        _pendingSuccessResults = new List<SettlementAnswerResult>();
+        TriggerLevelCompleteDialogue(levelNumber);
+    }
+
     private void HandleSubmitClicked()
     {
         // 1) 校验是否全部填满
@@ -299,7 +305,7 @@ public class SettlementPanelUI : MonoBehaviour
     /// <summary>
     /// 触发LevelComplete对话
     /// </summary>
-    private void TriggerLevelCompleteDialogue()
+    private void TriggerLevelCompleteDialogue(int levelNumberOverride = -1)
     {
         if (DialogueManager.Instance == null)
         {
@@ -308,9 +314,10 @@ public class SettlementPanelUI : MonoBehaviour
             return;
         }
 
+        int resolvedLevelNumber = ResolveLevelNumber(levelNumberOverride);
         // 触发LevelComplete对话，传入完成回调
         DialogueManager.Instance.ShowDialogue(
-            levelNumber: currentLevelNumber,
+            levelNumber: resolvedLevelNumber,
             triggerType: DialogueTriggerType.LevelComplete,
             waveNumber: 0,
             onComplete: OnLevelCompleteDialogueFinished,
@@ -318,11 +325,46 @@ public class SettlementPanelUI : MonoBehaviour
         );
     }
 
+    private int ResolveLevelNumber(int levelNumberOverride)
+    {
+        if (levelNumberOverride >= 0)
+        {
+            return levelNumberOverride;
+        }
+
+        SceneManager sceneManager = FindObjectOfType<SceneManager>();
+        GameSceneSO currentScene = sceneManager != null ? sceneManager.CurrentScene : null;
+        if (currentScene != null &&
+            DialogueManager.Instance != null &&
+            DialogueManager.Instance.TryResolveLevelNumberFromScene(currentScene, out int mappedLevelNumber))
+        {
+            return mappedLevelNumber;
+        }
+
+        SceneDialogueTrigger sceneDialogueTrigger = FindObjectOfType<SceneDialogueTrigger>();
+        if (currentScene != null &&
+            sceneDialogueTrigger != null &&
+            sceneDialogueTrigger.TryResolveLevelNumber(currentScene, out mappedLevelNumber))
+        {
+            return mappedLevelNumber;
+        }
+
+        return currentLevelNumber;
+    }
+
     /// <summary>
     /// LevelComplete对话结束回调
     /// </summary>
     private void OnLevelCompleteDialogueFinished()
     {
+        if (BoboStoryFlowController.HasActiveOrScheduledFlow)
+        {
+            Debug.Log("[SettlementPanelUI] Bobo story flow is active or scheduled; suppressing normal success panel and next-level flow.");
+            _pendingSuccessResults = null;
+            gameObject.SetActive(false);
+            return;
+        }
+
         // 对话结束后显示成功面板
         if (_pendingSuccessResults != null)
         {

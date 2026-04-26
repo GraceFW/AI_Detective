@@ -18,6 +18,9 @@ public class SceneManager : MonoBehaviour, ISaveable
 	private float _fadeDuration;
 	private bool _shouldPlayMenuBootText;
 
+	public GameSceneSO CurrentScene => currentScene;
+	public bool IsLoading => _isLoading;
+
 	[Header("主界面切场滚字")]
 	[SerializeField] private bool playBootTextWhenLeaveMenu = true;
 	[SerializeField] private float menuBootCharsPerSecond = 60f;
@@ -92,6 +95,18 @@ public class SceneManager : MonoBehaviour, ISaveable
 	/// <param name="sceneToLoad">要加载的场景</param>
 	public void LoadScene(GameSceneSO sceneToLoad)
 	{
+		if (sceneToLoad == null)
+		{
+			Debug.LogWarning("[SceneManager] LoadScene called with null scene.");
+			return;
+		}
+
+		if (!_isLoading && currentScene == sceneToLoad)
+		{
+			Debug.Log("[SceneManager] Requested scene is already loaded: " + sceneToLoad.name);
+			return;
+		}
+
 		OnLoadRequestEvent(sceneToLoad);
 	}
 

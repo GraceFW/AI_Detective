@@ -261,12 +261,14 @@ public class BoboBattlePanel : MonoBehaviour
         lastEndedResult = null;
         StopRoundAnimation();
 
+        controller.AiMode = currentRequest.AiMode;
         controller.StartNewBattle(currentRequest.PlayerName, currentRequest.AiName, currentRequest.StartingHP, currentRequest.StartingEnergy);
         ResetDraft(true);
         UpdateTitle();
 
         if (resultText != null) resultText.gameObject.SetActive(false);
         if (restartButton != null) restartButton.gameObject.SetActive(false);
+        ApplyCloseButtonState();
         if (submitButtonText != null) submitButtonText.text = "确定";
 
         UpdateStatus("先选左侧动作，再放入下方三张玩家牌位。");
@@ -278,7 +280,90 @@ public class BoboBattlePanel : MonoBehaviour
 
     public void CloseAsCancelled()
     {
+        TryCloseAsCancelled(false);
+    }
+
+    public void ForceHideWithoutCallback()
+    {
+        sessionCompleted = true;
+        StopRoundAnimation();
+        currentRequest = null;
+        lastEndedResult = null;
+        HideImmediate();
+    }
+
+    public bool TryCloseAsCancelled(bool force)
+    {
+        if (!IsVisible)
+        {
+            return false;
+        }
+
+        if (!force && !CanCloseCurrentBattle())
+        {
+            return false;
+        }
+
         CompleteSession(controller == null || controller.Model == null || !controller.Model.IsFinished);
+        return true;
+    }
+
+    public bool DebugCompleteAsPlayerWin()
+    {
+        if (!IsVisible || controller == null || controller.Model == null)
+        {
+            return false;
+        }
+
+        StopRoundAnimation();
+        isAnimating = false;
+
+        BattleModel model = controller.Model;
+        if (model.Player != null)
+        {
+            model.Player.HP = Mathf.Max(1, model.Player.HP);
+        }
+
+        if (model.AI != null)
+        {
+            model.AI.HP = 0;
+        }
+
+        model.Winner = BattleWinner.Player;
+        model.IsFinished = true;
+        lastEndedResult = controller.BuildSessionResult(false);
+
+        CompleteSession(false);
+        return true;
+    }
+
+    public bool DebugCompleteAsAiWin()
+    {
+        if (!IsVisible || controller == null || controller.Model == null)
+        {
+            return false;
+        }
+
+        StopRoundAnimation();
+        isAnimating = false;
+
+        BattleModel model = controller.Model;
+        if (model.AI != null)
+        {
+            model.AI.HP = Mathf.Max(1, model.AI.HP);
+        }
+
+        if (model.Player != null)
+        {
+            model.Player.HP = 0;
+        }
+
+        model.Winner = BattleWinner.AI;
+        model.IsFinished = true;
+        lastEndedResult = controller.BuildSessionResult(false);
+
+        CompleteSession(false);
+        return true;
     }
 
     private void OnDestroy()
@@ -769,7 +854,7 @@ public class BoboBattlePanel : MonoBehaviour
         roundAnimationCoroutine = null;
         isAnimating = false;
         resolvingSlotIndex = -1;
-        if (closeButton != null) closeButton.interactable = true;
+        ApplyCloseButtonState(roundResult.IsBattleFinished);
 
         if (roundResult.IsBattleFinished)
         {
@@ -1219,11 +1304,13 @@ public class BoboBattlePanel : MonoBehaviour
 
         if (restartButton != null)
         {
-            restartButton.gameObject.SetActive(true);
-            restartButton.interactable = true;
+            bool allowRestart = currentRequest == null || currentRequest.AllowRestartAfterEnd;
+            restartButton.gameObject.SetActive(allowRestart);
+            restartButton.interactable = allowRestart;
         }
 
         if (submitButton != null) submitButton.interactable = false;
+        ApplyCloseButtonState(true);
         if (submitButtonText != null) submitButtonText.text = "已结束";
 
         UpdateDraftUi();
@@ -1263,14 +1350,47 @@ public class BoboBattlePanel : MonoBehaviour
     private void RestartBattle()
     {
         if (currentRequest == null) return;
+        if (!currentRequest.AllowRestartAfterEnd) return;
+
         StopRoundAnimation();
         Show(currentRequest);
     }
 
     private void OnCloseClicked()
     {
+        if (!CanCloseCurrentBattle())
+        {
+            return;
+        }
+
         bool shouldCancel = controller == null || controller.Model == null || !controller.Model.IsFinished;
         CompleteSession(shouldCancel);
+    }
+
+    private bool CanCloseCurrentBattle()
+    {
+        if (controller == null || controller.Model == null || controller.Model.IsFinished)
+        {
+            return true;
+        }
+
+        return CanCancelBeforeEnd();
+    }
+
+    private bool CanCancelBeforeEnd()
+    {
+        return currentRequest == null || currentRequest.AllowCancelBeforeEnd;
+    }
+
+    private void ApplyCloseButtonState(bool battleFinished = false)
+    {
+        if (closeButton == null)
+        {
+            return;
+        }
+
+        closeButton.gameObject.SetActive(false);
+        closeButton.interactable = false;
     }
 
     private void CompleteSession(bool wasCancelled)

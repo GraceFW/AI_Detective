@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a6fcdd5a13ea3240bf045eafea6904e, type: 3}
-  m_Name: MainMenu
+  m_Name: Case_1
   m_EditorClassIdentifier: 
-  sceneType: 0
+  sceneType: 1
   sceneReference:
-    m_AssetGUID: 8c9cfa26abfee488c85f1582747f6a02
+    m_AssetGUID: e6b9bd9b8a4826846ac07a0600ff477e
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  nextLevelScene: {fileID: 11400000, guid: 15bb5226885e1b7479e6c0a7340843a3, type: 2}
+  nextLevelScene: {fileID: 11400000, guid: dc871ad34b59df845850c708e96adc0d, type: 2}
   useFade: 1
   fadeDuration: 1.5

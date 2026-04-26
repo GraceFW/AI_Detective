@@ -143,6 +143,16 @@ public class SceneDialogueTrigger : MonoBehaviour
         
         // 查找对应的关卡编号
         int? levelNumber = FindLevelNumberBySceneName(sceneName);
+        if (!levelNumber.HasValue &&
+            DialogueManager.Instance != null &&
+            DialogueManager.Instance.TryResolveLevelNumberFromSceneName(sceneName, out int dialogueManagerLevelNumber))
+        {
+            levelNumber = dialogueManagerLevelNumber;
+            if (verboseLogging)
+            {
+                Debug.Log($"[SceneDialogueTrigger] 使用 DialogueManager 映射：场景 {sceneName} → 关卡 {levelNumber.Value}");
+            }
+        }
         
         if (!levelNumber.HasValue)
         {
@@ -179,6 +189,30 @@ public class SceneDialogueTrigger : MonoBehaviour
         }
         
         return null;
+    }
+
+    public bool TryResolveLevelNumber(GameSceneSO scene, out int levelNumber)
+    {
+        levelNumber = -1;
+        if (scene == null)
+        {
+            return false;
+        }
+
+        int? mappedLevelNumber = FindLevelNumberBySceneName(scene.name);
+        if (mappedLevelNumber.HasValue)
+        {
+            levelNumber = mappedLevelNumber.Value;
+            return true;
+        }
+
+        if (DialogueManager.Instance != null &&
+            DialogueManager.Instance.TryResolveLevelNumberFromScene(scene, out levelNumber))
+        {
+            return true;
+        }
+
+        return false;
     }
     
     /// <summary>

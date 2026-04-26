@@ -20,6 +20,18 @@ public class BattleController
     /// </summary>
     public BattleModel Model { get; private set; }
 
+    public BoboBattleAiMode AiMode
+    {
+        get { return aiPlanner != null ? aiPlanner.AiMode : BoboBattleAiMode.Normal; }
+        set
+        {
+            if (aiPlanner != null)
+            {
+                aiPlanner.AiMode = value;
+            }
+        }
+    }
+
     /// <summary>
     /// 状态变化广播。UI 收到的是克隆快照，而不是内部真实对象。
     /// </summary>

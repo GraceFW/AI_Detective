@@ -65,6 +65,30 @@ public class DialogueManager : MonoBehaviour
 
 	public int CurrentLevelNumber => currentLevelNumber;
 
+    public bool TryResolveLevelNumberFromScene(GameSceneSO scene, out int levelNumber)
+    {
+        levelNumber = -1;
+        if (scene == null)
+        {
+            return false;
+        }
+
+        return TryResolveLevelNumberFromSceneName(scene.name, out levelNumber);
+    }
+
+    public bool TryResolveLevelNumberFromSceneName(string sceneName, out int levelNumber)
+    {
+        levelNumber = -1;
+        int? mappedLevelNumber = FindLevelNumberBySceneName(sceneName);
+        if (!mappedLevelNumber.HasValue)
+        {
+            return false;
+        }
+
+        levelNumber = mappedLevelNumber.Value;
+        return true;
+    }
+
 	// 当前对话状态
 	private DialogueSequence currentSequence;
     private int currentEntryIndex = 0;

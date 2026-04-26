@@ -10,41 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 155679d8aafb59145a4bf6382aed73ad, type: 3}
-  m_Name: "DialogueData_Level2_\u6CE2\u6CE2\u6512\u89E6\u53D1\u6D4B\u8BD5\u5BF9\u8BDD\u5E93\uFF0C\u76EE\u524D\u7684\u67B6\u6784\uFF0C\u6700\u7EC8\u8FD9\u4E9B\u5BF9\u8BDD\u4F1A\u585E\u8FDB\u7B2C\u4E00\u6848\u7684\u7ED3\u5C3E\u5BF9\u8BDD"
+  m_Name: DialogueData_Level2
   m_EditorClassIdentifier: 
   levelNumber: 2
   dialogueSequences:
-  - triggerType: 0
-    waveNumber: 0
-    entries:
-    - speakerName: Admin
-      speakerImage: {fileID: 0}
-      dialogueText: "\u6B63\u5F0F\u63A5\u5165\u6848\u4EF6\u524D\uFF0C\u5148\u505A\u4E00\u8F6E\u5373\u65F6\u5BF9\u6297\u6F14\u7EC3\u3002\u4E09\u69FD\u540C\u6B65\u9501\u5B9A\uFF0C\u7ED3\u7B97\u987A\u5E8F\u56FA\u5B9A\u4E3A
-        1 \u2192 2 \u2192 3\u3002\u522B\u5728\u8FD9\u79CD\u5730\u65B9\u7FFB\u8F66\u3002"
-      useTypewriterEffect: 1
-      typewriterSpeed: 120
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-      customActionId: 
-      customActionArgument: 
-    - speakerName: "\u7CFB\u7EDF"
-      speakerImage: {fileID: 0}
-      dialogueText: "\u6CE2\u6CE2\u6512\u5BF9\u6297\u6F14\u7EC3"
-      useTypewriterEffect: 0
-      typewriterSpeed: 0
-      textBoxBackground: {fileID: 0}
-      nodeType: 2
-      customActionId: BoboBattle
-      customActionArgument: level1_intro_training
-    - speakerName: Admin
-      speakerImage: {fileID: 0}
-      dialogueText: "\u6F14\u7EC3\u7ED3\u675F\u3002\u628A\u8FD9\u79CD\u8BA1\u7B97\u901F\u5EA6\u5E26\u8FDB\u73B0\u573A\uFF0C\u522B\u8BA9\u6211\u5728\u540C\u4E00\u4E2A\u6848\u4EF6\u91CC\u63D0\u9192\u4F60\u7B2C\u4E8C\u6B21\u3002"
-      useTypewriterEffect: 1
-      typewriterSpeed: 120
-      textBoxBackground: {fileID: 0}
-      nodeType: 0
-      customActionId: 
-      customActionArgument: 
   - triggerType: 2
     waveNumber: 0
     entries:
@@ -65,8 +34,8 @@ MonoBehaviour:
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
       nodeType: 2
-      customActionId: BoboBattle
-      customActionArgument: level1_intro_training
+      customActionId: BoboStoryFlow
+      customActionArgument: kaito_bobo_start
     - speakerName: Admin
       speakerImage: {fileID: 0}
       dialogueText: "\u6F14\u7EC3\u7ED3\u675F\u3002\u628A\u8FD9\u79CD\u8BA1\u7B97\u901F\u5EA6\u5E26\u8FDB\u73B0\u573A\uFF0C\u522B\u8BA9\u6211\u5728\u540C\u4E00\u4E2A\u6848\u4EF6\u91CC\u63D0\u9192\u4F60\u7B2C\u4E8C\u6B21\u3002"

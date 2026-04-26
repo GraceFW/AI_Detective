@@ -2,29 +2,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 波波攒 AI 的决策器。
-/// 它不是“拍脑袋随机”，也不是“永远最优解”。
-/// 当前策略是：
-/// 1. 根据当前能量枚举所有合法三槽方案
-/// 2. 用轻量启发式先筛一轮候选
-/// 3. 对候选方案做完整模拟
-/// 4. 按伤害、存活、能量、大招浪费等维度评分
-/// 5. 加入随机扰动后，从 Top N 里随机拿一个
+/// Chooses the AI three-slot plan.
+/// Normal mode keeps the previous "smart but imperfect" behavior; special story
+/// mode uses the same simulator to find a guaranteed counter after reading the
+/// player's locked plan.
 /// </summary>
 public class BattleAiPlanner
 {
     /// <summary>
-    /// AI 会尽量把候选池控制在这个数量级，避免无意义地模拟过多方案。
+    /// Normal AI only simulates a trimmed candidate set, which keeps it readable
+    /// and avoids making every regular battle feel solved.
     /// </summary>
     private const int DesiredCandidateCount = 10;
-
-    /// <summary>
-    /// 最终只在前几名中随机选，保证“有脑子但不完美”。
-    /// </summary>
     private const int TopPoolCount = 6;
 
     private readonly BattleRuleSystem ruleSystem;
     private readonly BattleSimulator simulator;
+
+    public BoboBattleAiMode AiMode { get; set; } = BoboBattleAiMode.Normal;
 
     public BattleAiPlanner(BattleRuleSystem ruleSystem, BattleSimulator simulator)
     {
@@ -32,20 +27,19 @@ public class BattleAiPlanner
         this.simulator = simulator;
     }
 
-    /// <summary>
-    /// 读取玩家已经锁定的方案后，为 AI 选出一套三槽动作。
-    /// </summary>
     public BattlePlan ChoosePlan(BattleModel model, BattlePlan playerPlan)
     {
         List<BattlePlan> validPlans = GenerateValidPlans(model.AI.Energy);
         if (validPlans.Count == 0)
         {
-            // 理论上不会走到这里，因为至少还能 Guard / Charge，
-            // 但保留一个兜底，避免极端情况下 AI 无法返回方案。
             return BattlePlan.Create(ActionType.Charge, ActionType.Charge, ActionType.Charge);
         }
 
-        // 先做一次启发式筛选，再进入完整模拟，降低总开销。
+        if (AiMode == BoboBattleAiMode.GuaranteedCounter)
+        {
+            return ChooseGuaranteedCounterPlan(model, playerPlan, validPlans);
+        }
+
         List<CandidateScore> candidatePool = BuildCandidatePool(model, playerPlan, validPlans, DesiredCandidateCount);
         for (int i = 0; i < candidatePool.Count; i++)
         {
@@ -53,7 +47,7 @@ public class BattleAiPlanner
             SimResult simResult = simulator.Simulate(model, playerPlan, candidate.Plan);
             candidate.Score = ScorePlan(model, playerPlan, candidate.Plan, simResult);
 
-            // 最终决策故意保留一定扰动，避免每次都走完全相同的最优路径。
+            // Keep normal AI readable but imperfect.
             candidate.Score += Random.Range(-1.15f, 1.15f);
         }
 
@@ -63,10 +57,51 @@ public class BattleAiPlanner
         return candidatePool[pickIndex].Plan.Clone();
     }
 
-    /// <summary>
-    /// 根据起始能量枚举所有合法三槽方案。
-    /// 这里不读对手动作，只保证“我这三步在能量规则下能走得通”。
-    /// </summary>
+    private BattlePlan ChooseGuaranteedCounterPlan(BattleModel model, BattlePlan playerPlan, List<BattlePlan> validPlans)
+    {
+        CandidateScore bestKill = null;
+        CandidateScore bestSurvival = null;
+        CandidateScore bestFallback = null;
+
+        // Special story mode is allowed to read the player's full plan. It does
+        // not write any state because BattleSimulator clones the source model.
+        for (int i = 0; i < validPlans.Count; i++)
+        {
+            BattlePlan plan = validPlans[i];
+            SimResult simResult = simulator.Simulate(model, playerPlan, plan);
+            CandidateScore candidate = new CandidateScore(plan.Clone());
+            candidate.Score = ScorePlan(model, playerPlan, plan, simResult);
+
+            if (simResult.PlayerKilled && !simResult.AiKilled)
+            {
+                bestKill = PickHigherScore(bestKill, candidate);
+            }
+
+            if (!simResult.AiKilled)
+            {
+                bestSurvival = PickHigherScore(bestSurvival, candidate);
+            }
+
+            bestFallback = PickHigherScore(bestFallback, candidate);
+        }
+
+        if (bestKill != null)
+        {
+            return bestKill.Plan.Clone();
+        }
+
+        if (bestSurvival != null)
+        {
+            Debug.LogWarning("[BattleAiPlanner] GuaranteedCounter could not find a killing line; using the best non-losing line instead.");
+            return bestSurvival.Plan.Clone();
+        }
+
+        Debug.LogWarning("[BattleAiPlanner] GuaranteedCounter could not find a safe line; using the highest scored fallback line.");
+        return bestFallback != null
+            ? bestFallback.Plan.Clone()
+            : BattlePlan.Create(ActionType.Charge, ActionType.Charge, ActionType.Charge);
+    }
+
     private List<BattlePlan> GenerateValidPlans(int startingEnergy)
     {
         List<BattlePlan> plans = new List<BattlePlan>();
@@ -75,10 +110,6 @@ public class BattleAiPlanner
         return plans;
     }
 
-    /// <summary>
-    /// 递归构造完整方案树。
-    /// 每深入一层，都会把当前槽位的动作效果投影到后续能量上。
-    /// </summary>
     private void GeneratePlanRecursive(int slotIndex, int currentEnergy, bool hasUsedGuard, ActionType[] buffer, List<BattlePlan> plans)
     {
         if (slotIndex >= BattlePlan.SlotCount)
@@ -98,9 +129,6 @@ public class BattleAiPlanner
         }
     }
 
-    /// <summary>
-    /// 给定当前能量，返回这一槽理论上可以用的动作集合。
-    /// </summary>
     private List<ActionType> GetAvailableActions(int currentEnergy, bool hasUsedGuard)
     {
         List<ActionType> actions = new List<ActionType>(4);
@@ -123,10 +151,6 @@ public class BattleAiPlanner
         return actions;
     }
 
-    /// <summary>
-    /// 从所有合法方案中筛出一个规模合适、分布相对均匀的候选池。
-    /// 这样做的目标是减少模拟次数，同时避免候选过于同质化。
-    /// </summary>
     private List<CandidateScore> BuildCandidatePool(BattleModel model, BattlePlan playerPlan, List<BattlePlan> validPlans, int desiredCount)
     {
         List<CandidateScore> seededCandidates = new List<CandidateScore>();
@@ -173,10 +197,6 @@ public class BattleAiPlanner
         return selected;
     }
 
-    /// <summary>
-    /// 第一层启发式打分。
-    /// 它不跑完整模拟，只根据动作对位关系和当前局势给出一个“值得不值得深入看”的粗分。
-    /// </summary>
     private float SeedPlanScore(BattleModel model, BattlePlan playerPlan, BattlePlan aiPlan)
     {
         float score = 0f;
@@ -230,11 +250,6 @@ public class BattleAiPlanner
         return score;
     }
 
-    /// <summary>
-    /// 完整模拟后的正式评分。
-    /// 这里直接体现了当前版本 AI 的价值取向：
-    /// 更看重击杀和净赚伤害，其次是保命和剩余能量，同时惩罚空放大招。
-    /// </summary>
     private float ScorePlan(BattleModel model, BattlePlan playerPlan, BattlePlan aiPlan, SimResult simResult)
     {
         float score = 0f;
@@ -267,9 +282,21 @@ public class BattleAiPlanner
         return score;
     }
 
-    /// <summary>
-    /// 检查候选集中是否已经存在相同方案，避免重复模拟。
-    /// </summary>
+    private CandidateScore PickHigherScore(CandidateScore currentBest, CandidateScore candidate)
+    {
+        if (candidate == null)
+        {
+            return currentBest;
+        }
+
+        if (currentBest == null || candidate.Score > currentBest.Score)
+        {
+            return candidate;
+        }
+
+        return currentBest;
+    }
+
     private bool ContainsPlan(List<CandidateScore> candidates, BattlePlan plan)
     {
         for (int i = 0; i < candidates.Count; i++)
@@ -283,9 +310,6 @@ public class BattleAiPlanner
         return false;
     }
 
-    /// <summary>
-    /// 比较两个 BattlePlan 是否完全相同。
-    /// </summary>
     private bool PlansEqual(BattlePlan left, BattlePlan right)
     {
         for (int i = 0; i < BattlePlan.SlotCount; i++)
@@ -299,17 +323,11 @@ public class BattleAiPlanner
         return true;
     }
 
-    /// <summary>
-    /// 分数高的排前面。
-    /// </summary>
     private static int CompareCandidateDescending(CandidateScore x, CandidateScore y)
     {
         return y.Score.CompareTo(x.Score);
     }
 
-    /// <summary>
-    /// AI 内部使用的候选项结构。
-    /// </summary>
     private class CandidateScore
     {
         public BattlePlan Plan;

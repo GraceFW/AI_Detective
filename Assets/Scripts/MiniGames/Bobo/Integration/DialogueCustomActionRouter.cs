@@ -1,21 +1,11 @@
 using System;
 using UnityEngine;
 
-/// <summary>
-/// 对话系统中的 CustomAction 路由器。
-/// 当前它只负责识别并启动 BoboBattle，但未来也可以继续在这里挂别的剧情模块。
-/// </summary>
 public static class DialogueCustomActionRouter
 {
-    /// <summary>
-    /// 在 DialogueEntry.customActionId 中约定使用的动作名。
-    /// </summary>
     public const string BoboBattleActionId = "BoboBattle";
+    public const string BoboStoryFlowActionId = "BoboStoryFlow";
 
-    /// <summary>
-    /// 尝试把一个对话节点解释成小游戏入口。
-    /// 返回 false 表示这个节点不归当前路由器处理。
-    /// </summary>
     public static bool TryExecute(DialogueEntry entry, Action<BoboBattleSessionResult> onComplete)
     {
         if (entry == null)
@@ -23,41 +13,94 @@ public static class DialogueCustomActionRouter
             return false;
         }
 
-        // 支持英文 ID 和中文别名，方便策划在资源中配置时更灵活。
-        string actionId = string.IsNullOrWhiteSpace(entry.customActionId) ? string.Empty : entry.customActionId.Trim();
-        if (!string.Equals(actionId, BoboBattleActionId, StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(actionId, "波波攒", StringComparison.OrdinalIgnoreCase))
+        string actionId = string.IsNullOrWhiteSpace(entry.customActionId)
+            ? string.Empty
+            : entry.customActionId.Trim();
+
+        if (IsStoryFlowAction(actionId))
+        {
+            ExecuteStoryFlow(entry, onComplete);
+            return true;
+        }
+
+        if (!IsBattleAction(actionId))
         {
             return false;
         }
 
-        string playerName = "玩家";
-        if (NameInputDialog.Instance != null)
-        {
-            playerName = NameInputDialog.Instance.GetActualPlayerName();
-        }
+        ExecuteSingleBattle(entry, onComplete);
+        return true;
+    }
 
-        // 由对话节点组装一次完整的小游戏请求。
+    private static bool IsBattleAction(string actionId)
+    {
+        return string.Equals(actionId, BoboBattleActionId, StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(actionId, "\u6ce2\u6ce2\u6512", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsStoryFlowAction(string actionId)
+    {
+        return string.Equals(actionId, BoboStoryFlowActionId, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void ExecuteSingleBattle(DialogueEntry entry, Action<BoboBattleSessionResult> onComplete)
+    {
         BoboBattleRequest request = new BoboBattleRequest();
-        request.Title = string.IsNullOrWhiteSpace(entry.dialogueText) ? "波波攒对抗演练" : entry.dialogueText;
-        request.PlayerName = playerName;
-        request.AiName = "镜像AI";
+        request.Title = string.IsNullOrWhiteSpace(entry.dialogueText) ? "\u6ce2\u6ce2\u6512\u5bf9\u6297\u6f14\u7ec3" : entry.dialogueText;
+        request.PlayerName = ResolvePlayerName();
+        request.AiName = "\u955c\u50cfAI";
         request.SourceTag = entry.customActionArgument;
         request.OnCompleted = onComplete;
 
         bool opened = BoboBattleService.Open(request);
         if (!opened)
         {
-            Debug.LogWarning("[DialogueCustomActionRouter] 波波攒面板当前不可打开，已直接跳过该节点。");
-            onComplete?.Invoke(new BoboBattleSessionResult
-            {
-                Winner = BattleWinner.None,
-                WasCancelled = true,
-                CompletedRounds = 0,
-                FinalModel = null
-            });
+            Debug.LogWarning("[DialogueCustomActionRouter] BoboBattle panel is unavailable. The custom action was skipped.");
+            onComplete?.Invoke(CreateCancelledResult());
+        }
+    }
+
+    private static void ExecuteStoryFlow(DialogueEntry entry, Action<BoboBattleSessionResult> onComplete)
+    {
+        BoboStoryFlowController controller = UnityEngine.Object.FindObjectOfType<BoboStoryFlowController>();
+        if (controller == null)
+        {
+            Debug.LogWarning("[DialogueCustomActionRouter] BoboStoryFlow requested, but no BoboStoryFlowController exists in the scene.");
+            onComplete?.Invoke(CreateCancelledResult());
+            return;
         }
 
-        return true;
+        controller.ScheduleStartAfterCurrentDialogue(entry.customActionArgument);
+
+        // The flow is intentionally scheduled, not opened here, so the current
+        // dialogue sequence can finish without re-entering DialogueManager.
+        onComplete?.Invoke(new BoboBattleSessionResult
+        {
+            Winner = BattleWinner.None,
+            WasCancelled = false,
+            CompletedRounds = 0,
+            FinalModel = null
+        });
+    }
+
+    private static string ResolvePlayerName()
+    {
+        if (NameInputDialog.Instance != null)
+        {
+            return NameInputDialog.Instance.GetActualPlayerName();
+        }
+
+        return "\u73a9\u5bb6";
+    }
+
+    private static BoboBattleSessionResult CreateCancelledResult()
+    {
+        return new BoboBattleSessionResult
+        {
+            Winner = BattleWinner.None,
+            WasCancelled = true,
+            CompletedRounds = 0,
+            FinalModel = null
+        };
     }
 }

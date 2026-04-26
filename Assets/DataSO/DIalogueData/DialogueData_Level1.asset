@@ -23,9 +23,9 @@ MonoBehaviour:
       useTypewriterEffect: 0
       typewriterSpeed: 0
       textBoxBackground: {fileID: 0}
-      nodeType: 2
-      customActionId: BoboBattle
-      customActionArgument: level1_intro_training
+      nodeType: 0
+      customActionId: 
+      customActionArgument: 
     - speakerName: Admin
       speakerImage: {fileID: 0}
       dialogueText: "\u77E5\u9053\u4ECA\u5929\u662F\u4EC0\u4E48\u65E5\u5B50\u5417\uFF0C\u5DE5\u85E4\u3002"

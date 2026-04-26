@@ -26,16 +26,59 @@ public class BoboBattleService : MonoBehaviour
         return EnsureInstance().OpenInternal(request);
     }
 
+    public static bool IsCurrentBattleOpen()
+    {
+        return instance != null && instance.panel != null && instance.panel.IsVisible;
+    }
+
     /// <summary>
     /// 以“主动取消”的方式关闭当前小游戏。
     /// 给对话系统或其他外层流程在中断时使用。
     /// </summary>
     public static void CloseCurrentAsCancelled()
     {
-        if (instance != null && instance.panel != null)
+        TryCloseCurrentAsCancelled(false);
+    }
+
+    public static bool TryCloseCurrentAsCancelled(bool force = false)
+    {
+        if (instance == null || instance.panel == null)
         {
-            instance.panel.CloseAsCancelled();
+            return false;
         }
+
+        return instance.panel.TryCloseAsCancelled(force);
+    }
+
+    public static bool ForceHideCurrentWithoutCallback()
+    {
+        if (instance == null || instance.panel == null)
+        {
+            return false;
+        }
+
+        instance.panel.ForceHideWithoutCallback();
+        return true;
+    }
+
+    public static bool DebugDefeatCurrentAi()
+    {
+        if (instance == null || instance.panel == null || !instance.panel.IsVisible)
+        {
+            return false;
+        }
+
+        return instance.panel.DebugCompleteAsPlayerWin();
+    }
+
+    public static bool DebugDefeatCurrentPlayer()
+    {
+        if (instance == null || instance.panel == null || !instance.panel.IsVisible)
+        {
+            return false;
+        }
+
+        return instance.panel.DebugCompleteAsAiWin();
     }
 
     /// <summary>

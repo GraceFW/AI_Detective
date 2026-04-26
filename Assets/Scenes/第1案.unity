@@ -3003,7 +3003,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueUI: {fileID: 361593136}
   dialogueHistory: {fileID: 361593135}
-  optionDialogueDb: {fileID: 11400000, guid: f8a2031411134134ebf1bda5f0d06782, type: 2}
+  optionDialogueDb: {fileID: 11400000, guid: f5609827fc6d75f49a4e0f81387cee34, type: 2}
 --- !u!1 &362255097
 GameObject:
   m_ObjectHideFlags: 0
