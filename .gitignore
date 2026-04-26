@@ -443,3 +443,5 @@ desktop.ini
 # Never ignore Unity meta files!!
 ###############################################################################
 !*.meta
+/Assets/Arts/立绘与摄像头.zip
+/Assets/Arts/立绘与摄像头.zip.meta
