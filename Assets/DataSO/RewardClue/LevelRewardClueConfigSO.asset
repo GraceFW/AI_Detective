@@ -21,3 +21,11 @@ MonoBehaviour:
     triggerType: 0
     clueIDs:
     - 1001
+  - levelNumber: 2
+    triggerType: 0
+    clueIDs:
+    - 2001
+    - 2035
+    - 2036
+    - 2037
+    - 2038

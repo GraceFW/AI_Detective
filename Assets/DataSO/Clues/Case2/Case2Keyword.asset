@@ -12,4 +12,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6a4e1a08df99db47b344219735b3174, type: 3}
   m_Name: Case2Keyword
   m_EditorClassIdentifier: 
-  keywords: []
+  keywords:
+  - term: "\u73B0\u573A\u52D8\u5BDF\u62A5\u544A"
+    revealsClue: {fileID: 11400000, guid: b2f2b59ef95f8b2488ef57b71c356964, type: 2}
+  - term: "\u5C38\u68C0\u62A5\u544A"
+    revealsClue: {fileID: 11400000, guid: ea3d4d5691baf1849be3ab502f2457c3, type: 2}
+  - term: "\u4E1C\u4EAC\u5DE8\u86CB"
+    revealsClue: {fileID: 11400000, guid: 20db2adbbe6762b46b94ab4518674f79, type: 2}
+  - term: "\u5316\u5986\u5BA4"
+    revealsClue: {fileID: 11400000, guid: 723f98af7aa9f854aab76ae1c49312d0, type: 2}
+  - term: "\u4F11\u606F\u5BA4"
+    revealsClue: {fileID: 11400000, guid: e763c9a3772e1c642878c3d360b68a85, type: 2}
+  - term: "\u62A5\u6848\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: cb3d683a36531d54c9ba36d8b7f495b5, type: 2}
+  - term: "\u6B7B\u4EA1\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: 84419d9cf47124647a4cb5a8109b24cd, type: 2}
+  - term: "\u8FDB\u98DF\u65F6\u95F4"
+    revealsClue: {fileID: 11400000, guid: d4c508aa124b6894ea0c6e96dcf05a31, type: 2}
+  - term: "\u8336\u6C34\u95F4"
+    revealsClue: {fileID: 11400000, guid: 36e9e5219b6fcb344ae53d7abe6874e2, type: 2}
+  - term: "\u548C\u679C\u5B50"
+    revealsClue: {fileID: 11400000, guid: 71edabf1007dbfd46bf8b674f4fde80c, type: 2}
+  - term: "\u5929\u5DDD\u6F14\u827A"
+    revealsClue: {fileID: 11400000, guid: 0a09d24af9d5aa646a6ab53b8b7e568c, type: 2}
+  - term: "\u661F\u9022"
+    revealsClue: {fileID: 11400000, guid: 2c376a990c2a2b94b96f704f6b21376f, type: 2}
+  - term: "\u785D\u9178\u7518\u6CB9"
+    revealsClue: {fileID: 11400000, guid: 0789e64c20162da42bdb64f11f072f4b, type: 2}
+  - term: "\u82B1\u751F\u7C89"
+    revealsClue: {fileID: 11400000, guid: 472ff250956b81a47998106a0cf2d3f1, type: 2}
+  - term: "\u536B\u751F\u95F4"
+    revealsClue: {fileID: 11400000, guid: a5b73381959018e48b5a5dd34a64b5f8, type: 2}
+  - term: "\u5411\u9633\u5904"
+    revealsClue: {fileID: 11400000, guid: 3536c3ffa08e2444e9611717248c742e, type: 2}
+  - term: "\u7EC7\u96EA\u7EC4"
+    revealsClue: {fileID: 11400000, guid: 3f564a44b20b3354e87587be38aa6c2f, type: 2}
+  - term: "\u897F\u5730\u90A3\u975E"
+    revealsClue: {fileID: 11400000, guid: 4f816dc0c1e80d7458616695a1dc2fd8, type: 2}
+  - term: "\u4E9A\u785D\u9178\u94A0"
+    revealsClue: {fileID: 11400000, guid: 758f68672306cea4a8bead97443969ed, type: 2}
+  - term: "\u63E1\u624B\u4F1A"
+    revealsClue: {fileID: 11400000, guid: 8fc5a776e23baa64791afffcceaa8b3f, type: 2}
+  - term: "\u6B7B\u8005\u7684\u624B\u673A"
+    revealsClue: {fileID: 11400000, guid: 7f9acde8b3b8f7a4eb89cedddc729fe0, type: 2}
+  - term: "\u4EB2\u543B\u7684\u7167\u7247"
+    revealsClue: {fileID: 11400000, guid: 9e49447758e645949a4d593c5718f82c, type: 2}
+  - term: "\u5F55\u97F3"
+    revealsClue: {fileID: 11400000, guid: cbc7d7fcd1e6209468a1ae21c916e098, type: 2}
+  - term: "\u9AD8\u5CF0\u8BDA\u4E00\u90CE"
+    revealsClue: {fileID: 11400000, guid: cedbef1b9b00ea342beeb3daec62014c, type: 2}
+  - term: "\u767D\u5DDD\u96EA\u4E43"
+    revealsClue: {fileID: 11400000, guid: 95aacf91788fd0345a49903803720c6d, type: 2}
+  - term: "\u6850\u751F\u83B2"
+    revealsClue: {fileID: 11400000, guid: 213259c5e1d1b3b4e9099a4fc0a16c2d, type: 2}
+  - term: "\u6A58\u65E5\u5411"
+    revealsClue: {fileID: 11400000, guid: 8865ca875eb135443ab9fb21e6f3f833, type: 2}
+  - term: "\u9ED1\u6728\u6267"
+    revealsClue: {fileID: 11400000, guid: bb30f6e4f23e8814195b6dc570397428, type: 2}
+  - term: "\u529E\u516C\u5BA4\u6444\u50CF\u5934"
+    revealsClue: {fileID: 11400000, guid: d6348d762ec0e8940be5b90370d67458, type: 2}
+  - term: "\u6863\u6848\u5BA4\u6444\u50CF\u5934"
+    revealsClue: {fileID: 11400000, guid: d475054653cfce44797984d97ce42f99, type: 2}
+  - term: "\u8336\u6C34\u95F4\u6444\u50CF\u5934"
+    revealsClue: {fileID: 11400000, guid: db2870dea18b8d145914bf420c07c259, type: 2}
