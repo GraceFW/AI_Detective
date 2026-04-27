@@ -20,7 +20,12 @@ public class FadeManager : MonoBehaviour
 	{
 		if (Instance == null) Instance = this;
 		else Destroy(gameObject);
-		_fadeImage.color = Color.clear; // 初始透明
+		if (_fadeImage != null)
+		{
+			_fadeImage.color = Color.clear; // 初始透明
+			_fadeImage.raycastTarget = false;
+		}
+
 		if (_bootText != null)
 		{
 			_bootText.text = string.Empty;
@@ -28,6 +33,9 @@ public class FadeManager : MonoBehaviour
 			if (_bootText.gameObject.activeSelf)
 				_bootText.gameObject.SetActive(false);
 		}
+
+		if (_bootScrollRect != null && _bootScrollRect.gameObject.activeSelf)
+			_bootScrollRect.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -79,6 +87,8 @@ public class FadeManager : MonoBehaviour
 		_bootText.maxVisibleCharacters = 0;
 		_bootText.text = string.Empty;
 		_bootText.gameObject.SetActive(false);
+		if (_bootScrollRect != null)
+			_bootScrollRect.gameObject.SetActive(false);
 	}
 
 	public bool IsBootTextPlaying => _isBootTextPlaying;
@@ -86,6 +96,8 @@ public class FadeManager : MonoBehaviour
 	private IEnumerator PlayBootTextCoroutine(string fullText, float charsPerSecond, Action onComplete)
 	{
 		_isBootTextPlaying = true;
+		if (_bootScrollRect != null)
+			_bootScrollRect.gameObject.SetActive(true);
 		_bootText.gameObject.SetActive(true);
 		var text = fullText ?? string.Empty;
 		_bootText.text = string.Empty;

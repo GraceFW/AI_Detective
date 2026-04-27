@@ -42,6 +42,11 @@ public class DeveloperPanelUI : MonoBehaviour
     [SerializeField] private int levelNumberOverride = -1;
     [SerializeField] private GameSceneSO nextSceneOverride;
 
+    [Header("Guide Debug")]
+    [SerializeField] private Button disableGuideButton;
+    [SerializeField] private bool autoCreateDisableGuideButton = true;
+    [SerializeField] private string disableGuideButtonLabel = "关闭新手教程";
+
     [Header("Status")]
     [SerializeField] private TextMeshProUGUI statusText;
     [SerializeField] private bool verboseLog = true;
@@ -66,6 +71,7 @@ public class DeveloperPanelUI : MonoBehaviour
 
         hidePanelWithCanvasGroup = panelRoot == gameObject;
         EnsurePanelInputSurface();
+        EnsureDisableGuideButton();
         BindButtons();
         RebuildSceneDropdown();
         HideSceneSwitchConfirm();
@@ -196,6 +202,19 @@ public class DeveloperPanelUI : MonoBehaviour
         SetStatus(success ? "Bobo minigame player defeated." : "No active Bobo minigame panel was found.");
     }
 
+    public void DisableGuide()
+    {
+        GuideManager guideManager = FindObjectOfType<GuideManager>(true);
+        if (guideManager == null)
+        {
+            SetStatus("GuideManager was not found.");
+            return;
+        }
+
+        guideManager.DisableGuide();
+        SetStatus("GuideManager disabled.");
+    }
+
     private void BindButtons()
     {
         if (loadSelectedSceneButton != null)
@@ -226,6 +245,12 @@ public class DeveloperPanelUI : MonoBehaviour
         {
             defeatBoboPlayerButton.onClick.RemoveListener(DefeatBoboPlayer);
             defeatBoboPlayerButton.onClick.AddListener(DefeatBoboPlayer);
+        }
+
+        if (disableGuideButton != null)
+        {
+            disableGuideButton.onClick.RemoveListener(DisableGuide);
+            disableGuideButton.onClick.AddListener(DisableGuide);
         }
 
         if (sceneDropdown != null)
@@ -272,6 +297,11 @@ public class DeveloperPanelUI : MonoBehaviour
         if (defeatBoboPlayerButton != null)
         {
             defeatBoboPlayerButton.onClick.RemoveListener(DefeatBoboPlayer);
+        }
+
+        if (disableGuideButton != null)
+        {
+            disableGuideButton.onClick.RemoveListener(DisableGuide);
         }
 
         if (sceneDropdown != null)
@@ -380,6 +410,48 @@ public class DeveloperPanelUI : MonoBehaviour
         {
             sceneSwitchConfirmRoot.SetActive(false);
         }
+    }
+
+    private void EnsureDisableGuideButton()
+    {
+        if (disableGuideButton != null || !autoCreateDisableGuideButton || panelRoot == null)
+        {
+            return;
+        }
+
+        Transform existing = panelRoot.transform.Find("DisableGuideButton");
+        if (existing != null && existing.TryGetComponent(out Button existingButton))
+        {
+            disableGuideButton = existingButton;
+            return;
+        }
+
+        GameObject buttonObject = new GameObject("DisableGuideButton", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(panelRoot.transform, false);
+
+        RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
+        buttonRect.sizeDelta = new Vector2(150f, 60f);
+
+        Image buttonImage = buttonObject.GetComponent<Image>();
+        buttonImage.color = new Color(0.72f, 0.26f, 0.20f, 1f);
+
+        disableGuideButton = buttonObject.GetComponent<Button>();
+
+        GameObject labelObject = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+        labelObject.transform.SetParent(buttonObject.transform, false);
+
+        RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = new Vector2(8f, 4f);
+        labelRect.offsetMax = new Vector2(-8f, -4f);
+
+        TextMeshProUGUI labelText = labelObject.GetComponent<TextMeshProUGUI>();
+        labelText.text = string.IsNullOrWhiteSpace(disableGuideButtonLabel) ? "Disable Guide" : disableGuideButtonLabel;
+        labelText.fontSize = 22f;
+        labelText.color = Color.white;
+        labelText.alignment = TextAlignmentOptions.Center;
+        labelText.enableWordWrapping = true;
     }
 
     private void EnsureSceneSwitchConfirmPopup()

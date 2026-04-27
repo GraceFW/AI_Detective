@@ -16,27 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 4fd69bf08316889438d375c07121fc01
-  m_SerializeEntries:
-  - m_GUID: 0307ced7d3a35934092e2c6388112020
-    m_Address: "Assets/Scenes/\u901A\u7528\u6A21\u677F.unity"
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8c9cfa26abfee488c85f1582747f6a02
-    m_Address: "Assets/Scenes/\u6807\u9898\u754C\u9762.unity"
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 92da38682a457e54fbf05ec709033ff4
-    m_Address: "Assets/Scenes/\u7B2C2\u6848.unity"
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e6b9bd9b8a4826846ac07a0600ff477e
-    m_Address: "Assets/Scenes/\u7B2C1\u6848.unity"
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 492fa0546fb214547bc87c679a3a35f0, type: 2}
   m_SchemaSet:

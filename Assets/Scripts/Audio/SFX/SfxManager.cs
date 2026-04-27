@@ -9,6 +9,7 @@ using UnityEngine.Audio;
 public class SfxManager : MonoBehaviour
 {
     public static SfxManager Instance { get; private set; }
+    private const string VolumePrefsKey = "Settings.SfxVolume";
 
     [Header("配置")]
     [Tooltip("音效配置库")]
@@ -21,6 +22,8 @@ public class SfxManager : MonoBehaviour
     [Tooltip("OneShot 音频源池大小")]
     [Range(8, 32)]
     [SerializeField] private int oneShotPoolSize = 16;
+    [Range(0f, 1f)]
+    [SerializeField] private float masterVolume = 1f;
 
     // OneShot 音频源池
     private Queue<AudioSource> _oneShotPool = new Queue<AudioSource>();
@@ -41,6 +44,7 @@ public class SfxManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            masterVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(VolumePrefsKey, masterVolume));
             DontDestroyOnLoad(gameObject);
             InitializePool();
         }
@@ -49,6 +53,19 @@ public class SfxManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+    }
+
+    public float GetMasterVolume01()
+    {
+        return Mathf.Clamp01(masterVolume);
+    }
+
+    public void SetMasterVolume01(float volume)
+    {
+        masterVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(VolumePrefsKey, masterVolume);
+        PlayerPrefs.Save();
+        ApplyLoopVolumes();
     }
 
     /// <summary>
@@ -138,7 +155,7 @@ public class SfxManager : MonoBehaviour
 
         // 配置并播放
         audioSource.clip = entry.clip;
-        audioSource.volume = entry.volume;
+        audioSource.volume = GetScaledVolume(entry);
         audioSource.loop = false;
         audioSource.pitch = Random.Range(entry.pitchMin, entry.pitchMax);
         audioSource.outputAudioMixerGroup = sfxMixerGroup;
@@ -208,7 +225,7 @@ public class SfxManager : MonoBehaviour
         audioSource.playOnAwake = false;
         audioSource.loop = true;
         audioSource.clip = entry.clip;
-        audioSource.volume = entry.volume;
+        audioSource.volume = GetScaledVolume(entry);
         audioSource.pitch = Random.Range(entry.pitchMin, entry.pitchMax);
         audioSource.outputAudioMixerGroup = sfxMixerGroup;
 
@@ -307,8 +324,38 @@ public class SfxManager : MonoBehaviour
         }
     }
 
+    private float GetScaledVolume(SfxEntry entry)
+    {
+        return entry == null ? 0f : Mathf.Clamp01(entry.volume * masterVolume);
+    }
+
+    private void ApplyLoopVolumes()
+    {
+        if (library == null)
+        {
+            return;
+        }
+
+        foreach (var kvp in _loopMap)
+        {
+            var source = kvp.Value;
+            if (source == null)
+            {
+                continue;
+            }
+
+            var entry = library.Get(kvp.Key.id);
+            source.volume = GetScaledVolume(entry);
+        }
+    }
+
     private void OnDestroy()
     {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+
         // 清理所有循环音效
         foreach (var audioSource in _loopMap.Values)
         {

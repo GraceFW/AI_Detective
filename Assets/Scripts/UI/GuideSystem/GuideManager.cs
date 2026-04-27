@@ -58,6 +58,17 @@ public class GuideManager : MonoBehaviour
 	private UnityAction<int> _activeDropdownHandler;
 
 	public bool GuideEnabled => guideEnabled;
+	public bool IsGuiding => guideEnabled && (isGuiding || pendingSequence != null);
+
+	public void DisableGuide()
+	{
+		guideEnabled = false;
+		StopDependencyBinding();
+		UnsubscribeDependencies();
+		CleanupActiveWaiters();
+		StopGuideRuntime();
+		enabled = false;
+	}
 
 	private void Awake()
 	{

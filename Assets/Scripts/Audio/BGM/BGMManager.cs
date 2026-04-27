@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class BGMManager : MonoBehaviour
 {
+    public static BGMManager Instance { get; private set; }
+    private const string VolumePrefsKey = "Settings.BgmVolume";
+
     [Header("事件")]
     [SerializeField] private GameSceneEventSO sceneLoadedEvent;
     [SerializeField] private BGMTrackEventSO bgmRequestEvent;
@@ -22,6 +25,17 @@ public class BGMManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Debug.LogWarning("[BGMManager] Multiple BGMManager instances detected.");
+        }
+
+        masterVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(VolumePrefsKey, masterVolume));
+
         if (audioSource == null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -34,6 +48,19 @@ public class BGMManager : MonoBehaviour
 
         audioSource.playOnAwake = false;
         audioSource.loop = true;
+    }
+
+    public float GetMasterVolume01()
+    {
+        return Mathf.Clamp01(masterVolume);
+    }
+
+    public void SetMasterVolume01(float volume)
+    {
+        masterVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(VolumePrefsKey, masterVolume);
+        PlayerPrefs.Save();
+        ApplyCurrentVolume();
     }
 
     private void OnEnable()
@@ -150,5 +177,24 @@ public class BGMManager : MonoBehaviour
         }
 
         _playRoutine = null;
+    }
+
+    private void ApplyCurrentVolume()
+    {
+        if (audioSource == null || _current == null || audioSource.clip == null)
+        {
+            return;
+        }
+
+        audioSource.DOKill();
+        audioSource.volume = Mathf.Clamp01(_current.volume * masterVolume);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 }

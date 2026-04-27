@@ -54,6 +54,11 @@ public class DataManager : MonoBehaviour
 
 	public void Save()
 	{
+		if (saveData == null)
+		{
+			saveData = new Data();
+		}
+
 		// 调用ISaveable 接口的每一个SaveData 实现
 		foreach (var saverable in saveableList)
 		{
@@ -75,11 +80,39 @@ public class DataManager : MonoBehaviour
 
 	public void Load()
 	{
+		if (saveData == null)
+		{
+			Debug.LogWarning("[DataManager] Load failed: saveData is null.");
+			return;
+		}
+
 		// 调用ISaveable 接口的每一个LoadData 实现
 		foreach (var saverable in saveableList)
 		{
 			saverable.LoadData(saveData);
 		}
+	}
+
+	public bool HasLoadableSceneSave()
+	{
+		if (saveData == null || !saveData.isHavingSceneData)
+		{
+			return false;
+		}
+
+		return saveData.GetSavedScene() != null;
+	}
+
+	public bool LoadSavedGame()
+	{
+		if (!HasLoadableSceneSave())
+		{
+			Debug.LogWarning("[DataManager] No loadable scene save was found.");
+			return false;
+		}
+
+		Load();
+		return true;
 	}
 
 	/// <summary>
@@ -91,9 +124,17 @@ public class DataManager : MonoBehaviour
 
 		if (File.Exists(resultPath))
 		{
-			var stringData = File.ReadAllText(resultPath);
-			var jsonData = JsonConvert.DeserializeObject<Data>(stringData);
-			saveData = jsonData;
+			try
+			{
+				var stringData = File.ReadAllText(resultPath);
+				var jsonData = JsonConvert.DeserializeObject<Data>(stringData);
+				saveData = jsonData ?? new Data();
+			}
+			catch (System.Exception ex)
+			{
+				Debug.LogWarning($"[DataManager] Failed to read save data: {ex.Message}");
+				saveData = new Data();
+			}
 		}
 	}
 
