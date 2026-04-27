@@ -59,11 +59,14 @@ public class DialogueEntry
     public DialogueNodeType nodeType = DialogueNodeType.Normal;
 
     [Header("自定义动作")]
-    [Tooltip("当节点类型为 CustomAction 时使用的动作标识，例如 BoboBattle")]
+    [Tooltip("当节点类型为 CustomAction 时使用的动作标识，例如 BoboBattle、SwitchBGM")]
     public string customActionId;
 
     [Tooltip("自定义动作的可选扩展参数")]
     public string customActionArgument;
+
+    [Tooltip("当 CustomAction 为 SwitchBGM/BGM 时播放的 BGM Track；留空则停止当前 BGM")]
+    public BGMTrackSO customBgmTrack;
 }
 
 /// <summary>

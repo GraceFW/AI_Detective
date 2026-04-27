@@ -489,6 +489,24 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator ShowCustomActionNode(DialogueEntry entry)
     {
+        if (DialogueCustomActionRouter.ShouldShowDialogueText(entry) && HasVisibleDialogueContent(entry))
+        {
+            if (dialoguePanel != null)
+            {
+                dialoguePanel.SetActive(true);
+            }
+
+            bool handledWithText = DialogueCustomActionRouter.TryExecute(entry, (_) => { });
+            if (!handledWithText)
+            {
+                Debug.LogWarning($"[DialogueManager] 未识别的 CustomAction 节点：{entry.customActionId}");
+            }
+
+            isWaitingForSpecialNode = false;
+            ShowNormalDialogueEntry(entry);
+            yield break;
+        }
+
         if (dialoguePanel != null)
         {
             dialoguePanel.SetActive(false);
@@ -543,6 +561,14 @@ public class DialogueManager : MonoBehaviour
         {
             EndDialogue();
         }
+    }
+
+    private static bool HasVisibleDialogueContent(DialogueEntry entry)
+    {
+        return entry != null &&
+               (!string.IsNullOrWhiteSpace(entry.dialogueText) ||
+                !string.IsNullOrWhiteSpace(entry.speakerName) ||
+                entry.speakerImage != null);
     }
     
     /// <summary>

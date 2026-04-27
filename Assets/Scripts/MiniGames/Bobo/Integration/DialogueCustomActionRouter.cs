@@ -5,6 +5,7 @@ public static class DialogueCustomActionRouter
 {
     public const string BoboBattleActionId = "BoboBattle";
     public const string BoboStoryFlowActionId = "BoboStoryFlow";
+    public const string SwitchBgmActionId = "SwitchBGM";
 
     public static bool TryExecute(DialogueEntry entry, Action<BoboBattleSessionResult> onComplete)
     {
@@ -23,6 +24,12 @@ public static class DialogueCustomActionRouter
             return true;
         }
 
+        if (IsBgmAction(actionId))
+        {
+            ExecuteBgmSwitch(entry, onComplete);
+            return true;
+        }
+
         if (!IsBattleAction(actionId))
         {
             return false;
@@ -30,6 +37,20 @@ public static class DialogueCustomActionRouter
 
         ExecuteSingleBattle(entry, onComplete);
         return true;
+    }
+
+    public static bool ShouldShowDialogueText(DialogueEntry entry)
+    {
+        if (entry == null)
+        {
+            return false;
+        }
+
+        string actionId = string.IsNullOrWhiteSpace(entry.customActionId)
+            ? string.Empty
+            : entry.customActionId.Trim();
+
+        return IsBgmAction(actionId);
     }
 
     private static bool IsBattleAction(string actionId)
@@ -41,6 +62,33 @@ public static class DialogueCustomActionRouter
     private static bool IsStoryFlowAction(string actionId)
     {
         return string.Equals(actionId, BoboStoryFlowActionId, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsBgmAction(string actionId)
+    {
+        return string.Equals(actionId, SwitchBgmActionId, StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(actionId, "BGM", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(actionId, "PlayBGM", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(actionId, "切换BGM", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void ExecuteBgmSwitch(DialogueEntry entry, Action<BoboBattleSessionResult> onComplete)
+    {
+        if (BGMManager.Instance == null)
+        {
+            Debug.LogWarning("[DialogueCustomActionRouter] SwitchBGM requested, but no BGMManager exists in the scene.");
+            onComplete?.Invoke(CreateCancelledResult());
+            return;
+        }
+
+        BGMManager.Instance.Play(entry.customBgmTrack);
+        onComplete?.Invoke(new BoboBattleSessionResult
+        {
+            Winner = BattleWinner.None,
+            WasCancelled = false,
+            CompletedRounds = 0,
+            FinalModel = null
+        });
     }
 
     private static void ExecuteSingleBattle(DialogueEntry entry, Action<BoboBattleSessionResult> onComplete)
