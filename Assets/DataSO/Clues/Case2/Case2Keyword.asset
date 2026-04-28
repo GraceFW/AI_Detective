@@ -69,9 +69,9 @@ MonoBehaviour:
     revealsClue: {fileID: 11400000, guid: 8865ca875eb135443ab9fb21e6f3f833, type: 2}
   - term: "\u9ED1\u6728\u6267"
     revealsClue: {fileID: 11400000, guid: bb30f6e4f23e8814195b6dc570397428, type: 2}
-  - term: "\u529E\u516C\u5BA4\u6444\u50CF\u5934"
+  - term: "\u8D70\u5ECA\u6444\u50CF\u5934"
     revealsClue: {fileID: 11400000, guid: d6348d762ec0e8940be5b90370d67458, type: 2}
-  - term: "\u6863\u6848\u5BA4\u6444\u50CF\u5934"
+  - term: "\u540E\u53F0\u6444\u50CF\u5934"
     revealsClue: {fileID: 11400000, guid: d475054653cfce44797984d97ce42f99, type: 2}
-  - term: "\u8336\u6C34\u95F4\u6444\u50CF\u5934"
+  - term: "\u5FAE\u578B\u6444\u50CF\u5934"
     revealsClue: {fileID: 11400000, guid: db2870dea18b8d145914bf420c07c259, type: 2}
