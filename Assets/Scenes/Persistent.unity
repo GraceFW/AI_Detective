@@ -6366,8 +6366,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SKIP
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
-  m_sharedMaterial: {fileID: -5848387286364068731, guid: 392dc7cceffe29d4883582625e75034e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ae5afc3f3a2baed499b939a1bb257338, type: 2}
+  m_sharedMaterial: {fileID: 9084585476090578737, guid: ae5afc3f3a2baed499b939a1bb257338, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8943,7 +8943,7 @@ MonoBehaviour:
       customBgmTrack: {fileID: 0}
     - speakerName: "\uFF1F\uFF1F\uFF1F"
       speakerImage: {fileID: 0}
-      dialogueText: "\u63A5\u4E0B\u6765\u8981\u8BA4\u771F\u4E86\u3002\u4E00\u5C40\u5B9A\u80DC\u8D1F\u2014\u2014"
+      dialogueText: "\u63A5\u4E0B\u6765\u8981\u8BA4\u771F\u4E86\u3002\u4E00\u5C40\u5B9A\u80DC\u8D1F\u2014\u2014\u4E24\u8FB9\u90FD\u53EA\u6709\u4E00\u70B9\u751F\u547D\u548C\u4E00\u70B9\u80FD\u91CF\uFF0C\u5F88\u516C\u5E73\u5427\uFF1F"
       useTypewriterEffect: 1
       typewriterSpeed: 120
       textBoxBackground: {fileID: 0}

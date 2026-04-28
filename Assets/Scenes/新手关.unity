@@ -8842,7 +8842,7 @@ MonoBehaviour:
   disableHoverWhileTyping: 1
   enableBlankClickNextDialogue: 1
   changeCursorOnHover: 1
-  handCursor: {fileID: 0}
+  handCursor: {fileID: 2800000, guid: eb4dbe7d0ea2a044ab121849c85b2ca4, type: 3}
   handCursorHotspot: {x: 6, y: 0}
   handlerBehaviours:
   - {fileID: 1085428047}
@@ -9602,7 +9602,7 @@ MonoBehaviour:
   disableHoverWhileTyping: 1
   enableBlankClickNextDialogue: 1
   changeCursorOnHover: 1
-  handCursor: {fileID: 2800000, guid: 6aa3f369a1d9b1d4dbb821f84dff81d8, type: 3}
+  handCursor: {fileID: 2800000, guid: eb4dbe7d0ea2a044ab121849c85b2ca4, type: 3}
   handCursorHotspot: {x: 6, y: 0}
   handlerBehaviours:
   - {fileID: 1235553419}

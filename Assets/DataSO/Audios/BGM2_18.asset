@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e0cc6cbed928f545a76aa2c3edce771, type: 3}
   m_Name: BGM2_18
   m_EditorClassIdentifier: 
-  clip: {fileID: 0}
+  clip: {fileID: 8300000, guid: 101de4566ed9899439a4ce72c1659562, type: 3}
   volume: 1
   loop: 1
