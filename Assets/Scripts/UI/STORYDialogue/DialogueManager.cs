@@ -112,6 +112,9 @@ public class DialogueManager : MonoBehaviour
     private Vector2 _guideLayoutAvoidDefaultAnchoredPosition;
     private bool _guideLayoutAvoidDefaultCached;
     private const float GuideLayoutAvoidMargin = 24f;
+    private const int UnskippableLevelCompleteLevel = 2;
+    private bool _skipButtonDefaultActive;
+    private bool _skipButtonDefaultActiveCached;
     
     private void Awake()
     {
@@ -143,6 +146,7 @@ public class DialogueManager : MonoBehaviour
         // 配置跳过按钮
         if (skipButton != null)
         {
+            CacheSkipButtonDefaultActive();
             // 清除所有原有的监听器
             skipButton.onClick.RemoveAllListeners();
             // 注册新的退出对话回调
@@ -168,10 +172,13 @@ public class DialogueManager : MonoBehaviour
                 OnContinueDialogue();
             }
             
-            // ESC键退出对话（无需allowSkip限制）
+            // ESC exits normal dialogue, but protected story sequences can lock it.
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                ExitDialogue();
+                if (CanExitCurrentDialogue())
+                {
+                    ExitDialogue();
+                }
             }
         }
     }
@@ -273,6 +280,7 @@ public class DialogueManager : MonoBehaviour
         isDialogueActive = true;
         isWaitingForSpecialNode = false;
         currentTriggerType = sequence.triggerType;
+        ApplySkipButtonVisibilityForCurrentDialogue();
         // 触发对话开始事件
         if (dialogueStartEvent != null)
         {
@@ -669,6 +677,12 @@ public class DialogueManager : MonoBehaviour
         {
             return;
         }
+
+        if (!CanExitCurrentDialogue())
+        {
+            Debug.Log("[DialogueManager] Current dialogue is marked as unskippable; ExitDialogue ignored.");
+            return;
+        }
         
         Debug.Log("[DialogueManager] 退出对话");
         
@@ -687,6 +701,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         RestoreGuideLayoutAvoidance();
+        RestoreSkipButtonVisibility();
 
 		// 重置状态,不能重置对话序列的触发类型，否则会导致事件系统无法正确识别当前对话类型
 		isTyping = false;
@@ -712,6 +727,7 @@ public class DialogueManager : MonoBehaviour
     private void EndDialogue()
     {
         RestoreGuideLayoutAvoidance();
+        RestoreSkipButtonVisibility();
         isDialogueActive = false;
         isWaitingForSpecialNode = false;
         currentSequence = null;
@@ -853,6 +869,49 @@ public class DialogueManager : MonoBehaviour
         _guideLayoutAvoidRect.anchoredPosition = _guideLayoutAvoidDefaultAnchoredPosition;
     }
 
+    private bool CanExitCurrentDialogue()
+    {
+        return !IsCurrentDialogueExitLocked();
+    }
+
+    private bool IsCurrentDialogueExitLocked()
+    {
+        return currentLevelNumber == UnskippableLevelCompleteLevel &&
+               currentTriggerType == DialogueTriggerType.LevelComplete;
+    }
+
+    private void ApplySkipButtonVisibilityForCurrentDialogue()
+    {
+        if (skipButton == null)
+        {
+            return;
+        }
+
+        CacheSkipButtonDefaultActive();
+        skipButton.gameObject.SetActive(_skipButtonDefaultActive && !IsCurrentDialogueExitLocked());
+    }
+
+    private void RestoreSkipButtonVisibility()
+    {
+        if (skipButton == null || !_skipButtonDefaultActiveCached)
+        {
+            return;
+        }
+
+        skipButton.gameObject.SetActive(_skipButtonDefaultActive);
+    }
+
+    private void CacheSkipButtonDefaultActive()
+    {
+        if (skipButton == null || _skipButtonDefaultActiveCached)
+        {
+            return;
+        }
+
+        _skipButtonDefaultActive = skipButton.gameObject.activeSelf;
+        _skipButtonDefaultActiveCached = true;
+    }
+
     private static bool TryGetScreenRect(RectTransform rectTransform, out Rect screenRect)
     {
         screenRect = default;
@@ -910,6 +969,7 @@ public class DialogueManager : MonoBehaviour
 	private void FinishDialogue()
 	{
 		RestoreGuideLayoutAvoidance();
+        RestoreSkipButtonVisibility();
 
 		// 隐藏对话面板
 		if (dialoguePanel != null)

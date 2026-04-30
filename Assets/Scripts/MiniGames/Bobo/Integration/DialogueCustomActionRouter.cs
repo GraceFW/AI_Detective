@@ -98,6 +98,7 @@ public static class DialogueCustomActionRouter
         request.PlayerName = ResolvePlayerName();
         request.AiName = "\u955c\u50cfAI";
         request.SourceTag = entry.customActionArgument;
+        request.AutoCompleteOnBattleEnd = true;
         request.OnCompleted = onComplete;
 
         bool opened = BoboBattleService.Open(request);
