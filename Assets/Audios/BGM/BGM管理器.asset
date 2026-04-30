@@ -17,6 +17,10 @@ MonoBehaviour:
     track: {fileID: 11400000, guid: e4ddd7b67bf9e9c46892bf6d5e4fb743, type: 2}
   - scene: {fileID: 11400000, guid: 15bb5226885e1b7479e6c0a7340843a3, type: 2}
     track: {fileID: 11400000, guid: 30a50bb38b1be6a4788ffa56581ef781, type: 2}
+  - scene: {fileID: 11400000, guid: e1c5c752308175048968757431a9dfec, type: 2}
+    track: {fileID: 11400000, guid: 41014a4c21586c543ab092f2181fc336, type: 2}
+  - scene: {fileID: 11400000, guid: dc871ad34b59df845850c708e96adc0d, type: 2}
+    track: {fileID: 11400000, guid: 0b3e5e05de2320f4eaa1316f71242151, type: 2}
   bySceneType:
   - sceneType: 1
     track: {fileID: 11400000, guid: 30a50bb38b1be6a4788ffa56581ef781, type: 2}

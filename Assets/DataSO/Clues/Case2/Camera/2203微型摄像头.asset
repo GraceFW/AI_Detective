@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0cbeb00849e6e844a21966c127b1526, type: 3}
+  m_Name: "2203\u5FAE\u578B\u6444\u50CF\u5934"
+  m_EditorClassIdentifier: 
+  id: 2203
+  displayName: "\u5FAE\u578B\u6444\u50CF\u5934"
+  detectable: 1
+  collectable: 1
+  collected: 0
+  attackKey: 
+  isAttackContentUnlocked: 0
+  showAttackContentDirectly: 1
+  attackUnlockContent: 
+  summary: "\u9690\u853D\u5730\u5B89\u88C5\u5728\u793C\u7269\u5305\u88C5\u76D2\u4E0A\u7684\u5FAE\u578B\u6444\u50CF\u5934\uFF0C\u5728\u6848\u53D1\u5F53\u65E5\u768416:55\u548C17:11\u90FD\u6355\u6349\u5230\u4E86\u753B\u9762\u6CE2\u52A8\u3002"
+  detailText: 
+  Detail_Mark: 
+  defaultImage: {fileID: 21300000, guid: dbc89c9aa91382f4d830e7fb705cba25, type: 3}
+  defaultAreas: []
+  frames:
+  - startTime:
+      day: 15
+      hour: 16
+      minute: 0
+    endTime:
+      day: 15
+      hour: 16
+      minute: 54
+    image: {fileID: 21300000, guid: f3620fb01ff8b984fba51a87d3be5b57, type: 3}
+    areas: []
+  - startTime:
+      day: 15
+      hour: 16
+      minute: 55
+    endTime:
+      day: 15
+      hour: 16
+      minute: 55
+    image: {fileID: 21300000, guid: 2d9b407ff46ffe444a0e82ec90217f6d, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 2b5f1beb3ecb7134eb91e4636e81c925, type: 2}
+  - startTime:
+      day: 15
+      hour: 16
+      minute: 56
+    endTime:
+      day: 15
+      hour: 17
+      minute: 4
+    image: {fileID: 21300000, guid: f3620fb01ff8b984fba51a87d3be5b57, type: 3}
+    areas: []
+  - startTime:
+      day: 15
+      hour: 17
+      minute: 5
+    endTime:
+      day: 15
+      hour: 17
+      minute: 10
+    image: {fileID: 21300000, guid: 8f7c250cf137e414caa2d929ef5cf880, type: 3}
+    areas: []
+  - startTime:
+      day: 15
+      hour: 17
+      minute: 11
+    endTime:
+      day: 15
+      hour: 17
+      minute: 11
+    image: {fileID: 21300000, guid: 4aefdc188e49a5747abfe4c96d65f770, type: 3}
+    areas:
+    - rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1
+        height: 1
+      reveals: {fileID: 11400000, guid: 9945e13ef5ad5dd4bbe572ff84430c7b, type: 2}
