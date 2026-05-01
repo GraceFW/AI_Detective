@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "1046\u82A5\u7684\u5F71\u50CF2"
   m_EditorClassIdentifier: 
   id: 1046
-  displayName: "\u82A5\u7684\u5F71\u50CF2"
+  displayName: "\u82A5\u7684\u5F71\u50CF\u2460"
   detectable: 0
   collectable: 0
   collected: 0

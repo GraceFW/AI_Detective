@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a797a7bbc187b28408d77a69535b4456, type: 3}
   m_Name: "1017\u4FDD\u6E29\u676F"
   m_EditorClassIdentifier: 
-  id: 1016
-  displayName: "\u7EAA\u5FF5\u7167"
+  id: 1017
+  displayName: "\u4FDD\u6E29\u676F"
   detectable: 1
   collectable: 1
   collected: 0

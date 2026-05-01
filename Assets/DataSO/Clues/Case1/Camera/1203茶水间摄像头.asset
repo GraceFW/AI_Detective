@@ -28,11 +28,11 @@ MonoBehaviour:
   defaultAreas: []
   frames:
   - startTime:
-      day: 3
+      day: 2
       hour: 17
       minute: 0
     endTime:
-      day: 3
+      day: 2
       hour: 17
       minute: 0
     image: {fileID: 21300000, guid: 662d45a335a085340bc6dc5c4a87b255, type: 3}

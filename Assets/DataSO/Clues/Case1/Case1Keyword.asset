@@ -38,7 +38,7 @@ MonoBehaviour:
   - term: "\u91C7\u8D2D\u90E8\u529E\u516C\u5BA4"
     revealsClue: {fileID: 11400000, guid: 0a7db88cebc1c2f46812a0da22ce0e9b, type: 2}
   - term: "\u603B\u52A1\u90E8"
-    revealsClue: {fileID: 11400000, guid: 0a7db88cebc1c2f46812a0da22ce0e9b, type: 2}
+    revealsClue: {fileID: 11400000, guid: 0e152b9ffb7f3434c8e060676b005cd8, type: 2}
   - term: "\u4E8B\u4E1A\u90E8"
     revealsClue: {fileID: 11400000, guid: 7893eed2161cecf4ab2544cf50a5909c, type: 2}
   - term: "\u91C7\u8D2D\u90E8"

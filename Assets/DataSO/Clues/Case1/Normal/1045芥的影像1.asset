@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "1045\u82A5\u7684\u5F71\u50CF1"
   m_EditorClassIdentifier: 
   id: 1045
-  displayName: "\u82A5\u7684\u5F71\u50CF1"
+  displayName: "\u82A5\u7684\u5F71\u50CF\u2461"
   detectable: 0
   collectable: 0
   collected: 0
@@ -21,6 +21,6 @@ MonoBehaviour:
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
   attackUnlockContent: 
-  summary: "\u57285\u67084\u65E5\u4E0B\u534817\uFF1A35\uFF0C\u53EF\u4EE5\u770B\u5230\u51AC\u9A6C\u79BB\u5F00\u91C7\u8D2D\u90E8\u529E\u516C\u5BA4\u3002"
+  summary: "\u57285\u67084\u65E5\u4E0B\u534817\uFF1A50\uFF0C\u53EF\u4EE5\u770B\u5230\u82A5\u56DE\u5230\u91C7\u8D2D\u90E8\u529E\u516C\u5BA4\u3002"
   detailText: 
   Detail_Mark: 

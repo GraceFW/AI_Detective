@@ -110,6 +110,17 @@ public class DialogueUI : MonoBehaviour
 			nextButton.onClick.AddListener(OnNextButtonClick);
 		}
 
+		// 对话框点击区域：推进下一句（无选项时）/ 打字机加速
+		if (dialogueBoxButton != null)
+		{
+			if (dialogueBoxButton.GetComponent<PlaySfxOnClick>() == null)
+			{
+				dialogueBoxButton.gameObject.AddComponent<PlaySfxOnClick>();
+			}
+
+			dialogueBoxButton.onClick.AddListener(OnDialogueBoxClick);
+		}
+
 		// 初始化 UI 状态
 		ClearDialogue();
 	}
@@ -125,6 +136,11 @@ public class DialogueUI : MonoBehaviour
 		if (nextButton != null)
 		{
 			nextButton.onClick.RemoveListener(OnNextButtonClick);
+		}
+
+		if (dialogueBoxButton != null)
+		{
+			dialogueBoxButton.onClick.RemoveListener(OnDialogueBoxClick);
 		}
 	}
 
@@ -418,6 +434,23 @@ public class DialogueUI : MonoBehaviour
 		else
 		{
 			Debug.LogWarning("[DialogueUI] DialogueController 不存在，无法处理下一条导航。");
+		}
+	}
+
+	private void OnDialogueBoxClick()
+	{
+		if (_typewriterEffect != null && _typewriterEffect.HandleTypingClick())
+		{
+			return;
+		}
+
+		if (_dialogueController != null)
+		{
+			_dialogueController.NextDialogue();
+		}
+		else
+		{
+			Debug.LogWarning("[DialogueUI] DialogueController 不存在，无法处理对话框点击。");
 		}
 	}
 
