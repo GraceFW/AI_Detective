@@ -218,6 +218,7 @@ public class BoboStoryFlowController : MonoBehaviour
         request.AllowRestartAfterEnd = false;
         request.AllowCancelBeforeEnd = false;
         request.ShowCloseButton = false;
+        request.AutoCompleteOnBattleEnd = true;
         request.SourceTag = string.IsNullOrEmpty(pendingSourceTag)
             ? sourceSuffix
             : pendingSourceTag + ":" + sourceSuffix;

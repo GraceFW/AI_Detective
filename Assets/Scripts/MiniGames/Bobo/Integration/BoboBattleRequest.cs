@@ -17,6 +17,7 @@ public class BoboBattleRequest
     public bool AllowRestartAfterEnd = true;
     public bool AllowCancelBeforeEnd = true;
     public bool ShowCloseButton = false;
+    public bool AutoCompleteOnBattleEnd = false;
     public string SourceTag = string.Empty;
     public Action<BoboBattleSessionResult> OnCompleted;
 }

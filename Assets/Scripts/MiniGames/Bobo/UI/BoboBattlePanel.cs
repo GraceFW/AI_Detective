@@ -859,6 +859,10 @@ public class BoboBattlePanel : MonoBehaviour
         if (roundResult.IsBattleFinished)
         {
             ApplyEndedState();
+            if (currentRequest != null && currentRequest.AutoCompleteOnBattleEnd)
+            {
+                CompleteSession(false);
+            }
         }
         else
         {
