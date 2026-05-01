@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "2009\u8FDB\u98DF\u65F6\u95F4"
   m_EditorClassIdentifier: 
   id: 2009
-  displayName: "\u6B7B\u4EA1\u65F6\u95F4"
+  displayName: "\u8FDB\u98DF\u65F6\u95F4"
   detectable: 0
   collectable: 1
   collected: 0
