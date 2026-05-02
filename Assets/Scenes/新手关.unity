@@ -7910,7 +7910,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &865590899
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9093,7 +9093,7 @@ MonoBehaviour:
   tmp: {fileID: 1085428042}
   typewriter: {fileID: 1085428045}
   hoverVisual: {fileID: 1085428048}
-  dialogueController: {fileID: 0}
+  dialogueController: {fileID: 361593137}
   enableHover: 1
   disableHoverWhileTyping: 1
   enableBlankClickNextDialogue: 1
