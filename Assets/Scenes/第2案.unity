@@ -6773,7 +6773,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C"
+  m_text: "\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\n\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\n\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C\n\u5ACC\u7591\u4EBA\u56DE\u7B54\u6587\u672C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ae5afc3f3a2baed499b939a1bb257338, type: 2}
   m_sharedMaterial: {fileID: 9084585476090578737, guid: ae5afc3f3a2baed499b939a1bb257338, type: 2}
@@ -6864,10 +6864,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1850121191}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00008773804, y: 0.000015258789}
-  m_SizeDelta: {x: 684.57043, y: 36}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.00012207031, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1085428045
 MonoBehaviour:
@@ -6905,7 +6905,7 @@ MonoBehaviour:
   tmp: {fileID: 1085428042}
   typewriter: {fileID: 1085428045}
   hoverVisual: {fileID: 1085428048}
-  dialogueController: {fileID: 0}
+  dialogueController: {fileID: 361593137}
   enableHover: 1
   disableHoverWhileTyping: 1
   enableBlankClickNextDialogue: 1
@@ -11172,11 +11172,11 @@ RectTransform:
   - {fileID: 1085428044}
   m_Father: {fileID: 1672572590}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -28.479996}
-  m_SizeDelta: {x: 720, y: 36.96}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.000091552734, y: 0}
+  m_SizeDelta: {x: 0, y: 147.83}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1850121192
 MonoBehaviour:
   m_ObjectHideFlags: 0
