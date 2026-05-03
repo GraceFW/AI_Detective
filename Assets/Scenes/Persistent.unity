@@ -7298,7 +7298,7 @@ MonoBehaviour:
   hideOnAwake: 1
   toggleKey: 9
   forceTopmostOnShow: 1
-  topmostSortingOrder: 10000
+  topmostSortingOrder: 25000
   loadSceneEvent: {fileID: 11400000, guid: 4cf5725f6899ba74689fa957df45c138, type: 2}
   sceneDatabase: {fileID: 11400000, guid: 974ccc40e15ba20419c2f43a92a9260a, type: 2}
   sceneOptions:

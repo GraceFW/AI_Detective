@@ -13,7 +13,7 @@ public class DeveloperPanelUI : MonoBehaviour
     [SerializeField] private bool hideOnAwake = true;
     [SerializeField] private KeyCode toggleKey = KeyCode.BackQuote;
     [SerializeField] private bool forceTopmostOnShow = true;
-    [SerializeField] private int topmostSortingOrder = 10000;
+    [SerializeField] private int topmostSortingOrder = 25000;
 
     [Header("Scene Loading")]
     [SerializeField] private GameSceneEventSO loadSceneEvent;
