@@ -2982,7 +2982,7 @@ MonoBehaviour:
   nameText: {fileID: 1966808141}
   portraitImage: {fileID: 608531883}
   dialogueText: {fileID: 1085428042}
-  keywordDatabase: {fileID: 11400000, guid: cb6e8576f0bf84e4ca181854ae997d49, type: 2}
+  keywordDatabase: {fileID: 11400000, guid: bc3d976465ef7c34cb891039df74c2e1, type: 2}
   choiceContainer: {fileID: 2145479396}
   choiceButtonPrefab: {fileID: 3894372315207669006, guid: b752d67e6a911e641a5e10e49ea44fed, type: 3}
   prevButton: {fileID: 2004872361}

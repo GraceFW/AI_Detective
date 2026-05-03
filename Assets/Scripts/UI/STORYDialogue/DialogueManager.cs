@@ -185,12 +185,32 @@ public class DialogueManager : MonoBehaviour
 
     private bool ShouldIgnoreMouseContinueThisFrame()
     {
-        if (GuideHighlightController.Instance == null)
+        if (IsPointerOverSkipButton())
+        {
+            return true;
+        }
+
+        return GuideHighlightController.Instance != null &&
+               GuideHighlightController.Instance.IsScreenPointOverHighlightedTarget(Input.mousePosition);
+    }
+
+    private bool IsPointerOverSkipButton()
+    {
+        if (skipButton == null || !skipButton.gameObject.activeInHierarchy || !skipButton.interactable)
         {
             return false;
         }
 
-        return GuideHighlightController.Instance.IsScreenPointOverHighlightedTarget(Input.mousePosition);
+        RectTransform skipButtonRect = skipButton.transform as RectTransform;
+        if (skipButtonRect == null)
+        {
+            return false;
+        }
+
+        return RectTransformUtility.RectangleContainsScreenPoint(
+            skipButtonRect,
+            Input.mousePosition,
+            GetEventCamera(skipButtonRect));
     }
     
     /// <summary>
