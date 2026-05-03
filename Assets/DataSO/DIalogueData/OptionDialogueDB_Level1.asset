@@ -23,11 +23,14 @@ MonoBehaviour:
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
         speakerImage: {fileID: 0}
-        dialogueText: "\u53EF\u4EE5\u8BE6\u7EC6\u63CF\u8FF0\u4E00\u4E0B\u60A8\u5728\u62A5\u6848\u65F6\u6240\u76EE\u51FB\u7684\u73B0\u573A\u72B6\u51B5\u5417\uFF1F"
+        dialogueText: "\u79F0\u547C\u6211\u4E3A\u5DE5\u85E4\u65B0\u4E00\u5C31\u597D\uFF0C\u5973\u58EB\u3002\u8FD9\u662F\u6211\u7684\u540D\u5B57\u3002"
         useTypewriterEffect: 1
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1102
@@ -44,6 +47,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1102
@@ -60,6 +66,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1102
@@ -76,6 +85,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1102
@@ -92,6 +104,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1102
@@ -108,6 +123,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1102
@@ -124,6 +142,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1102
@@ -140,6 +161,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -156,6 +180,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -172,6 +199,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -188,6 +218,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -204,6 +237,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -220,6 +256,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -236,6 +275,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -252,6 +294,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1103
@@ -268,6 +313,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -284,6 +332,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -300,6 +351,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -316,6 +370,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -332,6 +389,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -348,6 +408,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -364,6 +427,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -380,6 +446,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -396,6 +465,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -412,6 +484,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -428,6 +503,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
         speakerImage: {fileID: 0}
         dialogueText: "\u4E5F\u5C31\u662F\u6240\u8C13\u7684\u725F\u53D6\u79C1\u5229\u7684\u9634\u9633\u5408\u540C\u3002"
@@ -435,6 +513,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -451,6 +532,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -467,6 +551,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
         speakerImage: {fileID: 0}
         dialogueText: "\u6839\u636E\u6570\u636E\u5E93\u5206\u6790\u7ED3\u679C\uFF0C\u670990%\u7684\u53EF\u80FD\uFF0C\u5047\u5408\u540C\u662F\u4F60\u4EEC\u5408\u4F5C\u6240\u4E3A\u3002\u4F60\u901A\u8FC7\u8FD9\u7B14\u5DEE\u989D\u652F\u4ED8\u7ED9\u677E\u4E95\u77F3\u6839\u5148\u751F\u7684\u56DE\u6263\uFF0C\u8FD9\u88AB\u79F0\u4E3A\u9634\u9633\u5408\u540C\u3002"
@@ -474,6 +561,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1104
@@ -490,6 +580,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -506,6 +599,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -522,6 +618,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -538,6 +637,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -554,6 +656,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -570,6 +675,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -586,6 +694,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -602,6 +713,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -618,6 +732,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -634,6 +751,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -650,6 +770,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
   - levelNumber: 1
     personId: 1105
@@ -666,6 +789,9 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
         speakerImage: {fileID: 0}
         dialogueText: "\u60A8\u7684\u8BC1\u8BCD\u548C\u90AE\u4EF6\u5185\u5BB9\u4E00\u81F4\uFF0C\u6839\u636E\u9274\u5B9A\uFF0C\u8FD9\u5C01\u90AE\u4EF6\u7684\u9644\u4EF6\u548C\u90A3\u4EFD\u201C\u9519\u8BEF\u201D\u5408\u540C\u76F8\u540C\u3002\u8FD9\u610F\u5473\u7740\u677E\u4E95\u5148\u751F\u548C\u82A5\u5148\u751F\u6D89\u5ACC\u8D2A\u6C61\u3002"
@@ -673,4 +799,7 @@ MonoBehaviour:
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
         nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
     isForced: 0
