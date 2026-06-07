@@ -179,7 +179,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4e5f16a09911d75449c97287a8730486, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ddd723e66adb6c94bb9ab603c0b63501, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1269,7 +1269,7 @@ MonoBehaviour:
   videoPlayer: {fileID: 2064229989}
   sfxSource: {fileID: 1439647144}
   introVideo: {fileID: 32900000, guid: c3d43264f7dc9074eb929eb4b54f75f4, type: 3}
-  transitionVideo: {fileID: 32900000, guid: 8d8fcac2ac1d14f4e8aea19149a3f3c2, type: 3}
+  transitionVideo: {fileID: 32900000, guid: 34967d613a6dee7408a65284fe8306db, type: 3}
   introSfx: {fileID: 8300000, guid: 5230f8c3fa2384e4586c9ee40670055e, type: 3}
   transitionSfx: {fileID: 8300000, guid: 16416ffc99f51ec49ac9e9cf6ae95ca9, type: 3}
   defaultTitleImage: {fileID: 1516597060}
@@ -1958,7 +1958,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!328 &2064229989
 VideoPlayer:
   m_ObjectHideFlags: 0
@@ -2019,7 +2019,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000061035, y: -0.0029831}
+  m_AnchoredPosition: {x: -0.000061035, y: -0.0015183}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2064229992
