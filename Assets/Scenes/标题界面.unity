@@ -179,7 +179,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: cfa3710bfc86eb94392dcf581cc1f834, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4e5f16a09911d75449c97287a8730486, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1008,7 +1008,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1356604905
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1268,8 +1268,8 @@ MonoBehaviour:
   videoImage: {fileID: 2064229992}
   videoPlayer: {fileID: 2064229989}
   sfxSource: {fileID: 1439647144}
-  introVideo: {fileID: 32900000, guid: 874d791cdedb4e841b74fb926b6b849c, type: 3}
-  transitionVideo: {fileID: 32900000, guid: 3b9838ae28c647943a4336210018bc5d, type: 3}
+  introVideo: {fileID: 32900000, guid: c3d43264f7dc9074eb929eb4b54f75f4, type: 3}
+  transitionVideo: {fileID: 32900000, guid: 8d8fcac2ac1d14f4e8aea19149a3f3c2, type: 3}
   introSfx: {fileID: 8300000, guid: 5230f8c3fa2384e4586c9ee40670055e, type: 3}
   transitionSfx: {fileID: 8300000, guid: 16416ffc99f51ec49ac9e9cf6ae95ca9, type: 3}
   defaultTitleImage: {fileID: 1516597060}
@@ -1429,7 +1429,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2523c3211ece9444a93232e8cab33271, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aac29e35b20852045b3c4625af61160a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
