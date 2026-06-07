@@ -7,6 +7,20 @@ public class UIMenu : MonoBehaviour
 	public Button exitBtn;
 	[SerializeField] private GameSceneEventSO _loadSceneEvent;
 	[SerializeField] private GameSceneSO _firstLevelScene;
+
+	private Button[] _menuButtons;
+	private LoadSaveButtonStateUI[] _conditionalButtons;
+	private bool _menuInteractable;
+
+	public bool IsInteractable => _menuInteractable;
+
+	private void Awake()
+	{
+		_menuButtons = GetComponentsInChildren<Button>(true);
+		_conditionalButtons = GetComponentsInChildren<LoadSaveButtonStateUI>(true);
+		SetMenuInteractable(false);
+	}
+
 	private void Start()
 	{
 		Debug.Log("MenuPanel done!");
@@ -17,10 +31,34 @@ public class UIMenu : MonoBehaviour
 		}
 		Debug.Log("btn added!");
 	}
+
+	public void SetMenuInteractable(bool enabled)
+	{
+		_menuInteractable = enabled;
+
+		if (_menuButtons != null)
+		{
+			for (int i = 0; i < _menuButtons.Length; i++)
+			{
+				if (_menuButtons[i] != null)
+				{
+					_menuButtons[i].interactable = enabled;
+				}
+			}
+		}
+
+		if (enabled && _conditionalButtons != null)
+		{
+			for (int i = 0; i < _conditionalButtons.Length; i++)
+			{
+				_conditionalButtons[i]?.Refresh();
+			}
+		}
+	}
+
 	public void OnStartGameButtonClick()
 	{
 		Debug.Log("startBtn done!");
-		// 发布加载请求，无需直接调用SceneManager
 		_loadSceneEvent.RaiseEvent(_firstLevelScene);
 	}
 

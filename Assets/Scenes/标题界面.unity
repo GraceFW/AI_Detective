@@ -1008,7 +1008,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1356604905
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1274,6 +1274,7 @@ MonoBehaviour:
   transitionSfx: {fileID: 8300000, guid: 16416ffc99f51ec49ac9e9cf6ae95ca9, type: 3}
   defaultTitleImage: {fileID: 1516597060}
   selectTitleImage: {fileID: 189811221}
+  menuPanel: {fileID: 938949923}
   initialBlackHoldDuration: 3.8
 --- !u!225 &1439647141
 CanvasGroup:
@@ -1958,7 +1959,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!328 &2064229989
 VideoPlayer:
   m_ObjectHideFlags: 0

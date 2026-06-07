@@ -45,6 +45,9 @@ public class TitleSplashOverlay : MonoBehaviour
     [Tooltip("第二段视频结束后显示的标题选择图片")]
     [SerializeField] private GameObject selectTitleImage;
 
+    [Tooltip("标题菜单面板；第二段视频结束并显示 SelectTitleImage 后解锁其按钮")]
+    [SerializeField] private UIMenu menuPanel;
+
     [Header("参数")]
     [Tooltip("开头纯黑停留时间（秒）：完全黑屏停留结束后才开始进入渐变流程")]
     [SerializeField] private float initialBlackHoldDuration = 4f;
@@ -87,6 +90,11 @@ public class TitleSplashOverlay : MonoBehaviour
         if (overlayRoot == null)
         {
             overlayRoot = gameObject;
+        }
+
+        if (menuPanel == null)
+        {
+            menuPanel = FindObjectOfType<UIMenu>();
         }
 
         if (blackGroup != null)
@@ -264,5 +272,7 @@ public class TitleSplashOverlay : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
+
+        menuPanel?.SetMenuInteractable(true);
     }
 }

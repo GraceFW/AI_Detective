@@ -5,12 +5,16 @@ public class LoadSaveButtonStateUI : MonoBehaviour
 {
     [SerializeField] private Button targetButton;
 
+    private UIMenu _menuPanel;
+
     private void Awake()
     {
         if (targetButton == null)
         {
             targetButton = GetComponent<Button>();
         }
+
+        _menuPanel = GetComponentInParent<UIMenu>();
     }
 
     private void OnEnable()
@@ -25,6 +29,8 @@ public class LoadSaveButtonStateUI : MonoBehaviour
             return;
         }
 
-        targetButton.interactable = DataManager.instance != null && DataManager.instance.HasLoadableSceneSave();
+        bool menuUnlocked = _menuPanel == null || _menuPanel.IsInteractable;
+        bool hasSave = DataManager.instance != null && DataManager.instance.HasLoadableSceneSave();
+        targetButton.interactable = menuUnlocked && hasSave;
     }
 }
