@@ -17,7 +17,7 @@ MonoBehaviour:
   detectable: 1
   collectable: 0
   collected: 0
-  attackKey: 20540815
+  attackKey: "20540815"
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
   attackUnlockContent: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u7ED3\u679C1\u6761\u3002\r\n\r\n\u7535\u5B50\u5C0F\u7968\uFF1A\u5728\u5546\u8D85\u8D2D\u4E70\u82B1\u751F\u548C\u548C\u679C\u5B50\u7684\u8BB0\u5F55\u3002"

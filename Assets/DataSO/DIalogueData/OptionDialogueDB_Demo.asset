@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22dfe2c4deda8244b9002f158d8f754a, type: 3}
+  m_Name: OptionDialogueDB_Demo
+  m_EditorClassIdentifier: 
+  entries:
+  - levelNumber: 0
+    personId: 0104
+    nodeId: 1
+    optionId: "\u8BF7\u63CF\u8FF0\u4E00\u4E0B\u73B0\u573A\u7684\u95E8\u9501\u72B6\u51B5\u3002"
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+        speakerImage: {fileID: 0}
+        dialogueText: "\u8BF7\u8BE6\u7EC6\u63CF\u8FF0\u95E8\u9501\u7684\u5177\u4F53\u72B6\u6001\uFF0C\u662F\u5426\u6709\u94A5\u5319\u5B54\u635F\u4F24\uFF1F"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
+    isForced: 0

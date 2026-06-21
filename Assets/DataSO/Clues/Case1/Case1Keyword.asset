@@ -56,7 +56,7 @@ MonoBehaviour:
   - term: "\u6B7B\u8005\u7684\u624B\u673A"
     revealsClue: {fileID: 11400000, guid: 0f597436025c0de44982723459239fd2, type: 2}
   - term: "\u7EAA\u5FF5\u7167"
-    revealsClue: {fileID: 11400000, guid: 1d75b73fd6ce9134db70790951c6800d, type: 2}
+    revealsClue: {fileID: 11400000, guid: 831119d299420c2408509740b2fe2fdc, type: 2}
   - term: "\u4FDD\u6E29\u676F"
     revealsClue: {fileID: 11400000, guid: 14ccad0be4ce68947a79efd690463a92, type: 2}
   - term: "\u5496\u5561\u6E0D"

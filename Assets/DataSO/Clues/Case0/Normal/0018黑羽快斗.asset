@@ -22,47 +22,5 @@ MonoBehaviour:
   showAttackContentDirectly: 1
   attackUnlockContent: 
   summary: "\u4FE1\u606F\u88AB\u5C01\u9501\uFF0C\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002"
-  detailText: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F55 0 \u6761\u3002\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002\n\n\u2014\u2014\u2014\u2014
-    K.K SAYS \u2014\u2014\u2014\u2014\n\r                           \r\n                     
-    .  t  i  i  i  L  i  i  i  i  t  j  .      \n                     E  t  ,  . 
-    .             .  ,  j  i  E  ,    \n                     L                                     
-    j  j    \n                     i                                       j  j   
-    \n                  .  t                                      t  j    \n                 
-    ,  j                                       i  ,    \n                  t  .                                     
-    L  .    \n                  G                                       G     \n                 
-    G                                       G     \n                  E .  ,  j 
-    j  t  t  i  i  L  L  G  G  i     \n                  W  G  L  i  t  t  j  j 
-    j  ,  ,  .  . t j     \n                  W  G  L  i  t  t  j  j  j  ,  ,  . 
-    . t j     \n                ,  t                                        i  ,    
-    \n                j  j                                       E j ,    \n               
-    i   .          .  ,  t  i  L  G  K  #  E  L    \n    j  t  i  i  K  E  E  E 
-    E  E  E  K  L  K  #  #  #  #  K      \n    t  G  t K ,                 G                 
-    j  G  #  G      \n        i     G                   L                          
-    ,  i      \n        i     G             t  t  j                           j 
-    j      \n        i      j  L        . i G G                       ,  j G      
-    \n        L       K L  G j                    .  ,  t  .  j  L       \n     . 
-    K       L .    ,  ,  ,  ,  j  j                 ,  j  E        \n     K  #  L    
-    E  i  ,                      t  t  G  t         \nG  #  #  #  ,       ,   i  
-    i   i   i   L   i  ,\n .  ,  ."
-  Detail_Mark: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F55 0 \u6761\u3002\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002\n\n=====
-    K.K SAYS =====\n\r                           \r\n                      .  t 
-    i  i  i  L  i  i  i  i  t  j  .      \n                     E  t  ,  .  .            
-    .  ,  j  i  E  ,    \n                     L                                     
-    j  j    \n                     i                                       j  j   
-    \n                  .  t                                      t  j    \n                 
-    ,  j                                       i  ,    \n                  t  .                                     
-    L  .    \n                  G                                       G     \n                 
-    G                                       G     \n                  E .  ,  j 
-    j  t  t  i  i  L  L  G  G  i     \n                  W  G  L  i  t  t  j  j 
-    j  ,  ,  .  . t j     \n                  W  G  L  i  t  t  j  j  j  ,  ,  . 
-    . t j     \n                ,  t                                        i  ,    
-    \n                j  j                                       E j ,    \n               
-    i   .          .  ,  t  i  L  G  K  #  E  L    \n    j  t  i  i  K  E  E  E 
-    E  E  E  K  L  K  #  #  #  #  K      \n    t  G  t K ,                 G                 
-    j  G  #  G      \n        i     G                   L                          
-    ,  i      \n        i     G             t  t  j                           j 
-    j      \n        i      j  L        . i G G                       ,  j G      
-    \n        L       K L  G j                    .  ,  t  .  j  L       \n     . 
-    K       L .    ,  ,  ,  ,  j  j                 ,  j  E        \n     K  #  L    
-    E  i  ,                      t  t  G  t         \nG  #  #  #  ,       ,   i  
-    i   i   i   L   i  ,\n .  ,  ."
+  detailText: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F55 0 \u6761\u3002\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002\r\n\r\n\u2014\u2014\u2014\u2014 K.K SAYS \u2014\u2014\u2014\u2014\r\n\r\n                           \r\n                      .  t  i  i  i  L  i  i  i  i  t  j  .      \r\n                     E  t  ,  .  .             .  ,  j  i  E  ,    \r\n                     L                                      j  j    \r\n                     i                                       j  j    \r\n                  .  t                                      t  j    \r\n                  ,  j                                       i  ,    \r\n                  t  .                                      L  .    \r\n                  G                                       G     \r\n                  G                                       G     \r\n                  E .  ,  j  j  t  t  i  i  L  L  G  G  i     \r\n                  W  G  L  i  t  t  j  j  j  ,  ,  .  . t j     \r\n                  W  G  L  i  t  t  j  j  j  ,  ,  .  . t j     \r\n                ,  t                                        i  ,     \r\n                j  j                                       E j ,    \r\n                i   .          .  ,  t  i  L  G  K  #  E  L    \r\n    j  t  i  i  K  E  E  E  E  E  E  K  L  K  #  #  #  #  K      \r\n    t  G  t K ,                 G                  j  G  #  G      \r\n        i     G                   L                           ,  i      \r\n        i     G             t  t  j                           j  j      \r\n        i      j  L        . i G G                       ,  j G       \r\n        L       K L  G j                    .  ,  t  .  j  L       \r\n     .  K       L .    ,  ,  ,  ,  j  j                 ,  j  E        \r\n     K  #  L     E  i  ,                      t  t  G  t         \r\nG  #  #  #  ,       ,   i   i   i   i   L   i  ,\r\n .  ,  ."
+  Detail_Mark: "[\u7ED3\u679C]\uFF1A\u547D\u4E2D\u8BB0\u5F55 0 \u6761\u3002\u68C0\u6D4B\u5230\u8BBF\u95EE\u62E6\u622A\u3002\r\n\r\n===== K.K SAYS =====\r\n\r\n                           \r\n                      .  t  i  i  i  L  i  i  i  i  t  j  .      \r\n                     E  t  ,  .  .             .  ,  j  i  E  ,    \r\n                     L                                      j  j    \r\n                     i                                       j  j    \r\n                  .  t                                      t  j    \r\n                  ,  j                                       i  ,    \r\n                  t  .                                      L  .    \r\n                  G                                       G     \r\n                  G                                       G     \r\n                  E .  ,  j  j  t  t  i  i  L  L  G  G  i     \r\n                  W  G  L  i  t  t  j  j  j  ,  ,  .  . t j     \r\n                  W  G  L  i  t  t  j  j  j  ,  ,  .  . t j     \r\n                ,  t                                        i  ,     \r\n                j  j                                       E j ,    \r\n                i   .          .  ,  t  i  L  G  K  #  E  L    \r\n    j  t  i  i  K  E  E  E  E  E  E  K  L  K  #  #  #  #  K      \r\n    t  G  t K ,                 G                  j  G  #  G      \r\n        i     G                   L                           ,  i      \r\n        i     G             t  t  j                           j  j      \r\n        i      j  L        . i G G                       ,  j G       \r\n        L       K L  G j                    .  ,  t  .  j  L       \r\n     .  K       L .    ,  ,  ,  ,  j  j                 ,  j  E        \r\n     K  #  L     E  i  ,                      t  t  G  t         \r\nG  #  #  #  ,       ,   i   i   i   i   L   i  ,\r\n .  ,  ."

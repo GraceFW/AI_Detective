@@ -23,7 +23,7 @@ MonoBehaviour:
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
         speakerImage: {fileID: 21300000, guid: 25afd7eda1244cc44b865eed1f7b7612, type: 3}
-        dialogueText: "\u53EF\u4EE5\u8BE6\u7EC6\u63CF\u8FF0\u4E00\u4E0B\u60A8\u5728\u62A5\u6848\u65F6\u6240\u76EE\u51FB\u7684\u73B0\u573A\u72B6\u51B5\u5417\uFF1F"
+        dialogueText: "\u60A8\u597D\uFF0C\u53EF\u4EE5\u8BE6\u7EC6\u63CF\u8FF0\u4E00\u4E0B\u60A8\u5728\u62A5\u6848\u65F6\u6240\u76EE\u51FB\u7684\u73B0\u573A\u72B6\u51B5\u5417\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
