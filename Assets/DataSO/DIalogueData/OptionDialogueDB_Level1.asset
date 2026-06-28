@@ -138,7 +138,7 @@ MonoBehaviour:
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
         speakerImage: {fileID: 21300000, guid: 5e5e13c69df3e254cb2614bfa11248a0, type: 3}
-        dialogueText: "\u6253\u94A2\u73E0\uFF1F\u60A8\u7684\u610F\u601D\u662F\u8BF4\u4ED6\u8D4C\u535A\u5417"
+        dialogueText: "\u6253\u94A2\u73E0\uFF1F\u60A8\u7684\u610F\u601D\u662F\u8BF4\u4ED6\u8D4C\u535A\u5417\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
@@ -270,7 +270,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: 5e5e13c69df3e254cb2614bfa11248a0, type: 3}
         dialogueText: "\u60A8\u8BF4\u7684\u9634\u9633\u5408\u540C\u662F\u6307\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -289,7 +289,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: 9e0f98eae1493774182f1e870ddcfb65, type: 3}
         dialogueText: "\u5728\u82A5\u826F\u592B\u5148\u751F\u4E8E\u8BD5\u56FE\u8FDB\u5165\u529E\u516C\u5BA4\u65F6\uFF0C\u60A8\u5C31\u5728\u4ED6\u65C1\u8FB9\uFF0C\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6\u95E8\u628A\u624B\u9700\u8981\u7279\u6B8A\u65B9\u5F0F\u624D\u80FD\u5F00\u542F\u5462\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -308,7 +308,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: 9e0f98eae1493774182f1e870ddcfb65, type: 3}
         dialogueText: "\u5728\u82A5\u826F\u592B\u5148\u751F\u8BD5\u56FE\u8FDB\u5165\u529E\u516C\u5BA4\u65F6\uFF0C\u60A8\u5E94\u8BE5\u5C31\u5728\u4ED6\u65C1\u8FB9\uFF0C\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6\u95E8\u628A\u624B\u9700\u8981\u7279\u6B8A\u65B9\u5F0F\u624D\u80FD\u5F00\u542F\u5462\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -327,7 +327,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: 2af7fbaa4a9d9b342a8451cfa545d75f, type: 3}
+        speakerImage: {fileID: 21300000, guid: 05f4045641d66824890371380873a1b8, type: 3}
         dialogueText: "\u60A8\u7684\u676F\u5B50\u73B0\u5728\u5728\u54EA\u91CC\uFF0C\u53EF\u4EE5\u7ED9\u68C0\u9A8C\u79D1\u770B\u770B\u5417\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -346,7 +346,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: 5e5e13c69df3e254cb2614bfa11248a0, type: 3}
         dialogueText: "\u572817:30\u7684\u65F6\u5019\uFF0C\u60A8\u5728\u505A\u4EC0\u4E48\uFF1F\u60A8\u6709\u5F53\u65F6\u7684\u4E0D\u5728\u573A\u8BC1\u660E\u5417\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -365,7 +365,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: ab3870507f282504b8893622a3e4f1d3, type: 3}
         dialogueText: "\u60A8\u8BF4\u7684\u9634\u9633\u5408\u540C\u662F\u6307\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -384,7 +384,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: 05f4045641d66824890371380873a1b8, type: 3}
         dialogueText: "\u9664\u4E86\u8FD9\u4F4D\u5973\u58EB\u4EE5\u5916\uFF0C\u4ECA\u5929\u8FD8\u6709\u5176\u4ED6\u4E0D\u5C5E\u4E8E\u8FD9\u4E2A\u516C\u53F8\u5458\u5DE5\u7684\u8BBF\u5BA2\u51FA\u5165\u4F60\u4EEC\u7684\u529E\u516C\u5BA4\u5417\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -403,7 +403,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: 2af7fbaa4a9d9b342a8451cfa545d75f, type: 3}
         dialogueText: "\u8BF7\u60A8\u89E3\u91CA\u4E00\u4E0B\u4E3A\u4EC0\u4E48\u4E0A\u9762\u4F1A\u6709\u8840\u8FF9\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -422,7 +422,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: ab3870507f282504b8893622a3e4f1d3, type: 3}
         dialogueText: "\u7ECF\u8FC7\u68C0\u9A8C\uFF0C\u4E0A\u9762\u7684\u8840\u8FF9\u5E76\u4E0D\u5C5E\u4E8E\u60A8\uFF0C\u800C\u662F\u548C\u6B7B\u8005\u9AD8\u5EA6\u5339\u914D\uFF0C\u6211\u6709\u5408\u7406\u7684\u8BC1\u636E\u6000\u7591\u60A8\u5728\u8BF4\u8C0E\u3002"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -441,7 +441,7 @@ MonoBehaviour:
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        speakerImage: {fileID: 21300000, guid: ab3870507f282504b8893622a3e4f1d3, type: 3}
         dialogueText: "\u5728\u82A5\u826F\u592B\u5148\u751F\u8BD5\u56FE\u8FDB\u5165\u529E\u516C\u5BA4\u65F6\uFF0C\u60A8\u5E94\u8BE5\u5C31\u5728\u4ED6\u65C1\u8FB9\uFF0C\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6\u95E8\u628A\u624B\u9700\u8981\u7279\u6B8A\u65B9\u5F0F\u624D\u80FD\u5F00\u542F\u5462\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
