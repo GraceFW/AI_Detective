@@ -1,9 +1,10 @@
 # SO 数据双向导入 Skill
 
 ## 概述
-本 Skill 包含两项经过验证的工作能力：
+本 Skill 包含三项经过验证的工作能力：
 1. **线索导入**：读取 xlsx 线索表，将内容写回对应的 ClueData SO 文件
 2. **对话导入**：读取 xlsx 对话表，将内容写回 PersonClueData（NPC对话）和 OptionDialogueDB（主角插播对话）
+3. **章节对话导入**：读取 xlsx 章节对话表，将内容写回 DialogueData SO 文件
 
 ---
 
@@ -25,15 +26,17 @@
 | F | 已收集 | 是/否 |
 | G | AttackKey | |
 | H | 已解锁Attack内容 | 是/否 |
-| I | 摘要 (summary) | 支持换行 |
-| J | 详细内容 (detailText) | 支持换行 |
-| K | 富文本内容 (Detail_Mark) | 支持换行 |
-| L | 可传唤 (Person专属) | |
-| M | 有头像 (Person专属) | |
-| N | 时间帧数量 (Camera专属) | |
-| O | 资产路径 (assetPath) | 用于精确定位 SO 文件 |
+| I | 直接展示Attack内容 | 是/否 |
+| J | Attack解锁内容 (attackUnlockContent) | 支持换行 |
+| K | 摘要 (summary) | 支持换行 |
+| L | 详细内容 (detailText) | 支持换行 |
+| M | 富文本内容 (Detail_Mark) | 支持换行 |
+| N | 可传唤 (Person专属) | |
+| O | 有头像 (Person专属) | |
+| P | 时间帧数量 (Camera专属) | |
+| Q | 资产路径 (assetPath) | 用于精确定位 SO 文件 |
 
-> **定位规则**：优先用 O 列的 assetPath 精确定位文件；若 assetPath 为空，则用 C 列（类型）+ A 列（id）在 `Assets/DataSO/Clues/` 下搜索。
+> **定位规则**：优先用 Q 列的 assetPath 精确定位文件；若 assetPath 为空，则用 C 列（类型）+ A 列（id）在 `Assets/DataSO/Clues/` 下搜索。
 
 ### 执行步骤
 
@@ -42,12 +45,12 @@
 
 1. 用 openpyxl 读取 xlsx，跳过第一行（列头）
 2. 对每一数据行：
-   a. 从 O 列读取 assetPath，直接打开对应 .asset 文件
+   a. 从 Q 列读取 assetPath，直接打开对应 .asset 文件
       若 assetPath 为空，则在 Assets/DataSO/Clues/ 下按 type/id 查找
    b. 读取 .asset 文件内容（UTF-8）
    c. 将需要修改的字段用正则替换（保持 \uXXXX 转义格式）：
-      - summary, detailText, Detail_Mark：多行内容需先转义再替换
-      - detectable/collectable/collected：是→1，否→0
+      - summary, detailText, Detail_Mark, attackUnlockContent：多行内容需先转义再替换
+      - detectable/collectable/collected/isAttackContentUnlocked/showAttackContentDirectly：是→1，否→0
       - attackKey：直接替换字符串
    d. 将修改后内容写回原 .asset 文件
 3. 输出修改报告（哪些文件被修改了哪些字段）
@@ -245,4 +248,70 @@ DialogueData_Level{X}.asset
 
 对话 SO：
   Assets/DataSO/DIalogueData/OptionDialogueDB_Level{X}.asset
+
+章节对话 SO：
+  Assets/DataSO/DIalogueData/DialogueData_Level{X}.asset
 ```
+
+---
+
+## Skill 4：DialogueData SO → 章节对话表 xlsx
+
+### 适用场景
+需要将 `DialogueData_LevelX.asset` 中的章节对话导出为 xlsx 表格，便于文案编辑和查看。
+
+### 表格格式约定
+列顺序与导出时一致：
+
+| 列 | 字段名 | 说明 |
+|----|--------|------|
+| A | 序列编号 (seq_idx) | 第几个 dialogueSequence，用于定位 |
+| B | 对话序列 (触发类型) | 如"关卡开始 (LevelStart)"，辅助识别 |
+| C | 条目序号 (entry_idx) | 该序列内第几条 entry，用于定位 |
+| D | 说话人 (speakerName) | 可修改 |
+| E | 对话内容 (dialogueText) | **主要修改字段**，支持换行 |
+| F | 节点类型 | 普通对话/起名弹窗/自定义动作，辅助识别 |
+| G | 打字机 | 是/否 |
+| H | 打字机速度 | 数值 |
+| I | 自定义动作ID (customActionId) | 可修改 |
+| J | 动作参数 (customActionArgument) | 可修改 |
+
+> 黄色段落标题行（▼ 开头）直接跳过，不写入。
+
+### SO 文件结构
+```
+DialogueData_Level{X}.asset
+  levelNumber: X
+  dialogueSequences:
+  - triggerType: 0        ← seq_idx=1
+    waveNumber: 0
+    entries:
+    - speakerName: "..."  ← entry_idx=1，D列
+      dialogueText: "..." ← E列（要修改的内容）
+      ...
+    - speakerName: "..."  ← entry_idx=2
+      ...
+  - triggerType: 1        ← seq_idx=2
+    waveNumber: 0
+    ...
+```
+
+### 定位规则
+- 用 **A 列（seq_idx）** 定位是第几个 `dialogueSequences` 块（从 1 开始计）
+- 用 **C 列（entry_idx）** 定位该块内第几个 `entries` 条目（从 1 开始计）
+- 修改对应条目的 `speakerName` 和 `dialogueText`
+
+### 注意事项
+1. `triggerType: 1`（WaveSpawn）的序列有多个（Wave 0/1/2...），seq_idx 是所有序列的全局编号，不要按 wave 号混淆
+2. `nodeType: 2`（CustomAction）的条目有 `customActionId` 和 `customActionArgument`，这些也可以在表格中修改
+3. `speakerImage` 是图片资源引用（fileID/guid），不在表格中，保留原值
+4. 换行：表格单元格中的 `\n` 写入 YAML 时转为 `\r\n` 再 unicode 转义
+
+### 对应的导出脚本
+`ChapterDialogueExporter.cs`（位于 `Assets/Editor/` 目录）
+
+### 菜单入口
+Unity 编辑器菜单：`Tools > 线索导出 > 导出章节对话表为 Excel (.xlsx)`
+
+### Script GUID
+`DialogueData Script: 155679d8aafb59145a4bf6382aed73ad`

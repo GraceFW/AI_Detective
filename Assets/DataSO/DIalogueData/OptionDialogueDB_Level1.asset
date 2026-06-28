@@ -168,15 +168,15 @@ MonoBehaviour:
     isForced: 0
   - levelNumber: 1
     personId: 1102
-    nodeId: 17
-    optionId: "\u60A8\u600E\u4E48\u77E5\u9053\u6211\u8BF4\u7684\u54EA\u5929\uFF1F"
+    nodeId: 21
+    optionId: "\u5C5E\u4E8E\u5E38\u6001\u6C34\u5E73"
     sequence:
       triggerType: 3
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: 9e0f98eae1493774182f1e870ddcfb65, type: 3}
-        dialogueText: "\u201C\u90A3\u5929\u201D\uFF1F\u8BF7\u5141\u8BB8\u6211\u5BF9\u8FD9\u4E2A\u7528\u8BCD\u63D0\u51FA\u8D28\u7591\uFF0C\u56E0\u4E3A\u6211\u60F3\u6211\u5E76\u6CA1\u6709\u63D0\u53CA\u4EFB\u4F55\u7279\u5B9A\u7684\u4E00\u5929\u3002"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u6839\u636E\u516C\u53F8\u6570\u636E\u56DE\u8C03\uFF0C\u512A\u54C1\u5802\u7684\u5458\u5DE5\u5F85\u9047\u548C\u540C\u7C7B\u516C\u53F8\u6CA1\u6709\u663E\u8457\u5DEE\u5F02\u3002\u5C5E\u4E8E\u4E1A\u5185\u5E38\u6001\u6C34\u5E73\uFF0C\u4F5C\u4E3A\u7BA1\u7406\u5C42\uFF0C\u6B7B\u8005\u7684\u85AA\u916C\u4F1A\u7A0D\u9AD8\u4E00\u4E9B\uFF0C\u4F46\u4E5F\u6BD4\u8F83\u6709\u9650\u3002"
         useTypewriterEffect: 1
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
@@ -263,14 +263,14 @@ MonoBehaviour:
     isForced: 0
   - levelNumber: 1
     personId: 1103
-    nodeId: 8
+    nodeId: 7
     optionId: "\u9634\u9633\u5408\u540C\uFF1F"
     sequence:
       triggerType: 3
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: 25afd7eda1244cc44b865eed1f7b7612, type: 3}
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
         dialogueText: "\u60A8\u8BF4\u7684\u9634\u9633\u5408\u540C\u662F\u6307\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -283,14 +283,14 @@ MonoBehaviour:
   - levelNumber: 1
     personId: 1103
     nodeId: 12
-    optionId: "\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6"
+    optionId: "\u4E3A\u4EC0\u4E48\u4E0D\u8BF4\u660E\u60C5\u51B5\uFF1F"
     sequence:
       triggerType: 3
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: 9e0f98eae1493774182f1e870ddcfb65, type: 3}
-        dialogueText: "\u5728\u82A5\u826F\u592B\u5148\u751F\u8BD5\u56FE\u8FDB\u5165\u529E\u516C\u5BA4\u65F6\uFF0C\u60A8\u5E94\u8BE5\u5C31\u5728\u4ED6\u65C1\u8FB9\uFF0C\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6\u95E8\u628A\u624B\u9700\u8981\u7279\u6B8A\u65B9\u5F0F\u624D\u80FD\u5F00\u542F\u5462\uFF1F"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u5728\u82A5\u826F\u592B\u5148\u751F\u4E8E\u8BD5\u56FE\u8FDB\u5165\u529E\u516C\u5BA4\u65F6\uFF0C\u60A8\u5C31\u5728\u4ED6\u65C1\u8FB9\uFF0C\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6\u95E8\u628A\u624B\u9700\u8981\u7279\u6B8A\u65B9\u5F0F\u624D\u80FD\u5F00\u542F\u5462\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}
@@ -302,13 +302,13 @@ MonoBehaviour:
   - levelNumber: 1
     personId: 1103
     nodeId: 13
-    optionId: "\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6"
+    optionId: "\u4E3A\u4EC0\u4E48\u4E0D\u8BF4\u660E\u60C5\u51B5\uFF1F"
     sequence:
       triggerType: 3
       waveNumber: 0
       entries:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
-        speakerImage: {fileID: 21300000, guid: 9e0f98eae1493774182f1e870ddcfb65, type: 3}
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
         dialogueText: "\u5728\u82A5\u826F\u592B\u5148\u751F\u8BD5\u56FE\u8FDB\u5165\u529E\u516C\u5BA4\u65F6\uFF0C\u60A8\u5E94\u8BE5\u5C31\u5728\u4ED6\u65C1\u8FB9\uFF0C\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6\u95E8\u628A\u624B\u9700\u8981\u7279\u6B8A\u65B9\u5F0F\u624D\u80FD\u5F00\u542F\u5462\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
@@ -329,6 +329,120 @@ MonoBehaviour:
       - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
         speakerImage: {fileID: 21300000, guid: 2af7fbaa4a9d9b342a8451cfa545d75f, type: 3}
         dialogueText: "\u60A8\u7684\u676F\u5B50\u73B0\u5728\u5728\u54EA\u91CC\uFF0C\u53EF\u4EE5\u7ED9\u68C0\u9A8C\u79D1\u770B\u770B\u5417\uFF1F"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
+    isForced: 0
+  - levelNumber: 1
+    personId: 1103
+    nodeId: 19
+    optionId: "\u4E8B\u53D1\u7684\u65F6\u5019\uFF0C\u60A8\u5728\u505A\u4EC0\u4E48\uFF1F"
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u572817:30\u7684\u65F6\u5019\uFF0C\u60A8\u5728\u505A\u4EC0\u4E48\uFF1F\u60A8\u6709\u5F53\u65F6\u7684\u4E0D\u5728\u573A\u8BC1\u660E\u5417\uFF1F"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
+    isForced: 0
+  - levelNumber: 1
+    personId: 1103
+    nodeId: 22
+    optionId: "\u9634\u9633\u5408\u540C\uFF1F"
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u60A8\u8BF4\u7684\u9634\u9633\u5408\u540C\u662F\u6307\uFF1F"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
+    isForced: 0
+  - levelNumber: 1
+    personId: 1103
+    nodeId: 27
+    optionId: "\u8FD8\u6709\u5176\u4ED6\u8BBF\u5BA2\u5417\uFF1F"
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u9664\u4E86\u8FD9\u4F4D\u5973\u58EB\u4EE5\u5916\uFF0C\u4ECA\u5929\u8FD8\u6709\u5176\u4ED6\u4E0D\u5C5E\u4E8E\u8FD9\u4E2A\u516C\u53F8\u5458\u5DE5\u7684\u8BBF\u5BA2\u51FA\u5165\u4F60\u4EEC\u7684\u529E\u516C\u5BA4\u5417\uFF1F"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
+    isForced: 0
+  - levelNumber: 1
+    personId: 1103
+    nodeId: 29
+    optionId: "\u4E0A\u9762\u7684\u8840\u8FF9\u3002"
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u8BF7\u60A8\u89E3\u91CA\u4E00\u4E0B\u4E3A\u4EC0\u4E48\u4E0A\u9762\u4F1A\u6709\u8840\u8FF9\uFF1F"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
+    isForced: 0
+  - levelNumber: 1
+    personId: 1103
+    nodeId: 30
+    optionId: "\u6307\u51FA\u8C0E\u8A00\u3002"
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u7ECF\u8FC7\u68C0\u9A8C\uFF0C\u4E0A\u9762\u7684\u8840\u8FF9\u5E76\u4E0D\u5C5E\u4E8E\u60A8\uFF0C\u800C\u662F\u548C\u6B7B\u8005\u9AD8\u5EA6\u5339\u914D\uFF0C\u6211\u6709\u5408\u7406\u7684\u8BC1\u636E\u6000\u7591\u60A8\u5728\u8BF4\u8C0E\u3002"
+        useTypewriterEffect: 1
+        typewriterSpeed: 30
+        textBoxBackground: {fileID: 0}
+        nodeType: 0
+        customActionId: 
+        customActionArgument: 
+        customBgmTrack: {fileID: 0}
+    isForced: 0
+  - levelNumber: 1
+    personId: 1103
+    nodeId: 34
+    optionId: "\u4E3A\u4EC0\u4E48\u4E0D\u8BF4\u660E\u60C5\u51B5\uFF1F"
+    sequence:
+      triggerType: 3
+      waveNumber: 0
+      entries:
+      - speakerName: "\u5DE5\u85E4\u65B0\u4E00"
+        speakerImage: {fileID: 21300000, guid: b93c90acddde90d40984b068b4d75b53, type: 3}
+        dialogueText: "\u5728\u82A5\u826F\u592B\u5148\u751F\u8BD5\u56FE\u8FDB\u5165\u529E\u516C\u5BA4\u65F6\uFF0C\u60A8\u5E94\u8BE5\u5C31\u5728\u4ED6\u65C1\u8FB9\uFF0C\u4E3A\u4EC0\u4E48\u4E0D\u544A\u8BC9\u4ED6\u95E8\u628A\u624B\u9700\u8981\u7279\u6B8A\u65B9\u5F0F\u624D\u80FD\u5F00\u542F\u5462\uFF1F"
         useTypewriterEffect: 1
         typewriterSpeed: 30
         textBoxBackground: {fileID: 0}

@@ -28,6 +28,8 @@ public static class ClueExporter
         "已收集",
         "AttackKey",
         "已解锁Attack内容",
+        "直接展示Attack内容",
+        "Attack解锁内容",
         "摘要",
         "详细内容 (detailText)",
         "富文本内容 (Detail_Mark)",
@@ -47,6 +49,8 @@ public static class ClueExporter
         8,   // 已收集
         14,  // AttackKey
         12,  // 已解锁Attack内容
+        14,  // 直接展示Attack内容
+        62,  // Attack解锁内容
         42,  // 摘要
         62,  // detailText
         62,  // Detail_Mark
@@ -144,6 +148,8 @@ public static class ClueExporter
                         Collected   = clue.collected               ? "是" : "否",
                         AttackKey   = clue.attackKey               ?? "",
                         AttackUnlocked = clue.isAttackContentUnlocked ? "是" : "否",
+                        ShowAttackDirectly = clue.showAttackContentDirectly ? "是" : "否",
+                        AttackUnlockContent = clue.attackUnlockContent ?? "",
                         Summary     = clue.summary                 ?? "",
                         DetailText  = clue.detailText              ?? "",
                         DetailMark  = clue.Detail_Mark             ?? "",
@@ -221,7 +227,7 @@ public static class ClueExporter
                 {
                     r.Id, r.DisplayName, r.ClueType,
                     r.Detectable, r.Collectable, r.Collected,
-                    r.AttackKey, r.AttackUnlocked,
+                    r.AttackKey, r.AttackUnlocked, r.ShowAttackDirectly, r.AttackUnlockContent,
                     r.Summary, r.DetailText, r.DetailMark,
                     r.CanBeSummoned, r.HasPortrait, r.FrameCount,
                     r.AssetPath
@@ -469,6 +475,8 @@ public static class ClueExporter
         public string Collected      = "";
         public string AttackKey      = "";
         public string AttackUnlocked = "";
+        public string ShowAttackDirectly = "";
+        public string AttackUnlockContent = "";
         public string Summary        = "";
         public string DetailText     = "";
         public string DetailMark     = "";
