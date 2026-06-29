@@ -21,6 +21,6 @@ MonoBehaviour:
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
   attackUnlockContent: 
-  summary: "\u82A5\u826F\u592B\u572817\uFF1A40\u8BD5\u56FE\u6253\u5F00\u6848\u53D1\u73B0\u573A\u7684\u95E8\uFF0C\u53D1\u73B0\u65E0\u6CD5\u6253\u5F00\u3002"
+  summary: "\u82A5\u826F\u592B\u572817:40\u8BD5\u56FE\u6253\u5F00\u6848\u53D1\u73B0\u573A\u7684\u95E8\uFF0C\u53D1\u73B0\u65E0\u6CD5\u6253\u5F00\u3002"
   detailText: 
   Detail_Mark: 

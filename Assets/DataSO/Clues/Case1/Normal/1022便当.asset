@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "\u4FBF\u5F53"
   detectable: 0
   collectable: 1
-  collected: 1
+  collected: 0
   attackKey: 
   isAttackContentUnlocked: 0
   showAttackContentDirectly: 1
