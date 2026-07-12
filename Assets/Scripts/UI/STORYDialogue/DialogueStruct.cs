@@ -25,12 +25,25 @@ public enum DialogueNodeType
 }
 
 /// <summary>
+/// 剧情对话的人物立绘与对话框布局方向。
+/// </summary>
+public enum DialogueLayoutSide
+{
+    Left,
+    Right
+}
+
+/// <summary>
 /// 对话条目
 /// </summary>
 [System.Serializable]
 [Preserve]
 public class DialogueEntry
 {
+    [Header("人物布局")]
+    [Tooltip("选择本条对话使用左人物版式或右人物版式。旧数据默认使用 Left。")]
+    public DialogueLayoutSide layoutSide = DialogueLayoutSide.Left;
+
     [Header("说话人信息")]
     [Tooltip("说话人名称")]
     public string speakerName;
@@ -87,4 +100,3 @@ public class DialogueSequence
     [Tooltip("对话条目列表")]
     public DialogueEntry[] entries;
 }
-

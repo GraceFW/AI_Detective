@@ -57,6 +57,9 @@ public class DialogueUI : MonoBehaviour
 	[Tooltip("对话框点击区域按钮。当前版本中不是必须字段，保留用于兼容旧场景结构。")]
 	[SerializeField] private Button dialogueBoxButton;
 
+	[Tooltip("整块对话内容区域。未配置时会自动向上查找名为 DialogueBox 的物体。")]
+	[SerializeField] private RectTransform dialoguePanel;
+
 	[Header("Root Interaction Lock")]
 	[Tooltip("用于整体控制该对话 UI 区域是否可交互")]
 	[SerializeField] private CanvasGroup rootCanvasGroup;
@@ -70,6 +73,8 @@ public class DialogueUI : MonoBehaviour
 	/// 当前对话正文上的打字机效果组件
 	/// </summary>
 	private TypewriterEffect _typewriterEffect;
+
+	private DialoguePanelInteraction _panelInteraction;
 
 	/// <summary>
 	/// 当前动态生成的选项按钮实例列表
@@ -87,6 +92,8 @@ public class DialogueUI : MonoBehaviour
 		{
 			_typewriterEffect = dialogueText.GetComponent<TypewriterEffect>();
 		}
+
+		SetupDialoguePanelInteraction();
 
 		// 上一条按钮：绑定音效组件和点击事件
 		if (prevButton != null)
@@ -123,6 +130,41 @@ public class DialogueUI : MonoBehaviour
 
 		// 初始化 UI 状态
 		ClearDialogue();
+	}
+
+	private void SetupDialoguePanelInteraction()
+	{
+		if (dialoguePanel == null && dialogueText != null)
+		{
+			Transform current = dialogueText.transform.parent;
+			while (current != null)
+			{
+				if (current.name == "DialogueBox")
+				{
+					dialoguePanel = current as RectTransform;
+					break;
+				}
+				current = current.parent;
+			}
+		}
+
+		if (dialoguePanel == null)
+		{
+			Debug.LogWarning("[DialogueUI] 未找到 DialogueBox，整块面板点击和后续提示不可用。");
+			return;
+		}
+
+		_panelInteraction = dialoguePanel.GetComponent<DialoguePanelInteraction>();
+		if (_panelInteraction == null)
+			_panelInteraction = dialoguePanel.gameObject.AddComponent<DialoguePanelInteraction>();
+
+		_panelInteraction.Initialize(OnDialogueBoxClick);
+	}
+
+	public void SetContinueIndicator(bool visible)
+	{
+		if (_panelInteraction != null)
+			_panelInteraction.SetContinueVisible(visible);
 	}
 
 	private void OnDestroy()
@@ -383,6 +425,7 @@ public class DialogueUI : MonoBehaviour
 
 		ClearOptions();
 		UpdateNavigationButtons(false, false);
+		SetContinueIndicator(false);
 	}
 
 	/// <summary>

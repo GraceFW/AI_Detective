@@ -2989,6 +2989,7 @@ MonoBehaviour:
   prevButton: {fileID: 2004872361}
   nextButton: {fileID: 282705724}
   dialogueBoxButton: {fileID: 1212173210}
+  dialoguePanel: {fileID: 1672572590}
   rootCanvasGroup: {fileID: 1475180837}
 --- !u!114 &361593137
 MonoBehaviour:

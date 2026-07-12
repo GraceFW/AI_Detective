@@ -3059,6 +3059,7 @@ MonoBehaviour:
   prevButton: {fileID: 2004872361}
   nextButton: {fileID: 282705724}
   dialogueBoxButton: {fileID: 865590900}
+  dialoguePanel: {fileID: 1672572590}
   rootCanvasGroup: {fileID: 1475180837}
 --- !u!114 &361593137
 MonoBehaviour:
@@ -5039,7 +5040,7 @@ MonoBehaviour:
       dialogueTrigger: 1
       dialogueLevelNumber: -1
       dialogueWaveNumber: 3
-      delaySeconds: 0.5
+      delaySeconds: 0.2
       submitTargetKey: 
       requireNonEmptySubmit: 1
       requiredClueIds: []
@@ -5320,8 +5321,8 @@ MonoBehaviour:
     - stepDescribe: "\u7B49\u5F85\u6536\u96C6\u5230\u4EBA\u7269\u7EBF\u7D22"
       stepType: 7
       targetKeys:
-      - 0101
       - 0102
+      - 0101
       dragSourceKey: 
       dragTargetKey: 
       dialogueTrigger: 3

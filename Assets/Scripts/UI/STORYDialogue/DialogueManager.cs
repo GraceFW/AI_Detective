@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -35,12 +35,72 @@ public class DialogueManager : MonoBehaviour
     
     [Tooltip("文本框背景（DialogueTextBG的Image组件）")]
     public Image dialogueTextBG;
+
+    [Header("左右人物版式")]
+    [Tooltip("左人物版式根节点。启用右版式时会隐藏它。")]
+    [SerializeField] private GameObject leftLayoutRoot;
+
+    [Tooltip("右人物版式根节点。启用左版式时会隐藏它。")]
+    [SerializeField] private GameObject rightLayoutRoot;
+
+    [Tooltip("左侧人物立绘。未配置时兼容使用上方 speakerImage。")]
+    [SerializeField] private Image leftSpeakerImage;
+
+    [Tooltip("右侧人物立绘。")]
+    [SerializeField] private Image rightSpeakerImage;
+
+    [Tooltip("左版式中位于立绘后方的对话框图片。")]
+    [SerializeField] private Image leftDialogueTextBGBack;
+
+    [Tooltip("左版式中位于立绘前方的对话框图片。")]
+    [SerializeField] private Image leftDialogueTextBGFront;
+
+    [Tooltip("右版式中位于立绘后方的对话框图片。")]
+    [SerializeField] private Image rightDialogueTextBGBack;
+
+    [Tooltip("右版式中位于立绘前方的对话框图片。")]
+    [SerializeField] private Image rightDialogueTextBGFront;
+
+    [Header("左右版式文字与操作组件")]
+    [Tooltip("左版式的说话人名称。未配置时使用上方 Speaker Name Text。")]
+    [SerializeField] private TextMeshProUGUI leftSpeakerNameText;
+
+    [Tooltip("右版式的说话人名称。")]
+    [SerializeField] private TextMeshProUGUI rightSpeakerNameText;
+
+    [Tooltip("左版式的对话正文。未配置时使用上方 Dialogue Text。")]
+    [SerializeField] private TextMeshProUGUI leftDialogueText;
+
+    [Tooltip("右版式的对话正文。")]
+    [SerializeField] private TextMeshProUGUI rightDialogueText;
+
+    [Tooltip("左版式的继续提示。未配置时使用下方 Continue Indicator。")]
+    [SerializeField] private GameObject leftContinueIndicator;
+
+    [Tooltip("右版式的继续提示。")]
+    [SerializeField] private GameObject rightContinueIndicator;
+
+    [Tooltip("左版式的跳过按钮。未配置时使用下方 Skip Button。")]
+    [SerializeField] private Button leftSkipButton;
+
+    [Tooltip("右版式的跳过按钮。")]
+    [SerializeField] private Button rightSkipButton;
     
     [Tooltip("继续指示器")]
     public GameObject continueIndicator;
     
     [Tooltip("跳过按钮（可选）")]
     public Button skipButton;
+
+    [Header("跳过剧情确认弹窗")]
+    [Tooltip("跳过确认弹窗根节点，初始应设为隐藏。")]
+    [SerializeField] private GameObject skipConfirmPopup;
+
+    [Tooltip("确认跳过全部剧情的按钮。")]
+    [SerializeField] private Button confirmSkipButton;
+
+    [Tooltip("取消跳过并返回剧情的按钮。")]
+    [SerializeField] private Button cancelSkipButton;
     
     [Header("设置")]
     [Tooltip("是否允许跳过对话")]
@@ -113,8 +173,23 @@ public class DialogueManager : MonoBehaviour
     private bool _guideLayoutAvoidDefaultCached;
     private const float GuideLayoutAvoidMargin = 24f;
     private const int UnskippableLevelCompleteLevel = 2;
-    private bool _skipButtonDefaultActive;
+    private bool _leftSkipButtonDefaultActive;
+    private bool _rightSkipButtonDefaultActive;
     private bool _skipButtonDefaultActiveCached;
+    private bool _isSkipConfirmationOpen;
+    private DialogueLayoutSide _activeLayoutSide = DialogueLayoutSide.Left;
+
+    private TextMeshProUGUI ActiveSpeakerNameText =>
+        _activeLayoutSide == DialogueLayoutSide.Right ? rightSpeakerNameText : (leftSpeakerNameText != null ? leftSpeakerNameText : speakerNameText);
+
+    private TextMeshProUGUI ActiveDialogueText =>
+        _activeLayoutSide == DialogueLayoutSide.Right ? rightDialogueText : (leftDialogueText != null ? leftDialogueText : dialogueText);
+
+    private GameObject ActiveContinueIndicator =>
+        _activeLayoutSide == DialogueLayoutSide.Right ? rightContinueIndicator : (leftContinueIndicator != null ? leftContinueIndicator : continueIndicator);
+
+    private Button ActiveSkipButton =>
+        _activeLayoutSide == DialogueLayoutSide.Right ? rightSkipButton : (leftSkipButton != null ? leftSkipButton : skipButton);
     
     private void Awake()
     {
@@ -139,24 +214,36 @@ public class DialogueManager : MonoBehaviour
         {
             backgroundMask.color = maskColor;
         }
+
+        HideSkipConfirmation();
     }
     
     private void Start()
     {
-        // 配置跳过按钮
-        if (skipButton != null)
+        CacheSkipButtonDefaultActive();
+        ConfigureSkipButton(leftSkipButton != null ? leftSkipButton : skipButton);
+        ConfigureSkipButton(rightSkipButton);
+
+        if (confirmSkipButton != null)
         {
-            CacheSkipButtonDefaultActive();
-            // 清除所有原有的监听器
-            skipButton.onClick.RemoveAllListeners();
-            // 注册新的退出对话回调
-            skipButton.onClick.AddListener(ExitDialogue);
-            Debug.Log("[DialogueManager] SkipButton已配置，点击将直接退出对话");
+            confirmSkipButton.onClick.RemoveListener(ConfirmSkipDialogue);
+            confirmSkipButton.onClick.AddListener(ConfirmSkipDialogue);
         }
-        else
+
+        if (cancelSkipButton != null)
         {
-            Debug.LogWarning("[DialogueManager] SkipButton未绑定，请在Inspector中绑定跳过按钮");
+            cancelSkipButton.onClick.RemoveListener(CancelSkipDialogue);
+            cancelSkipButton.onClick.AddListener(CancelSkipDialogue);
         }
+    }
+
+    private void ConfigureSkipButton(Button button)
+    {
+        if (button == null)
+            return;
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(ShowSkipConfirmation);
     }
     
     private void Update()
@@ -164,6 +251,13 @@ public class DialogueManager : MonoBehaviour
         // 对话激活时处理输入
         if (isDialogueActive)
         {
+            if (_isSkipConfirmationOpen)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    CancelSkipDialogue();
+                return;
+            }
+
             bool shouldContinueByMouse = Input.GetMouseButtonDown(0) && !ShouldIgnoreMouseContinueThisFrame();
 
             // 点击或空格键继续
@@ -177,7 +271,7 @@ public class DialogueManager : MonoBehaviour
             {
                 if (CanExitCurrentDialogue())
                 {
-                    ExitDialogue();
+                    ShowSkipConfirmation();
                 }
             }
         }
@@ -196,12 +290,13 @@ public class DialogueManager : MonoBehaviour
 
     private bool IsPointerOverSkipButton()
     {
-        if (skipButton == null || !skipButton.gameObject.activeInHierarchy || !skipButton.interactable)
+        Button currentSkipButton = ActiveSkipButton;
+        if (currentSkipButton == null || !currentSkipButton.gameObject.activeInHierarchy || !currentSkipButton.interactable)
         {
             return false;
         }
 
-        RectTransform skipButtonRect = skipButton.transform as RectTransform;
+        RectTransform skipButtonRect = currentSkipButton.transform as RectTransform;
         if (skipButtonRect == null)
         {
             return false;
@@ -371,49 +466,25 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private void ShowNormalDialogueEntry(DialogueEntry entry)
     {
-        // 设置说话人头像
-        if (speakerImage != null)
-        {
-            if (entry.speakerImage != null)
-            {
-                speakerImage.sprite = entry.speakerImage;
-                speakerImage.gameObject.SetActive(true);
-            }
-            else
-            {
-                speakerImage.gameObject.SetActive(false);
-            }
-        }
+        ApplyDialogueLayout(entry);
         
         // 设置说话人名称
-        if (speakerNameText != null)
+        TextMeshProUGUI currentSpeakerNameText = ActiveSpeakerNameText;
+        if (currentSpeakerNameText != null)
         {
-            speakerNameText.text = entry.speakerName;
-        }
-        
-        // 设置文本框背景（根据角色配置不同的文本框样式）
-        if (dialogueTextBG != null)
-        {
-            if (entry.textBoxBackground != null)
-            {
-                dialogueTextBG.sprite = entry.textBoxBackground;
-                dialogueTextBG.gameObject.SetActive(true);
-            }
-            else
-            {
-                // 如果没有配置，使用默认背景（保持当前设置）
-                // dialogueTextBG.gameObject.SetActive(true); // 保持显示
-            }
+            currentSpeakerNameText.text = entry.speakerName;
         }
         
         // 隐藏继续指示器
-        if (continueIndicator != null)
+        GameObject currentContinueIndicator = ActiveContinueIndicator;
+        if (currentContinueIndicator != null)
         {
-            continueIndicator.SetActive(false);
+            currentContinueIndicator.SetActive(false);
         }
         
         // 显示对话文本（使用打字机效果）
-        if (dialogueText != null)
+        TextMeshProUGUI currentDialogueText = ActiveDialogueText;
+        if (currentDialogueText != null)
         {
             if (typewriterCoroutine != null)
             {
@@ -426,11 +497,72 @@ public class DialogueManager : MonoBehaviour
             }
             else
             {
-                dialogueText.text = entry.dialogueText;
+                currentDialogueText.text = entry.dialogueText;
                 isTyping = false;
                 ShowContinueIndicator();
             }
         }
+    }
+
+    private void ApplyDialogueLayout(DialogueEntry entry)
+    {
+        bool useRight = entry != null && entry.layoutSide == DialogueLayoutSide.Right;
+        _activeLayoutSide = useRight ? DialogueLayoutSide.Right : DialogueLayoutSide.Left;
+
+        if (leftLayoutRoot != null)
+            leftLayoutRoot.SetActive(!useRight);
+        if (rightLayoutRoot != null)
+            rightLayoutRoot.SetActive(useRight);
+
+        SetOptionalObjectActive(leftSpeakerNameText, !useRight);
+        SetOptionalObjectActive(rightSpeakerNameText, useRight);
+        SetOptionalObjectActive(leftDialogueText, !useRight);
+        SetOptionalObjectActive(rightDialogueText, useRight);
+        if (leftContinueIndicator != null)
+            leftContinueIndicator.SetActive(false);
+        if (rightContinueIndicator != null)
+            rightContinueIndicator.SetActive(false);
+
+        Image leftPortrait = leftSpeakerImage != null ? leftSpeakerImage : speakerImage;
+        SetPortrait(leftPortrait, !useRight ? entry?.speakerImage : null);
+        SetPortrait(rightSpeakerImage, useRight ? entry?.speakerImage : null);
+
+        // textBoxBackground 继续兼容旧数据：配置后替换当前版式的前景框图片。
+        if (entry != null && entry.textBoxBackground != null)
+        {
+            Image activeFront = useRight ? rightDialogueTextBGFront : leftDialogueTextBGFront;
+            if (activeFront != null)
+                activeFront.sprite = entry.textBoxBackground;
+            else if (dialogueTextBG != null)
+                dialogueTextBG.sprite = entry.textBoxBackground;
+        }
+
+        SetLayoutGraphicActive(leftDialogueTextBGBack, !useRight);
+        SetLayoutGraphicActive(leftDialogueTextBGFront, !useRight);
+        SetLayoutGraphicActive(rightDialogueTextBGBack, useRight);
+        SetLayoutGraphicActive(rightDialogueTextBGFront, useRight);
+        ApplySkipButtonVisibilityForCurrentDialogue();
+    }
+
+    private static void SetPortrait(Image target, Sprite portrait)
+    {
+        if (target == null)
+            return;
+
+        target.sprite = portrait;
+        target.gameObject.SetActive(portrait != null);
+    }
+
+    private static void SetLayoutGraphicActive(Image target, bool active)
+    {
+        if (target != null)
+            target.gameObject.SetActive(active);
+    }
+
+    private static void SetOptionalObjectActive(Component target, bool active)
+    {
+        if (target != null)
+            target.gameObject.SetActive(active);
     }
     
     /// <summary>
@@ -604,14 +736,18 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private IEnumerator TypewriterEffect(string text, float speed)
     {
+        TextMeshProUGUI currentDialogueText = ActiveDialogueText;
+        if (currentDialogueText == null)
+            yield break;
+
         isTyping = true;
-        dialogueText.text = "";
+        currentDialogueText.text = "";
         
         float interval = 1f / speed;
         
         foreach (char c in text)
         {
-            dialogueText.text += c;
+            currentDialogueText.text += c;
             yield return new WaitForSeconds(interval);
         }
         
@@ -624,9 +760,10 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private void ShowContinueIndicator()
     {
-        if (continueIndicator != null)
+        GameObject currentContinueIndicator = ActiveContinueIndicator;
+        if (currentContinueIndicator != null)
         {
-            continueIndicator.SetActive(true);
+            currentContinueIndicator.SetActive(true);
             // 可以添加闪烁动画
         }
     }
@@ -652,7 +789,9 @@ public class DialogueManager : MonoBehaviour
             
             if (currentSequence != null && currentEntryIndex < currentSequence.entries.Length)
             {
-                dialogueText.text = currentSequence.entries[currentEntryIndex].dialogueText;
+                TextMeshProUGUI currentDialogueText = ActiveDialogueText;
+                if (currentDialogueText != null)
+                    currentDialogueText.text = currentSequence.entries[currentEntryIndex].dialogueText;
             }
             
             isTyping = false;
@@ -685,7 +824,48 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private void SkipDialogue()
     {
+        ShowSkipConfirmation();
+    }
+
+    public void ShowSkipConfirmation()
+    {
+        if (!isDialogueActive || !CanExitCurrentDialogue())
+            return;
+
+        if (skipConfirmPopup == null || confirmSkipButton == null || cancelSkipButton == null)
+        {
+            Debug.LogWarning("[DialogueManager] 跳过确认弹窗引用不完整，已阻止直接跳过。请在 Inspector 中完成配置。");
+            return;
+        }
+
+        _isSkipConfirmationOpen = true;
+        skipConfirmPopup.SetActive(true);
+        if (ActiveSkipButton != null)
+            ActiveSkipButton.interactable = false;
+    }
+
+
+    private void ConfirmSkipDialogue()
+    {
+        if (!_isSkipConfirmationOpen)
+            return;
+
+        HideSkipConfirmation();
         ExitDialogue();
+    }
+
+    private void CancelSkipDialogue()
+    {
+        HideSkipConfirmation();
+    }
+
+    private void HideSkipConfirmation()
+    {
+        _isSkipConfirmationOpen = false;
+        if (skipConfirmPopup != null)
+            skipConfirmPopup.SetActive(false);
+        if (ActiveSkipButton != null)
+            ActiveSkipButton.interactable = true;
     }
     
     /// <summary>
@@ -704,6 +884,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         
+        HideSkipConfirmation();
         Debug.Log("[DialogueManager] 退出对话");
         
         // 停止打字机效果
@@ -746,6 +927,7 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     private void EndDialogue()
     {
+        HideSkipConfirmation();
         RestoreGuideLayoutAvoidance();
         RestoreSkipButtonVisibility();
         isDialogueActive = false;
@@ -773,19 +955,9 @@ public class DialogueManager : MonoBehaviour
 
     public void ApplyGuideLayoutAvoidance(IReadOnlyList<Rect> avoidRects)
     {
-        if (!isDialogueActive)
-        {
-            RestoreGuideLayoutAvoidance();
-            return;
-        }
-
-        if (!TryGetGuideLayoutAvoidRect(out var layoutRect))
-        {
-            return;
-        }
-
-        float shiftY = CalculateGuideLayoutAvoidShift(layoutRect, avoidRects);
-        layoutRect.anchoredPosition = _guideLayoutAvoidDefaultAnchoredPosition + new Vector2(0f, shiftY);
+        // 新版左右剧情对话框拥有各自固定布局，不再跟随教程高亮区域移动。
+        // 保留公开入口以兼容 GuideHighlightController 的现有调用。
+        RestoreGuideLayoutAvoidance();
     }
 
     public void ClearGuideLayoutAvoidance()
@@ -902,33 +1074,40 @@ public class DialogueManager : MonoBehaviour
 
     private void ApplySkipButtonVisibilityForCurrentDialogue()
     {
-        if (skipButton == null)
-        {
-            return;
-        }
-
         CacheSkipButtonDefaultActive();
-        skipButton.gameObject.SetActive(_skipButtonDefaultActive && !IsCurrentDialogueExitLocked());
+        Button leftButton = leftSkipButton != null ? leftSkipButton : skipButton;
+        bool exitAllowed = !IsCurrentDialogueExitLocked();
+
+        if (leftButton != null)
+            leftButton.gameObject.SetActive(_activeLayoutSide == DialogueLayoutSide.Left && _leftSkipButtonDefaultActive && exitAllowed);
+        if (rightSkipButton != null && rightSkipButton != leftButton)
+            rightSkipButton.gameObject.SetActive(_activeLayoutSide == DialogueLayoutSide.Right && _rightSkipButtonDefaultActive && exitAllowed);
     }
 
     private void RestoreSkipButtonVisibility()
     {
-        if (skipButton == null || !_skipButtonDefaultActiveCached)
+        if (!_skipButtonDefaultActiveCached)
         {
             return;
         }
 
-        skipButton.gameObject.SetActive(_skipButtonDefaultActive);
+        Button leftButton = leftSkipButton != null ? leftSkipButton : skipButton;
+        if (leftButton != null)
+            leftButton.gameObject.SetActive(_leftSkipButtonDefaultActive);
+        if (rightSkipButton != null && rightSkipButton != leftButton)
+            rightSkipButton.gameObject.SetActive(_rightSkipButtonDefaultActive);
     }
 
     private void CacheSkipButtonDefaultActive()
     {
-        if (skipButton == null || _skipButtonDefaultActiveCached)
+        if (_skipButtonDefaultActiveCached)
         {
             return;
         }
 
-        _skipButtonDefaultActive = skipButton.gameObject.activeSelf;
+        Button leftButton = leftSkipButton != null ? leftSkipButton : skipButton;
+        _leftSkipButtonDefaultActive = leftButton != null && leftButton.gameObject.activeSelf;
+        _rightSkipButtonDefaultActive = rightSkipButton != null && rightSkipButton.gameObject.activeSelf;
         _skipButtonDefaultActiveCached = true;
     }
 
@@ -988,6 +1167,7 @@ public class DialogueManager : MonoBehaviour
     // 结束对话序列，执行表现层管理和事件发布
 	private void FinishDialogue()
 	{
+		HideSkipConfirmation();
 		RestoreGuideLayoutAvoidance();
         RestoreSkipButtonVisibility();
 

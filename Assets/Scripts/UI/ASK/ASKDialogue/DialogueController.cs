@@ -150,6 +150,10 @@ public class DialogueController : MonoBehaviour
                 {
                     dialogueUI.ClearOptions();
                 }
+				dialogueUI.SetContinueIndicator(
+					latestEntry.options == null || latestEntry.options.Count == 0
+						? ResolveNextNode(_currentNode) != null
+						: false);
             }
             UpdateNavigationButtons();
             return;
@@ -348,6 +352,7 @@ public class DialogueController : MonoBehaviour
     /// </summary>
     private void ShowHistoryEntry()
     {
+		dialogueUI.SetContinueIndicator(false);
         var entry = dialogueHistory.GetCurrent();
         if (entry != null)
         {
@@ -400,8 +405,23 @@ public class DialogueController : MonoBehaviour
             dialogueUI.ClearOptions();
         }
 
+		// 只有当前句没有选项且 nextNodeId 能解析到真实节点时，才提示玩家继续。
+		dialogueUI.SetContinueIndicator(!hasOptions && ResolveNextNode(_currentNode) != null);
+
         UpdateNavigationButtons();
     }
+
+	private DialogueNode ResolveNextNode(DialogueNode node)
+	{
+		if (node == null || string.IsNullOrEmpty(node.nextNodeId))
+			return null;
+
+		DialogueNode nextNode = FindNodeById(node.nextNodeId, _currentDialogueNodes);
+		if (nextNode == null && _currentPerson != null && _currentPerson.baseDialogues != null)
+			nextNode = FindNodeById(node.nextNodeId, _currentPerson.baseDialogues);
+
+		return nextNode;
+	}
 
     /// <summary>
     /// 更新导航按钮状态
@@ -418,6 +438,7 @@ public class DialogueController : MonoBehaviour
     /// </summary>
     private void EndDialogue()
     {
+		dialogueUI.SetContinueIndicator(false);
         Debug.Log("[DialogueController] 对话结束");
         // 可以在这里添加对话结束的处理逻辑
     }
@@ -478,4 +499,3 @@ public class DialogueController : MonoBehaviour
         return null;
     }
 }
-
